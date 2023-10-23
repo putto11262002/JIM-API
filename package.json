@@ -1,0 +1,38 @@
+{
+    "name": "jimmodel-ts",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "license": "MIT",
+    "scripts": {
+        "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "lint": "eslint src/**/*.ts",
+        "lint:fix": "eslint --fix src/**/*.ts",
+        "format": "prettier --write ."
+    },
+    "devDependencies": {
+        "@types/koa": "^2.13.10",
+        "@types/koa-router": "^7.4.6",
+        "@types/node": "^20.8.7",
+        "@typescript-eslint/eslint-plugin": "^6.4.0",
+        "eslint": "^8.0.1",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-config-standard-with-typescript": "^39.1.1",
+        "eslint-plugin-import": "^2.25.2",
+        "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+        "eslint-plugin-promise": "^6.0.0",
+        "nodemon": "^3.0.1",
+        "prettier": "^3.0.3",
+        "ts-node": "^10.9.1",
+        "typescript": "*"
+    },
+    "dependencies": {
+        "dotenv": "^16.3.1",
+        "koa": "^2.14.2",
+        "koa-body": "^6.0.1",
+        "koa-router": "^11.0.2",
+        "winston": "^3.11.0",
+        "zod": "^3.22.4"
+    }
+}
