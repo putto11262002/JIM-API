@@ -1,0 +1,5 @@
+{
+    "*.ts": "yarn lint:fix",
+    "*.{ts,json}": "yarn format",
+    "*.prisma": "yarn prisma format"
+}
