@@ -1,4 +1,4 @@
-import type Koa from "koa"
+import type Koa from "koa";
 import { CreateStaffSchema } from "../validators/staff";
 import ValidationError from "../utils/errors/validation-error";
 import { type StaffControllerContext } from "../types/context";
@@ -11,24 +11,27 @@ export interface IStaffController {
 }
 
 class StaffController implements IStaffController {
-    private readonly staffService: IStaffService
-    private readonly logger: ILogger
+    private readonly staffService: IStaffService;
+    private readonly logger: ILogger;
     constructor(ctx: StaffControllerContext) {
-        this.staffService = ctx.staffService
-        this.logger = ctx.logger
+        this.staffService = ctx.staffService;
+        this.logger = ctx.logger;
         this.createStaff = this.createStaff.bind(this);
     }
 
     public async createStaff(ctx: Koa.Context): Promise<void> {
-        const validation = CreateStaffSchema.safeParse(ctx.request.body)
+        const validation = CreateStaffSchema.safeParse(ctx.request.body);
         if (!validation.success) {
-            throw new ValidationError("Invalid payload", validation.error.formErrors.fieldErrors)
+            throw new ValidationError(
+                "Invalid payload",
+                validation.error.formErrors.fieldErrors
+            );
         }
-        const staffPayload = validation.data
-        await this.staffService.createStaff(staffPayload)
-        this.logger.info("Staff created successfully")
-        ctx.body = new ApiResponse("Staff created successfully", undefined)
+        const staffPayload = validation.data;
+        await this.staffService.createStaff(staffPayload);
+        this.logger.info("Staff created successfully");
+        ctx.body = new ApiResponse("Staff created successfully", undefined);
     }
 }
 
-export default StaffController
+export default StaffController;

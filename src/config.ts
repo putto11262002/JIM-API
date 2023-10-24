@@ -19,11 +19,10 @@ class AppConfig {
             );
         }
 
-        const data = configValidation.data
+        const data = configValidation.data;
 
         this.port = data.port;
     }
 }
-
 
 export default new AppConfig();

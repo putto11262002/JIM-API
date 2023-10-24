@@ -5,16 +5,16 @@ import { type StaffRoutesContext } from "../types/context";
 class StaffRoutes {
     private readonly router: Router;
     private readonly controller: IStaffController;
-    constructor(ctx: StaffRoutesContext){
-        this.router = new Router({})
-        this.controller = ctx.staffController
+    constructor(ctx: StaffRoutesContext) {
+        this.router = new Router({});
+        this.controller = ctx.staffController;
 
-        this.router.post("/admin/staffs", this.controller.createStaff)
+        this.router.post("/admin/staffs", this.controller.createStaff);
     }
 
     public getRoutes(): Router.IMiddleware {
-        return this.router.routes()
+        return this.router.routes();
     }
 }
 
-export default StaffRoutes
+export default StaffRoutes;
