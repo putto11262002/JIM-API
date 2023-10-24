@@ -33,4 +33,6 @@ export interface ILogger {
     debug: (message: string) => void;
 }
 
-export default Logger;
+const logger = new Logger()
+
+export default logger;

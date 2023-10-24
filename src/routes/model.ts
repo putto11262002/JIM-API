@@ -1,10 +1,12 @@
 import Router from "koa-router";
 import { type IModelController } from "../controllers/model";
+import { type ModelRoutesContext } from "../types/context";
+
 class ModelRoutes {
     private readonly router: Router;
     private readonly controller: IModelController;
-    constructor(_controller: IModelController) {
-        this.controller = _controller;
+    constructor(context: ModelRoutesContext) {
+        this.controller = context.controller;
         this.router = new Router({ prefix: "/model" });
         this.router.get("/", this.controller.getModels);
     }
