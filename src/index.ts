@@ -1,17 +1,10 @@
-import App from "./app";
-import appConfig from "./config";
-import { type AppContext } from "./types/context";
-import logger from "./utils/logger";
+import type App from "./app";
 
-const config = appConfig;
+import { TYPES } from "./inversify.config";
+import container from "./inversify.container";
 
-const appCtx: AppContext = {
-    config,
-    logger,
-};
+// Initialize app
+const app = container.get<App>(TYPES.APP);
 
-// Initialize server
-const server = new App(appCtx);
-
-// Start server
-void server.start();
+// Start app
+void app.start();

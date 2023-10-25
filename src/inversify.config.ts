@@ -1,0 +1,18 @@
+export const TYPES = {
+    // Staff related classes
+    STAFF_SERVICE: Symbol.for("StaffService"),
+    STAFF_CONTROLLER: Symbol.for("StaffController"),
+    STAFF_ROUTER: Symbol.for("StaffRouter"),
+
+    // Model relate classes
+    MODEL_SERVICE: Symbol.for("ModelService"),
+    MODEL_CONTROLLER: Symbol.for("ModelController"),
+    MODEL_ROUTER: Symbol.for("ModelRouter"),
+
+    // Application levels clases
+    PRISMA: Symbol.for("Prisma"),
+    ROOT_ROUTER: Symbol.for("RootRouter"),
+    CONFIG: Symbol.for("Config"),
+
+    APP: Symbol.for("App"),
+};

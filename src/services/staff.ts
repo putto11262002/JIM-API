@@ -1,8 +1,11 @@
-import type { PrismaClient, Staff } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import type { Staff } from "@prisma/client";
 import { type CreateStaffInput } from "../types/staff";
-import { type StaffServiceContext } from "../types/context";
 import InvalidArgumentError from "../utils/errors/conflict-error";
 import bcrypt from "bcrypt";
+import { injectable, inject } from "inversify";
+import { TYPES } from "../inversify.config";
+
 export interface IStaffService {
     /**
      * Check if the staff with the username or email already exists. If not, create a new staff.
@@ -12,11 +15,10 @@ export interface IStaffService {
     createStaff: (input: CreateStaffInput) => Promise<Staff>;
 }
 
+@injectable()
 class StaffService implements IStaffService {
-    private readonly prisma: PrismaClient;
-    constructor(ctx: StaffServiceContext) {
-        this.prisma = ctx.prisma;
-    }
+    @inject(TYPES.PRISMA)
+    private readonly prisma!: PrismaClient;
 
     public async createStaff(input: CreateStaffInput): Promise<Staff> {
         const staffExist = await this.prisma.staff.findFirst({

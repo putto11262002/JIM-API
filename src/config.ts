@@ -1,8 +1,10 @@
+import { injectable } from "inversify";
 import { ConfigSchema } from "./validators/config";
 import dotenv from "dotenv";
 
 dotenv.config();
 
+@injectable()
 class AppConfig {
     public readonly port: number;
     constructor() {

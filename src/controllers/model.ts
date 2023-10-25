@@ -1,3 +1,4 @@
+import { injectable } from "inversify";
 import type Koa from "koa";
 
 export interface IModelController {
@@ -8,6 +9,7 @@ export interface IModelController {
     getModelById: Koa.Middleware;
 }
 
+@injectable()
 class ModelController implements IModelController {
     public async getModels(ctx: Koa.Context): Promise<void> {}
 

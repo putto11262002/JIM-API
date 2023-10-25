@@ -1,15 +1,21 @@
 import Router from "koa-router";
 import { type IStaffController } from "../controllers/staff";
-import { type StaffRoutesContext } from "../types/context";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../inversify.config";
+import type { IAppRouter } from "./index.ts";
 
-class StaffRoutes {
+@injectable()
+class StaffRouter implements IAppRouter {
     private readonly router: Router;
-    private readonly controller: IStaffController;
-    constructor(ctx: StaffRoutesContext) {
-        this.router = new Router({});
-        this.controller = ctx.staffController;
 
-        this.router.post("/admin/staffs", this.controller.createStaff);
+    private readonly staffController: IStaffController;
+
+    constructor(
+        @inject(TYPES.STAFF_CONTROLLER) staffController: IStaffController
+    ) {
+        this.router = new Router({});
+        this.staffController = staffController;
+        this.router.post("/admin/staffs", this.staffController.createStaff);
     }
 
     public getRoutes(): Router.IMiddleware {
@@ -17,4 +23,4 @@ class StaffRoutes {
     }
 }
 
-export default StaffRoutes;
+export default StaffRouter;

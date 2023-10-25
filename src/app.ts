@@ -1,89 +1,47 @@
-import type { AppConfig } from "./types/config";
+import { AppConfig } from "./types/config";
 import Koa from "koa";
 import type { ILogger } from "./utils/logger";
-import Router from "koa-router";
-import ModelRoutes from "./routes/model";
-import ModelController from "./controllers/model";
 import type { Server } from "http";
-import type {
-    ModelRoutesContext,
-    AppContext,
-    StaffServiceContext,
-    StaffControllerContext,
-    StaffRoutesContext,
-} from "./types/context";
 import koaBody from "koa-body";
-import StaffService from "./services/staff";
 import { prisma } from "./prisma/client";
-import StaffController from "./controllers/staff";
-import StaffRoutes from "./routes/staff";
 import ErrorMiddleware from "./middlewares/error-middleware";
-import type { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { TYPES } from "./inversify.config";
+import { IAppRouter } from "./routes/index.ts";
+import { inject, injectable } from "inversify";
+import logger from "./utils/logger";
 
+@injectable()
 class App {
-    private readonly config: AppConfig;
+    @inject(TYPES.CONFIG)
+    private readonly config!: AppConfig;
+
     private readonly koaApp: Koa;
+
     private readonly logger: ILogger;
-    private server: Server | undefined;
-    private readonly prisma: PrismaClient;
-    constructor(ctx: AppContext) {
-        this.config = ctx.config;
+
+    private server!: Server;
+
+    @inject(TYPES.ROOT_ROUTER)
+    private readonly router!: IAppRouter;
+
+    @inject(TYPES.PRISMA)
+    private readonly prisma!: PrismaClient;
+
+    constructor() {
         this.koaApp = new Koa();
-        this.logger = ctx.logger;
-        this.prisma = prisma;
+        this.logger = logger;
     }
 
     private initRoutesAndMiddlewares(): void {
         /**
-         * Register event listeners
-         */
-
-        this.registerListeners();
-
-        /**
-         * API router
-         */
-        const apiRouter = new Router({ prefix: "/api" });
-
-        /**
          * Global error handle
          */
-        apiRouter.use(ErrorMiddleware());
+        this.koaApp.use(koaBody());
 
-        apiRouter.use(koaBody());
+        this.koaApp.use(ErrorMiddleware());
 
-        /**
-         * Model routes initialisation
-         */
-        const modelController = new ModelController();
-        const modelRoutesCtx: ModelRoutesContext = {
-            controller: modelController,
-        };
-        const modelRoutes = new ModelRoutes(modelRoutesCtx);
-        apiRouter.use(modelRoutes.getRoutes());
-
-        /**
-         * Staff routes initialisation
-         */
-        const staffServiceCtx: StaffServiceContext = {
-            prisma: this.prisma,
-        };
-        const staffService = new StaffService(staffServiceCtx);
-        const staffControllerContext: StaffControllerContext = {
-            staffService,
-            logger: this.logger,
-        };
-        const staffController = new StaffController(staffControllerContext);
-        const staffRoutesCtx: StaffRoutesContext = {
-            staffController,
-        };
-        const staffRoutes = new StaffRoutes(staffRoutesCtx);
-        apiRouter.use(staffRoutes.getRoutes());
-
-        /**
-         * Mount api router
-         */
-        this.koaApp.use(apiRouter.routes());
+        this.koaApp.use(this.router.getRoutes());
     }
 
     private registerListeners(): void {
@@ -107,7 +65,7 @@ class App {
         if (this.server !== undefined) {
             this.server.close(() => {
                 this.logger.info("Closed out remaining connections.");
-
+                this.koaApp.removeAllListeners();
                 this.logger.info("Closing database connection...");
                 this.prisma
                     .$disconnect()
@@ -133,6 +91,7 @@ class App {
 
     public async start(): Promise<void> {
         await this.connectToDatabase();
+        this.registerListeners();
         this.initRoutesAndMiddlewares();
         this.listenToProcessSignals();
         this.startServer();

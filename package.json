@@ -35,10 +35,12 @@
         "@prisma/client": "5.4.2",
         "bcrypt": "^5.1.1",
         "dotenv": "^16.3.1",
+        "inversify": "^6.0.2",
         "koa": "^2.14.2",
         "koa-body": "^6.0.1",
         "koa-router": "^11.0.2",
         "prisma": "^5.4.2",
+        "reflect-metadata": "^0.1.13",
         "winston": "^3.11.0",
         "zod": "^3.22.4"
     }
