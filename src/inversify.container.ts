@@ -11,6 +11,7 @@ import config from "./config";
 import ModelService from "./services/model";
 import ModelController from "./controllers/model";
 import ModelRouter from "./routes/model";
+import { AuthService } from "./services/auth";
 
 const container = new Container();
 container.bind(TYPES.STAFF_SERVICE).to(StaffService);
@@ -21,6 +22,8 @@ container.bind(TYPES.ROOT_ROUTER).to(RootRouter);
 container.bind(TYPES.MODEL_SERVICE).to(ModelService);
 container.bind(TYPES.MODEL_CONTROLLER).to(ModelController);
 container.bind(TYPES.MODEL_ROUTER).to(ModelRouter);
+
+container.bind(TYPES.AUTH_SERVICE).to(AuthService);
 
 container.bind(TYPES.CONFIG).toConstantValue(config);
 container.bind(TYPES.APP).to(App);

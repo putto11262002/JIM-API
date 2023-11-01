@@ -7,10 +7,14 @@ dotenv.config();
 @injectable()
 class AppConfig {
     public readonly port: number;
+    public readonly jwtSecret: string;
+    public readonly jwtAccessTokenExpiration: string;
+    public readonly jwtRefreshTokenExpiration: string;
     constructor() {
         // Load configs and validate
         const configValidation = ConfigSchema.safeParse({
             port: process.env.PORT ?? 3000,
+            jwtSecret: process.env.JWT_SECRET,
         });
 
         if (!configValidation.success) {
@@ -24,6 +28,9 @@ class AppConfig {
         const data = configValidation.data;
 
         this.port = data.port;
+        this.jwtSecret = data.jwtSecret ?? "secret";
+        this.jwtAccessTokenExpiration = "10m";
+        this.jwtRefreshTokenExpiration = "1y";
     }
 }
 

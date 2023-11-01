@@ -17,4 +17,5 @@ export const ConfigSchema = z.object({
             }
             return parsedPort;
         }),
+    jwtSecret: z.string().optional(),
 });

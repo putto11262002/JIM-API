@@ -1,18 +1,96 @@
-import { PrismaClient } from "@prisma/client";
-import type { Staff } from "@prisma/client";
-import { type CreateStaffInput } from "../types/staff";
-import InvalidArgumentError from "../utils/errors/conflict-error";
-import bcrypt from "bcrypt";
+import { Prisma, PrismaClient, type StaffRole } from "@prisma/client";
+import type { CreateStaffInput, StaffWithoutPassword } from "../types/staff";
+import ConstraintViolationError from "../utils/errors/conflict-error";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../inversify.config";
+import { IAuthService } from "./auth";
+import AuthenticationError from "../utils/errors/authentication-error";
+import _ from "lodash";
+
+/**
+ * @field accessToken Access token
+ * @field refreshToken Refresh token
+ * @field staff Staff details without password
+ */
+export type LoginResult = {
+    accessToken: string;
+    refreshToken: string;
+    staff: StaffWithoutPassword;
+};
+
+/**
+ * @field q Search query for username, email, first name, last name
+ * @field roles Filter by roles
+ * @field sortBy Sort by field
+ * @field sortOrder Sort order
+ * @field limit Limit the number of results
+ * @field offset Offset the results
+ */
+export type StaffQuery = {
+    q?: string;
+    roles?: string[];
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+    limit?: number;
+    offset?: number;
+};
+
+/**
+ * @field data list of Staff details without password
+ * @field offset Offset the results
+ * @field limit Limit the number of results
+ * @field total Total number of staff that matched the query
+ */
+export type StaffResult = {
+    data: StaffWithoutPassword[];
+    offset: number;
+    limit: number;
+    total: number;
+};
 
 export interface IStaffService {
     /**
      * Check if the staff with the username or email already exists. If not, create a new staff.
-     * @param input Staff defails
+     * @param input StaffWithoutPassword defails
      * @returns The created staff
      */
-    createStaff: (input: CreateStaffInput) => Promise<Staff>;
+    createStaff: (input: CreateStaffInput) => Promise<StaffWithoutPassword>;
+
+    /**
+     * @param usernameOrEmail username or email of the staff
+     * @param password
+     * @returns accessToken, refreshToken, and staff details, see {@link LoginResult}
+     */
+    login: (usernameOrEmail: string, password: string) => Promise<LoginResult>;
+
+    /**
+     *
+     * @param id
+     * @returns if found, return the staff details, otherwise null
+     */
+    getStaffById: (id: string) => Promise<StaffWithoutPassword | null>;
+
+    /**
+     *
+     * @param email
+     * @returns if found, return the staff details, otherwise null
+     */
+    getStaffByEmail: (email: string) => Promise<StaffWithoutPassword | null>;
+
+    /**
+     *
+     * @param username
+     * @returns if found, return the staff details, otherwise null
+     */
+    getStaffByUsername: (
+        username: string
+    ) => Promise<StaffWithoutPassword | null>;
+
+    /**
+     * @param query see {@link StaffQuery}
+     * @returns list staffs that matched the query
+     */
+    getStaffs: (query: StaffQuery) => Promise<StaffResult>;
 }
 
 @injectable()
@@ -20,7 +98,12 @@ class StaffService implements IStaffService {
     @inject(TYPES.PRISMA)
     private readonly prisma!: PrismaClient;
 
-    public async createStaff(input: CreateStaffInput): Promise<Staff> {
+    @inject(TYPES.AUTH_SERVICE)
+    private readonly authService!: IAuthService;
+
+    public async createStaff(
+        input: CreateStaffInput
+    ): Promise<StaffWithoutPassword> {
         const staffExist = await this.prisma.staff.findFirst({
             where: {
                 OR: [
@@ -35,11 +118,14 @@ class StaffService implements IStaffService {
         });
 
         if (staffExist !== null) {
-            throw new InvalidArgumentError("Staff already exists");
+            throw new ConstraintViolationError(
+                "StaffWithoutPassword already exists"
+            );
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(input.password, salt);
+        const hashedPassword = await this.authService.hashPassword(
+            input.password
+        );
         input.password = hashedPassword;
 
         const staff = await this.prisma.staff.create({
@@ -47,6 +133,174 @@ class StaffService implements IStaffService {
         });
 
         return staff;
+    }
+
+    public async login(
+        usernameOrEmail: string,
+        password: string
+    ): Promise<LoginResult> {
+        const staff = await this.prisma.staff.findFirst({
+            where: {
+                OR: [
+                    {
+                        email: usernameOrEmail,
+                    },
+                    {
+                        username: usernameOrEmail,
+                    },
+                ],
+            },
+        });
+
+        if (staff === null) {
+            throw new AuthenticationError("StaffWithoutPassword not found");
+        }
+
+        const isPasswordValid = await this.authService.comparePassword(
+            password,
+            staff.password
+        );
+
+        if (!isPasswordValid) {
+            throw new AuthenticationError("Invalid password or email/username");
+        }
+
+        const [accessToken, refreshToken] = await Promise.all([
+            this.authService.generateAccessToken({
+                id: staff.id,
+                role: staff.role,
+            }),
+            this.authService.generateRefreshToken({
+                id: staff.id,
+                role: staff.role,
+            }),
+        ]);
+
+        return {
+            accessToken,
+            refreshToken,
+            staff: _.omit(staff, ["password"]),
+        };
+    }
+
+    public async getStaffById(
+        id: string
+    ): Promise<StaffWithoutPassword | null> {
+        const staff = await this.prisma.staff.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (staff === null) {
+            return staff;
+        }
+
+        return _.omit(staff, ["password"]);
+    }
+
+    public async getStaffByEmail(
+        email: string
+    ): Promise<StaffWithoutPassword | null> {
+        const staff = await this.prisma.staff.findUnique({
+            where: {
+                email,
+            },
+        });
+
+        if (staff === null) {
+            return staff;
+        }
+
+        return _.omit(staff, ["password"]);
+    }
+
+    public async getStaffByUsername(
+        username: string
+    ): Promise<StaffWithoutPassword | null> {
+        const staff = await this.prisma.staff.findUnique({
+            where: {
+                username,
+            },
+        });
+
+        if (staff === null) {
+            return staff;
+        }
+
+        return _.omit(staff, ["password"]);
+    }
+
+    public async getStaffs(query: StaffQuery): Promise<StaffResult> {
+        const { q, roles, sortBy, sortOrder, limit, offset } = query;
+        const _query: Prisma.StaffWhereInput = {};
+        if (q == null) {
+            _query.OR = [
+                {
+                    username: {
+                        startsWith: q,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    email: {
+                        startsWith: q,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    firstName: {
+                        startsWith: q,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    lastName: {
+                        startsWith: q,
+                        mode: "insensitive",
+                    },
+                },
+            ];
+        }
+
+        if (roles != null && roles.length > 0) {
+            _query.role = {
+                in: roles as StaffRole[],
+            };
+        }
+
+        const [staffs, total] = await Promise.all([
+            this.prisma.staff.findMany({
+                where: _query,
+                orderBy: {
+                    [sortBy ?? Prisma.StaffScalarFieldEnum.updatedAt]:
+                        sortOrder ?? "asc",
+                },
+                take: limit ?? 10,
+                skip: offset ?? 0,
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    firstName: true,
+                    lastName: true,
+                    role: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            }),
+            this.prisma.staff.count({
+                where: _query,
+            }),
+        ]);
+
+        const paginatedData: StaffResult = {
+            data: staffs,
+            total,
+            offset: offset ?? 0,
+            limit: limit ?? 10,
+        };
+        return paginatedData;
     }
 }
 

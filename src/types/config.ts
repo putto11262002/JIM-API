@@ -1,4 +1,18 @@
-import { type z } from "zod";
-import { type ConfigSchema } from "../validators/config";
-
-export type AppConfig = z.infer<typeof ConfigSchema>;
+export type AppConfig = {
+    /**
+     * @description Port to run the server on. Default to 3000.
+     */
+    port: number;
+    /**
+     * @description Secret used to sign JWT tokens. Default to 'secret'.
+     */
+    jwtSecret: string;
+    /**
+     * @description String describing a time span: https://github.com/vercel/ms
+     */
+    jwtAccessTokenExpiration: string;
+    /**
+     * @description String describing a time span: https://github.com/vercel/ms
+     */
+    jwtRefreshTokenExpiration: string;
+};

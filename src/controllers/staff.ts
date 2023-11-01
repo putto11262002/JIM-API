@@ -26,6 +26,14 @@ class StaffController implements IStaffController {
         await this.staffService.createStaff(staffPayload);
         ctx.body = new ApiResponse("Staff created successfully", undefined);
     }
+
+    public async login(ctx: Koa.Context): Promise<void> {}
+
+    public async getStaffById(ctx: Koa.Context): Promise<void> {}
+
+    public async getStaffs(ctx: Koa.Context): Promise<void> {}
+
+    public async getMe(ctx: Koa.Context): Promise<void> {}
 }
 
 export default StaffController;

@@ -9,10 +9,12 @@ export const TYPES = {
     MODEL_CONTROLLER: Symbol.for("ModelController"),
     MODEL_ROUTER: Symbol.for("ModelRouter"),
 
+    // Auth related classes
+    AUTH_SERVICE: Symbol.for("AuthService"),
+
     // Application levels clases
     PRISMA: Symbol.for("Prisma"),
     ROOT_ROUTER: Symbol.for("RootRouter"),
     CONFIG: Symbol.for("Config"),
-
     APP: Symbol.for("App"),
 };

@@ -6,26 +6,27 @@ class Logger {
         this.winstonLogger = winston.createLogger({
             format: winston.format.combine(
                 winston.format.timestamp(),
-                winston.format.json()
+                winston.format.errors({ stack: true }),
+                winston.format.simple()
             ),
             transports: [new winston.transports.Console({})],
         });
     }
 
     public info(message: string, ...meta: any[]): void {
-        this.winstonLogger.info(message);
+        this.winstonLogger.info(message, ...meta);
     }
 
     public error(message: string, ...meta: any[]): void {
-        this.winstonLogger.error(message);
+        this.winstonLogger.error(message, ...meta);
     }
 
     public warn(message: string, ...meta: any[]): void {
-        this.winstonLogger.warn(message);
+        this.winstonLogger.warn(message, ...meta);
     }
 
     public debug(message: string, ...meta: any[]): void {
-        this.winstonLogger.debug(message);
+        this.winstonLogger.debug(message, ...meta);
     }
 }
 

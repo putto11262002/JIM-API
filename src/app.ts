@@ -3,13 +3,14 @@ import Koa from "koa";
 import type { ILogger } from "./utils/logger";
 import type { Server } from "http";
 import koaBody from "koa-body";
-import { prisma } from "./prisma/client";
 import ErrorMiddleware from "./middlewares/error-middleware";
 import { PrismaClient } from "@prisma/client";
 import { TYPES } from "./inversify.config";
 import { IAppRouter } from "./routes/index.ts";
 import { inject, injectable } from "inversify";
 import logger from "./utils/logger";
+import { IStaffService } from "./services/staff";
+import ConstraintViolationError from "./utils/errors/conflict-error";
 
 @injectable()
 class App {
@@ -21,6 +22,9 @@ class App {
     private readonly logger: ILogger;
 
     private server!: Server;
+
+    @inject(TYPES.STAFF_SERVICE)
+    private readonly staffService!: IStaffService;
 
     @inject(TYPES.ROOT_ROUTER)
     private readonly router!: IAppRouter;
@@ -95,12 +99,31 @@ class App {
         this.initRoutesAndMiddlewares();
         this.listenToProcessSignals();
         this.startServer();
+        await this.createStaffRootUser();
+    }
+
+    private async createStaffRootUser(): Promise<void> {
+        try {
+            await this.staffService.createStaff({
+                email: "root@example.com",
+                username: "root",
+                password: "password",
+                firstName: "Root",
+                lastName: "User",
+                role: "ADMIN",
+            });
+        } catch (err) {
+            if (err instanceof ConstraintViolationError) {
+                return;
+            }
+            this.logger.error("Failed to create root user", err);
+        }
     }
 
     private async connectToDatabase(): Promise<void> {
         try {
             this.logger.info("Connecting to database...");
-            await prisma.$connect();
+            await this.prisma.$connect();
             this.logger.info("Connected to database");
         } catch (err) {
             this.logger.error("Failed to connect to database", err);

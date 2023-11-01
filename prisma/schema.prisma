@@ -12,7 +12,7 @@ model Staff {
   firstName String
   lastName  String
   email     String    @unique
-  username String @unique
+  username  String    @unique
   password  String
   role      StaffRole
   createdAt DateTime  @default(now())
