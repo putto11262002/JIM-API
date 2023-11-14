@@ -1,11 +1,20 @@
-import { Prisma, PrismaClient, type StaffRole } from "@prisma/client";
-import type { CreateStaffInput, StaffWithoutPassword } from "../types/staff";
-import ConstraintViolationError from "../utils/errors/conflict-error";
+import { Prisma, PrismaClient } from "@prisma/client";
+import type { StaffRole, StaffWithoutPassword } from "../types/staff";
+import ConstraintViolationError from "../utils/errors/conflict.error";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../inversify.config";
 import { IAuthService } from "./auth";
-import AuthenticationError from "../utils/errors/authentication-error";
+import AuthenticationError from "../utils/errors/authentication.error";
 import _ from "lodash";
+
+export type CreateStaffInput = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    password: string;
+    role: StaffRole;
+};
 
 /**
  * @field accessToken Access token
@@ -88,7 +97,7 @@ export interface IStaffService {
 
     /**
      * @param query see {@link StaffQuery}
-     * @returns list staffs that matched the query
+     * @returns list staffs that matched the query. See {@link StaffResult}
      */
     getStaffs: (query: StaffQuery) => Promise<StaffResult>;
 }
@@ -234,7 +243,7 @@ class StaffService implements IStaffService {
     public async getStaffs(query: StaffQuery): Promise<StaffResult> {
         const { q, roles, sortBy, sortOrder, limit, offset } = query;
         const _query: Prisma.StaffWhereInput = {};
-        if (q == null) {
+        if (q != null) {
             _query.OR = [
                 {
                     username: {

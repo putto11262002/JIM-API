@@ -17,4 +17,6 @@ export const TYPES = {
     ROOT_ROUTER: Symbol.for("RootRouter"),
     CONFIG: Symbol.for("Config"),
     APP: Symbol.for("App"),
+    LOGGER: Symbol.for("Logger"),
+    AUTH_MIDDLEWARE: Symbol.for("AuthMiddleware"),
 };

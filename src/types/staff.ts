@@ -1,8 +1,10 @@
-import type { Staff, Prisma } from "@prisma/client";
+import type { Staff as _Staff, StaffRole as _StaffRole } from "@prisma/client";
 
-export type CreateStaffInput = Omit<
-    Prisma.StaffCreateInput,
-    "id" | "createdAt" | "updatedAt"
->;
+export type StaffRole = _StaffRole;
+
+/**
+ * @description Staff domain type
+ */
+export type Staff = _Staff;
 
 export type StaffWithoutPassword = Omit<Staff, "password">;

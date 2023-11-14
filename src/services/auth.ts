@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { AppConfig } from "../types";
 import { TYPES } from "../inversify.config";
 import type { CreateJwtPayload, JwtPayload } from "../types/jwt";
+import UnauthorizedError from "../utils/errors/unauthorised.error";
 
 export interface IAuthService {
     /**
@@ -83,8 +84,19 @@ export class AuthService implements IAuthService {
     }
 
     public verifyAccessToken(token: string): JwtPayload {
-        const payload = jwt.verify(token, this.config.jwtSecret);
-        return payload as JwtPayload;
+        try {
+            const payload = jwt.verify(token, this.config.jwtSecret);
+            return payload as JwtPayload;
+        } catch (err) {
+            if (err instanceof jwt.TokenExpiredError) {
+                throw new UnauthorizedError("Token expired");
+            }
+
+            if (err instanceof jwt.JsonWebTokenError) {
+                throw new UnauthorizedError("Invalid token");
+            }
+            throw err;
+        }
     }
 
     public verifyRefreshToken(token: string): JwtPayload {

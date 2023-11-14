@@ -3,14 +3,14 @@ import Koa from "koa";
 import type { ILogger } from "./utils/logger";
 import type { Server } from "http";
 import koaBody from "koa-body";
-import ErrorMiddleware from "./middlewares/error-middleware";
+import ErrorMiddleware from "./middlewares/error.middleware";
 import { PrismaClient } from "@prisma/client";
 import { TYPES } from "./inversify.config";
 import { IAppRouter } from "./routes/index.ts";
 import { inject, injectable } from "inversify";
 import logger from "./utils/logger";
-import { IStaffService } from "./services/staff";
-import ConstraintViolationError from "./utils/errors/conflict-error";
+import ConstraintViolationError from "./utils/errors/conflict.error";
+import { IStaffService } from "./services/staff.service";
 
 @injectable()
 class App {
