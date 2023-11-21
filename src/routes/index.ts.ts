@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import Router from "koa-router";
-import ModelRouter from "./model";
+import ModelRouter from "./model.route";
 
 import { TYPES } from "../inversify.config";
 

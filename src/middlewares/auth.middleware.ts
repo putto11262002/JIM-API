@@ -1,7 +1,7 @@
 import type Router from "koa-router";
 import type Koa from "koa";
 import type { IAppRouterContext } from "../types/app";
-import { AuthService } from "../services/auth";
+import { AuthService } from "../services/auth.service";
 import type ErrorResponse from "../types/dtos/error-response.dto";
 import { RoleLevels } from "../constants/role.constant";
 import { TYPES } from "../inversify.config";

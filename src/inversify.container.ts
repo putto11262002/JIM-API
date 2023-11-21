@@ -8,10 +8,10 @@ import StaffRouter from "./routes/staff.route";
 import RootRouter from "./routes/index.ts";
 import App from "./app";
 import config from "./config";
-import ModelService from "./services/model";
+import ModelService from "./services/model.service";
 import ModelController from "./controllers/model";
-import ModelRouter from "./routes/model";
-import { AuthService } from "./services/auth";
+import ModelRouter from "./routes/model.route";
+import { AuthService } from "./services/auth.service";
 import logger from "./utils/logger";
 import AuthMiddleware from "./middlewares/auth.middleware";
 

@@ -3,7 +3,7 @@ import type { StaffRole, StaffWithoutPassword } from "../types/staff";
 import ConstraintViolationError from "../utils/errors/conflict.error";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../inversify.config";
-import { IAuthService } from "./auth";
+import { IAuthService } from "./auth.service";
 import AuthenticationError from "../utils/errors/authentication.error";
 import _ from "lodash";
 
@@ -60,7 +60,7 @@ export type StaffResult = {
 export interface IStaffService {
     /**
      * Check if the staff with the username or email already exists. If not, create a new staff.
-     * @param input StaffWithoutPassword defails
+     * @param input staff details
      * @returns The created staff
      */
     createStaff: (input: CreateStaffInput) => Promise<StaffWithoutPassword>;
@@ -127,9 +127,7 @@ class StaffService implements IStaffService {
         });
 
         if (staffExist !== null) {
-            throw new ConstraintViolationError(
-                "StaffWithoutPassword already exists"
-            );
+            throw new ConstraintViolationError("staff already exists");
         }
 
         const hashedPassword = await this.authService.hashPassword(
@@ -141,7 +139,18 @@ class StaffService implements IStaffService {
             data: input,
         });
 
-        return staff;
+        const returnedStaff: StaffWithoutPassword = {
+            id: staff.id,
+            email: staff.email,
+            username: staff.username,
+            firstName: staff.firstName,
+            lastName: staff.lastName,
+            createdAt: staff.createdAt,
+            updatedAt: staff.updatedAt,
+            role: staff.role,
+        };
+
+        return returnedStaff;
     }
 
     public async login(
