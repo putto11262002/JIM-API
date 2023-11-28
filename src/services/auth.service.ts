@@ -100,7 +100,18 @@ export class AuthService implements IAuthService {
     }
 
     public verifyRefreshToken(token: string): JwtPayload {
-        const payload = jwt.verify(token, this.config.jwtSecret);
-        return payload as JwtPayload;
+        try {
+            const payload = jwt.verify(token, this.config.jwtSecret);
+            return payload as JwtPayload;
+        } catch (err) {
+            if (err instanceof jwt.TokenExpiredError) {
+                throw new UnauthorizedError("Token expired");
+            }
+
+            if (err instanceof jwt.JsonWebTokenError) {
+                throw new UnauthorizedError("Invalid token");
+            }
+            throw err;
+        }
     }
 }
