@@ -108,6 +108,7 @@ class StaffController implements IStaffController {
         const paginatedData: PaginatedData<StaffResponseDTO> = {
             data: data.map(mapStaffToResponse),
             total,
+            totalPage: Math.ceil(total / limit),
             page: Math.floor(offset / limit) + 1,
             hasNextPage: offset + limit < total,
             hasPreviousPage: offset > 0,

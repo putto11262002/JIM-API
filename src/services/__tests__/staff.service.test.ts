@@ -36,6 +36,10 @@ describe("StaffService", () => {
         staffService = container.resolve(StaffService);
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     const staffInput: CreateStaffInput = {
         firstName: "test",
         lastName: "staff",
