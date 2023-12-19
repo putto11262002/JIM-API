@@ -23,7 +23,7 @@ export const StaffQuerySchema = z.object({
         .optional()
         .default("username"),
     sortOrder: z.enum(["asc", "desc"]).optional().default("asc"),
-    limit: z
+    pageSize: z
         .number()
         .or(z.string())
         .optional()
@@ -40,7 +40,7 @@ export const StaffQuerySchema = z.object({
             }
             return parsed;
         }),
-    offset: z
+    page: z
         .number()
         .or(z.string())
         .optional()

@@ -6,6 +6,7 @@ import { TYPES } from "../inversify.config";
 import { IAuthService } from "./auth.service";
 import AuthenticationError from "../utils/errors/authentication.error";
 import _ from "lodash";
+import type { PaginatedData } from "../types/paginated-data";
 
 export type CreateStaffInput = {
     firstName: string;
@@ -40,8 +41,8 @@ export type StaffQuery = {
     roles?: string[];
     sortBy?: string;
     sortOrder?: "asc" | "desc";
-    limit?: number;
-    offset?: number;
+    page?: number;
+    pageSize?: number;
 };
 
 /**
@@ -99,7 +100,9 @@ export interface IStaffService {
      * @param query see {@link StaffQuery}
      * @returns list staffs that matched the query. See {@link StaffResult}
      */
-    getStaffs: (query: StaffQuery) => Promise<StaffResult>;
+    getStaffs: (
+        query: StaffQuery
+    ) => Promise<PaginatedData<StaffWithoutPassword>>;
 }
 
 @injectable()
@@ -249,53 +252,57 @@ class StaffService implements IStaffService {
         return _.omit(staff, ["password"]);
     }
 
-    public async getStaffs(query: StaffQuery): Promise<StaffResult> {
-        const { q, roles, sortBy, sortOrder, limit, offset } = query;
+    public async getStaffs(
+        query: StaffQuery
+    ): Promise<PaginatedData<StaffWithoutPassword>> {
         const _query: Prisma.StaffWhereInput = {};
-        if (q != null) {
+        if (query.q != null) {
             _query.OR = [
                 {
                     username: {
-                        startsWith: q,
+                        startsWith: query.q,
                         mode: "insensitive",
                     },
                 },
                 {
                     email: {
-                        startsWith: q,
+                        startsWith: query.q,
                         mode: "insensitive",
                     },
                 },
                 {
                     firstName: {
-                        startsWith: q,
+                        startsWith: query.q,
                         mode: "insensitive",
                     },
                 },
                 {
                     lastName: {
-                        startsWith: q,
+                        startsWith: query.q,
                         mode: "insensitive",
                     },
                 },
             ];
         }
 
-        if (roles != null && roles.length > 0) {
+        if (query.roles != null && query.roles.length > 0) {
             _query.role = {
-                in: roles as StaffRole[],
+                in: query.roles as StaffRole[],
             };
         }
+
+        const page = query.page ?? 10;
+        const pageSize = query.pageSize ?? 10;
 
         const [staffs, total] = await Promise.all([
             this.prisma.staff.findMany({
                 where: _query,
                 orderBy: {
-                    [sortBy ?? Prisma.StaffScalarFieldEnum.updatedAt]:
-                        sortOrder ?? "asc",
+                    [query.sortBy ?? Prisma.StaffScalarFieldEnum.updatedAt]:
+                        query.sortOrder ?? "asc",
                 },
-                take: limit ?? 10,
-                skip: offset ?? 0,
+                take: pageSize,
+                skip: ((page ?? 1) - 1) * (pageSize ?? 10),
                 select: {
                     id: true,
                     username: true,
@@ -312,11 +319,14 @@ class StaffService implements IStaffService {
             }),
         ]);
 
-        const paginatedData: StaffResult = {
+        const paginatedData: PaginatedData<StaffWithoutPassword> = {
             data: staffs,
             total,
-            offset: offset ?? 0,
-            limit: limit ?? 10,
+            totalPage: Math.ceil(total / pageSize),
+            page,
+            pageSize,
+            hasNextPage: total < pageSize * pageSize,
+            hasPreviousPage: page > 1,
         };
         return paginatedData;
     }

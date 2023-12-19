@@ -12,7 +12,6 @@ import type StaffLoginResponseDTO from "../types/dtos/staff-login-response.dto";
 import type Router from "koa-router";
 import type StaffResponseDTO from "../types/dtos/staff-response.dto";
 import NotFoundError from "../utils/errors/not-found.error";
-import type { PaginatedData } from "../types/paginated-data";
 import type { IAppRouterContext } from "../types/app";
 import { mapStaffToResponse } from "../utils/mappers/staff";
 export interface IStaffController {
@@ -95,27 +94,18 @@ class StaffController implements IStaffController {
             );
         }
 
-        const { q, roles, sortBy, sortOrder, limit, offset } = validation.data;
-        const { data, total } = await this.staffService.getStaffs({
+        const { q, roles, sortBy, sortOrder, pageSize, page } = validation.data;
+        const paginatedStaffs = await this.staffService.getStaffs({
             q,
             roles,
             sortBy,
             sortOrder,
-            limit,
-            offset,
+            page,
+            pageSize,
         });
 
-        const paginatedData: PaginatedData<StaffResponseDTO> = {
-            data: data.map(mapStaffToResponse),
-            total,
-            totalPage: Math.ceil(total / limit),
-            page: Math.floor(offset / limit) + 1,
-            hasNextPage: offset + limit < total,
-            hasPreviousPage: offset > 0,
-        };
-
         const response: ApiResponse = {
-            data: paginatedData,
+            data: paginatedStaffs,
         };
 
         ctx.body = response;

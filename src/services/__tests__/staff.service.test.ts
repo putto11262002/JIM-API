@@ -204,8 +204,8 @@ describe("StaffService", () => {
     describe("getStaffs", () => {
         it("Should return paginated stuff without password", async () => {
             const staffQuery: StaffQuery = {
-                limit: 2,
-                offset: 0,
+                page: 1,
+                pageSize: 2,
                 q: "query",
                 roles: [StaffRole.ADMIN],
                 sortBy: "createdAt",
@@ -233,18 +233,30 @@ describe("StaffService", () => {
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 },
+                {
+                    id: "uuid3",
+                    email: "teststaff3@example.com",
+                    username: "teststaff3",
+                    firstName: "test",
+                    lastName: "staff3",
+                    role: StaffRole.ADMIN,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                },
             ];
             prismaMock.staff.findMany.mockResolvedValue(staffsToReturn);
 
-            prismaMock.staff.count.mockResolvedValue(2);
+            prismaMock.staff.count.mockResolvedValue(staffsToReturn.length);
 
             const paginatedStaff = await staffService.getStaffs(staffQuery);
 
-            expect(paginatedStaff.data).toHaveLength(2);
+            expect(paginatedStaff.data).toHaveLength(3);
             expect(paginatedStaff.data).toEqual(staffsToReturn);
-            expect(paginatedStaff.total).toBe(2);
-            expect(paginatedStaff.offset).toBe(0);
-            expect(paginatedStaff.limit).toBe(2);
+            expect(paginatedStaff.total).toBe(3);
+            expect(paginatedStaff.hasNextPage).toBe(true);
+            expect(paginatedStaff.hasPreviousPage).toBe(false);
+            expect(paginatedStaff.page).toBe(1);
+            expect(paginatedStaff.pageSize).toBe(2);
 
             const where = {
                 OR: [
