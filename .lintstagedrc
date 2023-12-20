@@ -1,5 +1,0 @@
-{
-    "*.ts": "yarn workspaces @jimmodel/api lint:fix",
-    "*.{ts,json}": "yarn workspaces @jimmodel/api format",
-    "*.prisma": "yarn workspaces @jimmodel/db prisma format"
-}

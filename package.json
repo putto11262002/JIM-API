@@ -6,10 +6,11 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+  },
   "author": "Put Suthisrisinlpa",
   "license": "MIT",
-  "dependencies": {
-    "husky": "^8.0.3",
-    "lint-staged": "^15.0.2"
+  "devDependencies": {
+    "lerna": "^8.0.1"
   }
 }

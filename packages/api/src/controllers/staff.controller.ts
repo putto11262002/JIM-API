@@ -28,7 +28,7 @@ class StaffController implements IStaffController {
 
     public async createStaff(ctx: IAppRouterContext): Promise<void> {
         const validation = CreateStaffSchema.safeParse(ctx.request.body);
-       
+
         if (!validation.success) {
             throw new ValidationError(
                 "Invalid payload",

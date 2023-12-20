@@ -4,6 +4,9 @@
   "main": "./prisma/client/index.js",
   "types": "./prisma/client/index.d.ts",
   "license": "MIT",
+  "scripts": {
+    "prisma:format": "prisma format"
+  },
   "dependencies": {
     "@prisma/client": "^5.7.1",
     "prisma": "^5.7.1"

@@ -12,7 +12,6 @@ import logger from "./utils/logger";
 import ConstraintViolationError from "./utils/errors/conflict.error";
 import { IStaffService } from "./services/staff.service";
 
-
 @injectable()
 class App {
     @inject(TYPES.CONFIG)
@@ -36,7 +35,6 @@ class App {
     constructor() {
         this.koaApp = new Koa();
         this.logger = logger;
-    
     }
 
     private initRoutesAndMiddlewares(): void {

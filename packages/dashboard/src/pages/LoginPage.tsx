@@ -1,4 +1,3 @@
-import React from "react";
 import FormLayout from "../components/layouts/FormLayout";
 import {
   Form,
@@ -11,11 +10,14 @@ import {
 import { useForm } from "react-hook-form";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import { z } from "zod";
+import {StaffLoginSchema} from "@jimmodel/shared"
 
 export default function LoginPage() {
-  const form = useForm();
+  const form = useForm<z.infer<typeof StaffLoginSchema>>();
 
-  function handleSubmit(data: any){
+  function handleSubmit(data: z.infer<typeof StaffLoginSchema>){
+    console.log(data)
 
   }
   return (
