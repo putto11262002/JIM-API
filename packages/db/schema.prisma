@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "./prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Staff {
+  id        String    @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String    @unique
+  username  String    @unique
+  password  String
+  role      StaffRole
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum StaffRole {
+  ADMIN
+  SCOUT
+  BOOKER
+}
+
+enum ModelApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model ModelApplicationExperience {
+  id            String           @id @default(uuid())
+  applicationId String
+  application   ModelApplication @relation(fields: [applicationId], references: [id])
+  year          Int
+  media         String
+  country       String
+  product       String
+  details       String
+}
+
+model ModelApplicationImage {
+  id            String           @id @default(uuid())
+  type          String
+  caption       String
+  url           String
+  height        Int
+  width         Int
+  application   ModelApplication @relation(fields: [applicationId], references: [id])
+  applicationId String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model ModelApplication {
+  id            String                       @id @default(uuid())
+  firstName     String
+  lastName      String
+  phoneNumber   String
+  email         String
+  lineId        String
+  weChat        String
+  facebook      String
+  instagram     String
+  whatsApp      String
+  dateOfBirth   DateTime
+  gender        String
+  nationality   String
+  ethnicity     String
+  address       String
+  city          String
+  region        String
+  zipCode       String
+  country       String
+  experiences   ModelApplicationExperience[]
+  talents       String[]
+  aboutMe       String
+  height        String
+  weight        String
+  bust          String
+  hips          String
+  suitDressSize String
+  shoeSize      String
+  eyeColor      String
+  hairColor     String
+  images        ModelApplicationImage[]
+  status        ModelApplicationStatus       @default(PENDING)
+  createdAt     DateTime                     @default(now())
+  updatedAt     DateTime                     @updatedAt
+}
+
+model ModelImage {
+  id        String   @id @default(uuid())
+  caption   String
+  type      String
+  url       String
+  height    Int
+  width     Int
+  model     Model    @relation(fields: [modelId], references: [id])
+  modelId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ModelMeasurement {
+  modelId            String  @id
+  model              Model   @relation(fields: [modelId], references: [id])
+  height             String
+  weight             String
+  bust               String
+  collar             String?
+  aroundArmpit       String?
+  aroundArmToWrist1  String?
+  aroundArmToWrist2  String?
+  aroundArmToWrist3  String?
+  armLength1         String?
+  armLength2         String?
+  aroundThickToAnkle String?
+  trousersLength     String?
+  chestHeight        String?
+  chestWidth         String?
+  waist              String?
+  hips               String
+  shoulder           String?
+  frontShoulder      String?
+  frontLength        String?
+  backShoulder       String?
+  backLength         String?
+  crotch             String?
+  braSize            String?
+  suitDressSize      String?
+  shoeSize           String?
+  hairColor          String
+  eyeColor           String
+}
+
+model ModelExperience {
+  id      String @id @default(uuid())
+  modelId String
+  model   Model  @relation(fields: [modelId], references: [id])
+  year    Int
+  media   String
+  country String
+  product String
+  details String
+}
+
+model Model {
+  id                           String            @id @default(uuid())
+  firstName                    String
+  lastName                     String
+  nickname                     String?
+  phoneNumber                  String
+  email                        String
+  lineId                       String?
+  whatsApp                     String?
+  weChat                       String?
+  instagram                    String?
+  facebook                     String?
+  dateOfBirth                  DateTime
+  gender                       String
+  nationality                  String?
+  ethnicity                    String?
+  countryOfResidence           String?
+  spokenLanguage               String?
+  passportNo                   String?
+  idCardNo                     String?
+  taxId                        String?
+  occupation                   String?
+  highestLevelOfEducation      String?
+  address                      String?
+  city                         String?
+  region                       String?
+  zipCode                      String?
+  country                      String?
+  experiences                  ModelExperience[]
+  talents                      String[]
+  aboutMe                      String?
+  medicalBackground            String?
+  tattoos                      String?
+  scars                        String?
+  underwareShooting            Boolean?
+  inTown                       Boolean           @default(false)
+  emergencyContactName         String?
+  emergencyContactPhoneNumber  String?
+  emergencyContactRelationship String?
+  images                       ModelImage[]
+  measurements                 ModelMeasurement?
+  createdAt                    DateTime          @default(now())
+  updatedAt                    DateTime          @updatedAt
+}
+
+model Job {
+  id String @id @default(uuid())
+}
+
+model Option {
+  id String @id @default(uuid())
+}

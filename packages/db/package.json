@@ -1,0 +1,11 @@
+{
+  "name": "@jimmodel/db",
+  "version": "1.0.0",
+  "main": "./prisma/client/index.js",
+  "types": "./prisma/client/index.d.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "prisma": "^5.7.1"
+  }
+}
