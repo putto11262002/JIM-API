@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import type { Model } from "../types/model";
+import type { CreateModelInput, Model } from "../types/model";
 import type {
     CreateModelApplicationInput,
     ModelApplication,
@@ -12,6 +12,7 @@ import { IEmailService } from "./email.service";
 import { IModelService } from "./model.service";
 import { InvalidArgumentError } from "../utils/errors/invalid-argument.error";
 import { ModelApplicationStatus } from "../constants/model-application";
+import ConstraintViolationError from "../utils/errors/conflict.error";
 
 export interface IModelApplicationService {
     createApplication: (
@@ -41,7 +42,16 @@ export class ModelApplicationService implements IModelApplicationService {
     ): Promise<ModelApplication> {
         // save applicaiton to database
         const savedApplication = await this.prisma.modelApplication.create({
-            data: application,
+            data: {
+                ...application,
+                experiences: {
+                    create: application.experiences ?? [],
+                },
+                images: {
+                    create: application.images ?? [],
+                },
+            },
+
             include: {
                 experiences: true,
                 images: true,
@@ -169,7 +179,7 @@ export class ModelApplicationService implements IModelApplicationService {
         }
 
         if (application.status !== ModelApplicationStatus.PENDING) {
-            throw new InvalidArgumentError(
+            throw new ConstraintViolationError(
                 "Application has already been finalized"
             );
         }
@@ -212,7 +222,7 @@ export class ModelApplicationService implements IModelApplicationService {
         };
 
         // create model from application
-        const model: Prisma.ModelCreateInput = {
+        const model: CreateModelInput = {
             firstName: application.firstName,
             lastName: application.lastName,
             email: application.email,
@@ -247,15 +257,9 @@ export class ModelApplicationService implements IModelApplicationService {
             // tattoos: string
             // scars: string
             // underwareShooting: boolean,
-            experiences: {
-                create: experiences,
-            },
-            images: {
-                create: images,
-            },
-            measurements: {
-                create: measurements,
-            },
+            experiences,
+            images,
+            measurements,
         };
 
         // save model to database
@@ -285,7 +289,7 @@ export class ModelApplicationService implements IModelApplicationService {
         }
 
         if (application.status !== ModelApplicationStatus.PENDING) {
-            throw new InvalidArgumentError(
+            throw new ConstraintViolationError(
                 "Application has already been finalized"
             );
         }

@@ -14,6 +14,7 @@ import type {
 import { ModelApplicationStatus } from "../../constants/model-application";
 import type { Model } from "../../types/model";
 import { InvalidArgumentError } from "../../utils/errors/invalid-argument.error";
+import ConstraintViolationError from "../../utils/errors/conflict.error";
 
 describe("modelApplicationService", () => {
     let container: Container;
@@ -78,28 +79,24 @@ describe("modelApplicationService", () => {
         shoeSize: "42",
         eyeColor: "black",
         hairColor: "black",
-        experiences: {
-            create: [
-                {
-                    year: 2020,
-                    product: "product1",
-                    media: "media1",
-                    details: "details1",
-                    country: "country1",
-                },
-            ],
-        },
-        images: {
-            create: [
-                {
-                    type: "headshot",
-                    caption: "caption1",
-                    url: "url1",
-                    height: 100,
-                    width: 100,
-                },
-            ],
-        },
+        experiences: [
+            {
+                year: 2020,
+                product: "product1",
+                media: "media1",
+                details: "details1",
+                country: "country1",
+            },
+        ],
+        images: [
+            {
+                type: "headshot",
+                caption: "caption1",
+                url: "url1",
+                height: 100,
+                width: 100,
+            },
+        ],
     };
 
     const savedApplication: ModelApplication = {
@@ -179,7 +176,11 @@ describe("modelApplicationService", () => {
             expect(prismaMock.modelApplication.create).toHaveBeenCalledTimes(1);
             // Expect model to be creataed with the following details
             expect(prismaMock.modelApplication.create).toHaveBeenCalledWith({
-                data: inputApplication,
+                data: {
+                    ...inputApplication,
+                    experiences: { create: inputApplication.experiences },
+                    images: { create: inputApplication.images },
+                },
                 include: {
                     experiences: true,
                     images: true,
@@ -371,7 +372,7 @@ describe("modelApplicationService", () => {
             expect(prismaMock.modelApplication.update).toHaveBeenCalledTimes(0);
         });
 
-        it("Should throw an InvalidArgumentError if the application has been finalised", async () => {
+        it("Should throw an ConstrainViolationError if the application has been finalised", async () => {
             const validId = savedApplication.id;
             prismaMock.modelApplication.findUnique.mockResolvedValue({
                 ...savedApplication,
@@ -379,7 +380,7 @@ describe("modelApplicationService", () => {
             });
             await expect(
                 modelApplicationService.acceptApplication(validId)
-            ).rejects.toThrow(InvalidArgumentError);
+            ).rejects.toThrow(ConstraintViolationError);
 
             prismaMock.modelApplication.findUnique.mockResolvedValue({
                 ...savedApplication,
@@ -387,7 +388,7 @@ describe("modelApplicationService", () => {
             });
             await expect(
                 modelApplicationService.acceptApplication(validId)
-            ).rejects.toThrow(InvalidArgumentError);
+            ).rejects.toThrow(ConstraintViolationError);
         });
     });
 
@@ -427,7 +428,7 @@ describe("modelApplicationService", () => {
             expect(prismaMock.modelApplication.update).toHaveBeenCalledTimes(0);
         });
 
-        it("Should throw an InvalidArgumentError if the application has already been finalised", async () => {
+        it("Should throw an ConstraintViolationError if the application has already been finalised", async () => {
             const validId = savedApplication.id;
             prismaMock.modelApplication.findUnique.mockResolvedValue({
                 ...savedApplication,
@@ -435,7 +436,7 @@ describe("modelApplicationService", () => {
             });
             await expect(
                 modelApplicationService.rejectApplication(validId)
-            ).rejects.toThrow(InvalidArgumentError);
+            ).rejects.toThrow(ConstraintViolationError);
 
             prismaMock.modelApplication.findUnique.mockResolvedValue({
                 ...savedApplication,
@@ -443,7 +444,7 @@ describe("modelApplicationService", () => {
             });
             await expect(
                 modelApplicationService.rejectApplication(validId)
-            ).rejects.toThrow(InvalidArgumentError);
+            ).rejects.toThrow(ConstraintViolationError);
         });
     });
 });

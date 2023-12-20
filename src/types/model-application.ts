@@ -11,7 +11,13 @@ export type ModelApplication = _ModelApplication & {
     images: ModelApplicationImage[];
 };
 
-export type CreateModelApplicationInput = Prisma.ModelApplicationCreateInput;
+export type CreateModelApplicationInput = Omit<
+    Prisma.ModelApplicationCreateInput,
+    "experiences" | "images"
+> & {
+    experiences?: Prisma.ModelApplicationExperienceCreateWithoutApplicationInput[];
+    images?: Prisma.ModelApplicationImageCreateWithoutApplicationInput[];
+};
 
 export type ModelApplicationQuery = {
     q?: string;
