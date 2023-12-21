@@ -1,4 +1,4 @@
-import type { Staff as _Staff, StaffRole as _StaffRole } from "@jimmodel/db";
+import type { Staff as _Staff, StaffRole as _StaffRole } from "@prisma/client";
 
 export type StaffRole = _StaffRole;
 

@@ -1,4 +1,4 @@
-import { Prisma } from "@jimmodel/db";
+import {Prisma} from "@prisma/client"
 import { z } from "zod";
 
 export const CreateStaffSchema = z.object({

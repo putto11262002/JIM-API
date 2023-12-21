@@ -8,7 +8,7 @@ import type {
     UpdateModelInput,
 } from "../types/model";
 import type { PaginatedData } from "../types/paginated-data";
-import { Prisma, PrismaClient } from "@jimmodel/db";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { TYPES } from "../inversify.config";
 import { InvalidArgumentError } from "../utils/errors/invalid-argument.error";
 import ConstraintViolationError from "../utils/errors/conflict.error";

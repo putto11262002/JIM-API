@@ -6,7 +6,7 @@ import type {
     ModelApplicationQuery,
 } from "../types/model-application";
 import type { PaginatedData } from "../types/paginated-data";
-import { type Prisma, PrismaClient } from "@jimmodel/db";
+import { type Prisma, PrismaClient } from "@prisma/client";
 import { TYPES } from "../inversify.config";
 import { IEmailService } from "./email.service";
 import { IModelService } from "./model.service";

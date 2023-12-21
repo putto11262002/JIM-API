@@ -4,7 +4,7 @@ import type {
     ModelApplication as _ModelApplication,
     ModelApplicationExperience,
     ModelApplicationImage,
-} from "@jimmodel/db";
+} from "@prisma/client";
 
 export type ModelApplication = _ModelApplication & {
     experiences: ModelApplicationExperience[];

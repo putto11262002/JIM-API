@@ -3,7 +3,7 @@ import type {
     ModelImage as _ModelImage,
     Prisma,
     Model as _Model,
-} from "@jimmodel/db";
+} from "@prisma/client";
 
 export type CreateModelInput = Omit<
     Prisma.ModelCreateInput,

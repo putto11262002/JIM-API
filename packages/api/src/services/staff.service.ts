@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@jimmodel/db";
+import { Prisma, PrismaClient } from "@prisma/client";
 import type { StaffRole, StaffWithoutPassword } from "../types/staff";
 import ConstraintViolationError from "../utils/errors/conflict.error";
 import { injectable, inject } from "inversify";

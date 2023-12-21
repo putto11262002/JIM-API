@@ -4,7 +4,7 @@ import type { ILogger } from "./utils/logger";
 import type { Server } from "http";
 import koaBody from "koa-body";
 import ErrorMiddleware from "./middlewares/error.middleware";
-import { PrismaClient } from "@jimmodel/db";
+import { PrismaClient } from "@prisma/client";
 import { TYPES } from "./inversify.config";
 import { IAppRouter } from "./routes/index.ts";
 import { inject, injectable } from "inversify";

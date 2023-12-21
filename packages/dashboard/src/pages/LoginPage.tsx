@@ -10,15 +10,20 @@ import {
 import { useForm } from "react-hook-form";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { z } from "zod";
-import {StaffLoginSchema} from "@jimmodel/shared"
+import { zodResolver } from "@hookform/resolvers/zod";
+import {   StaffLoginSchema, StaffLoginDTO } from "@jimmodel/shared";
 
 export default function LoginPage() {
-  const form = useForm<z.infer<typeof StaffLoginSchema>>();
+  const form = useForm<StaffLoginDTO>({
+    resolver: zodResolver(StaffLoginSchema),
+    defaultValues: {
+      usernameOrEmail: "",
+      password: ""
+    }
+  });
 
-  function handleSubmit(data: z.infer<typeof StaffLoginSchema>){
-    console.log(data)
-
+  function handleSubmit(data: StaffLoginDTO) {
+    console.log(data);
   }
   return (
     <FormLayout className="pt-[30vh] flex justify-center items-center">
@@ -28,41 +33,51 @@ export default function LoginPage() {
 
         <h2 className="font-bold text-center py-3">Login</h2>
 
-        <Form  {...form}>
-        <form className="space-y-3" onSubmit={form.handleSubmit(handleSubmit)}>
-        <FormField
-            name="usernameOrEmail"
-            control={form.control}
-            render={({ field, fieldState: { error } }) => (
-              <FormItem>
-                <FormLabel>Email or Username</FormLabel>
-                <FormControl {...field}>
-                  <Input type="text" />
-                </FormControl>
-                {error?.message && <FormMessage>{error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
+        <Form {...form}>
+          <form
+            className="space-y-3"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
+            <FormField
+              name="usernameOrEmail"
+              control={form.control}
+              render={({ field, fieldState: { error } }) => (
+                <FormItem>
+                  <FormLabel>Email or Username</FormLabel>
+                  <FormControl {...field}>
+                    <Input type="text" />
+                  </FormControl>
+                  {error?.message && <FormMessage>{error.message}</FormMessage>}
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            name="password"
-            control={form.control}
-            render={({ field, fieldState: { error } }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl {...field}>
-                  <Input type="password" />
-                </FormControl>
-                {error?.message && <FormMessage>{error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
+            <FormField
+              name="password"
+              control={form.control}
+              render={({ field, fieldState: { error } }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl {...field}>
+                    <Input type="password" />
+                  </FormControl>
+                  {error?.message && <FormMessage>{error.message}</FormMessage>}
+                </FormItem>
+              )}
+            />
 
-          <div className="py-3 text-center"><Button type="submit">Login</Button></div>
-        </form>
+            <div className="py-3 text-center">
+              <Button type="submit">Login</Button>
+            </div>
+          </form>
         </Form>
 
-        <a className="underline text-sm text-center block mt-4" href="/reset-password">Forgot password</a>
+        <a
+          className="underline text-sm text-center block mt-4"
+          href="/reset-password"
+        >
+          Forgot password
+        </a>
       </div>
     </FormLayout>
   );
