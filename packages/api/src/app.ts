@@ -2,7 +2,7 @@ import { AppConfig } from "./types/config";
 import Koa from "koa";
 import type { ILogger } from "./utils/logger";
 import type { Server } from "http";
-import koaBody from "koa-body";
+import {koaBody} from "koa-body";
 import ErrorMiddleware from "./middlewares/error.middleware";
 import { PrismaClient } from "@prisma/client";
 import { TYPES } from "./inversify.config";

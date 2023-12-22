@@ -1,4 +1,4 @@
-import Router = require("koa-router");
+import type Router from "koa-router"
 export interface IAppRouterContext extends Router.IRouterContext {
     state: {
         auth: {
