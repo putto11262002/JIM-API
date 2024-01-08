@@ -11,6 +11,7 @@ import { inject, injectable } from "inversify";
 import logger from "./utils/logger";
 import ConstraintViolationError from "./utils/errors/conflict.error";
 import { IStaffService } from "./services/staff.service";
+import cors from "@koa/cors"
 
 @injectable()
 class App {
@@ -41,6 +42,8 @@ class App {
         /**
          * Global error handle
          */
+
+        this.koaApp.use(cors({origin: "*"}))
         this.koaApp.use(koaBody());
 
         this.koaApp.use(ErrorMiddleware());

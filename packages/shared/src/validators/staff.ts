@@ -58,3 +58,7 @@ export const StaffQuerySchema = z.object({
             return parsed;
         }),
 });
+
+export const StaffRefreshTokenSchema = z.object({
+    token: z.string({required_error: "token is required"}).min(1, "token is required"),
+})

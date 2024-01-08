@@ -11,20 +11,52 @@ import { useForm } from "react-hook-form";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {   StaffLoginSchema, StaffLoginDTO } from "@jimmodel/shared";
+import { StaffLoginSchema, StaffLoginDTO } from "@jimmodel/shared";
+import { useEffect } from "react";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
+import { useNavigate } from "react-router-dom";
+import { loginThunk } from "../redux/thunk/auth-thunk";
+import { AuthStatus } from "../redux/auth-reducer";
 export default function LoginPage() {
+  // const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { status, isLogin, error } = useAppSelector((state) => state.auth);
   const form = useForm<StaffLoginDTO>({
     resolver: zodResolver(StaffLoginSchema),
     defaultValues: {
       usernameOrEmail: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
-  function handleSubmit(data: StaffLoginDTO) {
-    console.log(data);
+  // const { mutate: handleLogin } = useMutation({
+  //   mutationFn: async (data: StaffLoginDTO) => {
+  //     const loginRes = await StaffAuthService.login(data);
+  //     setErrorMsg(null);
+  //     dispatch(login(loginRes.data.staff));
+  //   },
+  //   onError: (error) => {
+  //     const errRes = StaffAuthService.handleError(error);
+  //     setErrorMsg(errRes.message);
+  //   },
+  // });
+
+  function handleLogin(data: StaffLoginDTO) {
+    dispatch(loginThunk(data));
   }
+
+  useEffect(() => {
+    if (
+      status !== AuthStatus.LOADING &&
+      isLogin
+    ) {
+      navigate("/");
+    }
+  }, [status, isLogin, navigate]);
+
   return (
     <FormLayout className="pt-[30vh] flex justify-center items-center">
       <div className="w-full">
@@ -33,10 +65,17 @@ export default function LoginPage() {
 
         <h2 className="font-bold text-center py-3">Login</h2>
 
+        {error && (
+          <Alert variant="destructive" className="my-3">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        )}
+
         <Form {...form}>
           <form
             className="space-y-3"
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit((data) => handleLogin(data))}
           >
             <FormField
               name="usernameOrEmail"

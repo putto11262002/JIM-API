@@ -7,6 +7,12 @@ export type StaffLoginResponseDTO = {
     staff: StaffResponseDTO;
 };
 
+export type StaffRefreshTokenResponseDTO = {
+    accessToken: string;
+    refreshToken: string;
+    staff: StaffResponseDTO;
+}
+
 /**
  * @description Staff response DTO type
  */

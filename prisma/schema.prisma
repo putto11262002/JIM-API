@@ -15,6 +15,7 @@ model Staff {
   username  String    @unique
   password  String
   role      StaffRole
+  logout    Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }

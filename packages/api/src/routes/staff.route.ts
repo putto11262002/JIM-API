@@ -23,18 +23,18 @@ class StaffRouter implements IAppRouter {
         this.authMiddleware = authMiddleware;
         this.router.post(
             "/admin/staffs",
-            authMiddleware.gaurd(StaffRole.ADMIN),
+            authMiddleware.gaurdStaff(StaffRole.ADMIN),
             this.staffController.createStaff.bind(this.staffController)
         );
         this.router.get(
             "/admin/staffs",
-            authMiddleware.gaurd(StaffRole.ADMIN),
+            authMiddleware.gaurdStaff(StaffRole.ADMIN),
             this.staffController.getStaffs.bind(this.staffController)
         );
 
         this.router.get(
             "/staffs/me",
-            authMiddleware.gaurd(
+            authMiddleware.gaurdStaff(
                 StaffRole.ADMIN,
                 StaffRole.BOOKER,
                 StaffRole.SCOUT
@@ -44,13 +44,28 @@ class StaffRouter implements IAppRouter {
 
         this.router.get(
             "/admin/staffs/:id",
-            authMiddleware.gaurd(StaffRole.ADMIN),
+            authMiddleware.gaurdStaff(StaffRole.ADMIN),
             this.staffController.getStaffById.bind(this.staffController)
         );
 
         this.router.post(
             "/staffs/login",
             this.staffController.login.bind(this.staffController)
+        );
+
+        this.router.post(
+            "/staffs/refresh",
+            this.staffController.refreshToken.bind(this.staffController)
+        );
+
+        this.router.post(
+            "/staffs/logout",
+            authMiddleware.gaurdStaff(
+                StaffRole.ADMIN,
+                StaffRole.BOOKER,
+                StaffRole.SCOUT
+            ),
+            this.staffController.logout.bind(this.staffController)
         );
     }
 

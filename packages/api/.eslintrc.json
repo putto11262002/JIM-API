@@ -10,5 +10,6 @@
     },
     "rules": {
         "@typescript-eslint/consistent-type-definitions": ["off"]
-    }
+    },
+    "ignorePatterns": ["dist", "node_modules"]
 }

@@ -58,6 +58,13 @@ export type StaffResult = {
     total: number;
 };
 
+
+export type RefreshTokenResult = {
+    accessToken: string;
+    refreshToken: string;
+    staff: StaffWithoutPassword;
+}
+
 export interface IStaffService {
     /**
      * Check if the staff with the username or email already exists. If not, create a new staff.
@@ -103,6 +110,21 @@ export interface IStaffService {
     getStaffs: (
         query: StaffQuery
     ) => Promise<PaginatedData<StaffWithoutPassword>>;
+
+    /**
+     * Refresh the access token and refresh token using the refresh token
+     * @param refreshToken 
+     * @returns 
+     */
+    refresh: (refreshToken: string) => Promise<RefreshTokenResult>
+
+
+    /**
+     * Mark staff as logout in the database
+     * @param accessToken 
+     * @returns 
+     */
+    logout: (accessToken: string) => Promise<void>;
 }
 
 @injectable()
@@ -151,6 +173,7 @@ class StaffService implements IStaffService {
             createdAt: staff.createdAt,
             updatedAt: staff.updatedAt,
             role: staff.role,
+            logout: staff.logout
         };
 
         return returnedStaff;
@@ -196,6 +219,15 @@ class StaffService implements IStaffService {
                 role: staff.role,
             }),
         ]);
+
+        await this.prisma.staff.update({
+            where: {
+                id: staff.id,
+            },
+            data: {
+                logout: false
+            }
+        })
 
         return {
             accessToken,
@@ -312,6 +344,7 @@ class StaffService implements IStaffService {
                     role: true,
                     createdAt: true,
                     updatedAt: true,
+                    logout: true
                 },
             }),
             this.prisma.staff.count({
@@ -329,6 +362,42 @@ class StaffService implements IStaffService {
             hasPreviousPage: page > 1,
         };
         return paginatedData;
+    }
+
+    public async refresh(refreshToken: string): Promise<RefreshTokenResult> {
+        const payload = this.authService.verifyRefreshToken(refreshToken)
+        const staff = await this.prisma.staff.findUnique({where: {id: payload.id}})
+        if (staff == null) {
+            throw new AuthenticationError("Invalid refresh token");
+        }
+
+        const [accessToken, newRefreshToken] = await Promise.all([
+            this.authService.generateAccessToken({
+                id: staff.id,
+                role: staff.role,
+            }),
+            this.authService.generateRefreshToken({
+                id: staff.id,
+                role: staff.role,
+            }),
+        ]);
+
+        return {
+            accessToken,
+            refreshToken: newRefreshToken,
+            staff: _.omit(staff, ["password"])
+        };
+
+    }
+
+    public async logout(accessToken: string): Promise<void> {
+        let payload;
+        try{
+            payload = this.authService.verifyAccessToken(accessToken);
+        }catch(err){
+            return
+        }
+        await this.prisma.staff.update({where: {id: payload?.id}, data: {logout: true}})
     }
 }
 

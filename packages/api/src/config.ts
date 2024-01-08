@@ -29,8 +29,8 @@ class AppConfig {
 
         this.port = data.port;
         this.jwtSecret = data.jwtSecret ?? "secret";
-        this.jwtAccessTokenExpiration = "10m";
-        this.jwtRefreshTokenExpiration = "1y";
+        this.jwtAccessTokenExpiration = "1m";
+        this.jwtRefreshTokenExpiration = "3m";
     }
 }
 
