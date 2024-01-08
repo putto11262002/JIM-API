@@ -1,0 +1,19 @@
+{
+  "name": "@jimmodel/shared",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "prisma": "*",
+    "@prisma/client": "*"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
+}
