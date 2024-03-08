@@ -1,0 +1,928 @@
+{
+  "version": "6.0",
+  "nxVersion": "17.2.6",
+  "deps": {
+    "@prisma/client": "5.4.2",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "inversify": "^6.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "koa": "^2.14.2",
+    "koa-body": "^6.0.1",
+    "koa-router": "^11.0.2",
+    "lodash": "^4.17.21",
+    "prisma": "^5.4.2",
+    "reflect-metadata": "^0.1.13",
+    "winston": "^3.11.0",
+    "zod": "^3.22.4",
+    "@types/bcrypt": "^5.0.1",
+    "@types/jest": "^29.5.8",
+    "@types/jsonwebtoken": "^9.0.4",
+    "@types/koa": "^2.13.10",
+    "@types/koa-router": "^7.4.6",
+    "@types/lodash": "^4.14.200",
+    "@types/node": "^20.8.7",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-standard-with-typescript": "^39.1.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.0.2",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "*"
+  },
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {},
+    "nonProjectFiles": [
+      {
+        "file": ".dockerignore",
+        "hash": "5619713228320807829"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "2298573005877826558"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "6011060196382460028"
+      },
+      {
+        "file": ".husky/pre-commit",
+        "hash": "16746835688139557385"
+      },
+      {
+        "file": ".lintstagedrc",
+        "hash": "2323139995665974771"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "6678016968563985598"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "11206942479685816737"
+      },
+      {
+        "file": "Dockerfile",
+        "hash": "16078734778800189551"
+      },
+      {
+        "file": "README.md",
+        "hash": "6456586503903325710"
+      },
+      {
+        "file": "docker/db.docker-compose.yml",
+        "hash": "1014531551001274209"
+      },
+      {
+        "file": "docker/postgres/Dockerfile",
+        "hash": "16245341869845594529"
+      },
+      {
+        "file": "exmaple.env",
+        "hash": "13870261353324734962"
+      },
+      {
+        "file": "jest.config.js",
+        "hash": "15514029088007891976"
+      },
+      {
+        "file": "package.json",
+        "hash": "7120986714412124705"
+      },
+      {
+        "file": "packages/api/dist/src/app.js",
+        "hash": "24863744428673440"
+      },
+      {
+        "file": "packages/api/dist/src/app.js.map",
+        "hash": "1444858914185160558"
+      },
+      {
+        "file": "packages/api/dist/src/config.js",
+        "hash": "16999459840310310592"
+      },
+      {
+        "file": "packages/api/dist/src/config.js.map",
+        "hash": "13976847042933071862"
+      },
+      {
+        "file": "packages/api/dist/src/constants/model-application.js",
+        "hash": "15819122272215575205"
+      },
+      {
+        "file": "packages/api/dist/src/constants/model-application.js.map",
+        "hash": "7958974992751184352"
+      },
+      {
+        "file": "packages/api/dist/src/constants/role.constant.js",
+        "hash": "7109213902516504411"
+      },
+      {
+        "file": "packages/api/dist/src/constants/role.constant.js.map",
+        "hash": "7423120693101820584"
+      },
+      {
+        "file": "packages/api/dist/src/controllers/index.js",
+        "hash": "828567823659317787"
+      },
+      {
+        "file": "packages/api/dist/src/controllers/index.js.map",
+        "hash": "6491203687434242441"
+      },
+      {
+        "file": "packages/api/dist/src/controllers/model.js",
+        "hash": "17836340836418708427"
+      },
+      {
+        "file": "packages/api/dist/src/controllers/model.js.map",
+        "hash": "5724485839011060290"
+      },
+      {
+        "file": "packages/api/dist/src/controllers/staff.controller.js",
+        "hash": "4013932027895045954"
+      },
+      {
+        "file": "packages/api/dist/src/controllers/staff.controller.js.map",
+        "hash": "7556537004823167537"
+      },
+      {
+        "file": "packages/api/dist/src/index.js",
+        "hash": "3807131311626447620"
+      },
+      {
+        "file": "packages/api/dist/src/index.js.map",
+        "hash": "7344324594869436104"
+      },
+      {
+        "file": "packages/api/dist/src/inversify.config.js",
+        "hash": "11815192108342441093"
+      },
+      {
+        "file": "packages/api/dist/src/inversify.config.js.map",
+        "hash": "18104729406044247999"
+      },
+      {
+        "file": "packages/api/dist/src/inversify.container.js",
+        "hash": "6477660317895238974"
+      },
+      {
+        "file": "packages/api/dist/src/inversify.container.js.map",
+        "hash": "16430632342459829836"
+      },
+      {
+        "file": "packages/api/dist/src/middlewares/auth.middleware.js",
+        "hash": "8741835693689688397"
+      },
+      {
+        "file": "packages/api/dist/src/middlewares/auth.middleware.js.map",
+        "hash": "6329957714356154871"
+      },
+      {
+        "file": "packages/api/dist/src/middlewares/error.middleware.js",
+        "hash": "16278150990858002877"
+      },
+      {
+        "file": "packages/api/dist/src/middlewares/error.middleware.js.map",
+        "hash": "861791735313016304"
+      },
+      {
+        "file": "packages/api/dist/src/prisma/client.js",
+        "hash": "15370236833643249122"
+      },
+      {
+        "file": "packages/api/dist/src/prisma/client.js.map",
+        "hash": "12658475814428991934"
+      },
+      {
+        "file": "packages/api/dist/src/routes/index.ts.js",
+        "hash": "7427688310972859690"
+      },
+      {
+        "file": "packages/api/dist/src/routes/index.ts.js.map",
+        "hash": "10586233483228502997"
+      },
+      {
+        "file": "packages/api/dist/src/routes/model.route.js",
+        "hash": "14673159782833386266"
+      },
+      {
+        "file": "packages/api/dist/src/routes/model.route.js.map",
+        "hash": "15967795067630534792"
+      },
+      {
+        "file": "packages/api/dist/src/routes/staff.route.js",
+        "hash": "2773899928480014689"
+      },
+      {
+        "file": "packages/api/dist/src/routes/staff.route.js.map",
+        "hash": "4757829300588373153"
+      },
+      {
+        "file": "packages/api/dist/src/services/auth.service.js",
+        "hash": "1566904331648537195"
+      },
+      {
+        "file": "packages/api/dist/src/services/auth.service.js.map",
+        "hash": "6610323930906048007"
+      },
+      {
+        "file": "packages/api/dist/src/services/email.service.js",
+        "hash": "2948542198772621060"
+      },
+      {
+        "file": "packages/api/dist/src/services/email.service.js.map",
+        "hash": "13500010258646827513"
+      },
+      {
+        "file": "packages/api/dist/src/services/job.service.js",
+        "hash": "4967747801074853213"
+      },
+      {
+        "file": "packages/api/dist/src/services/job.service.js.map",
+        "hash": "1932918293794371430"
+      },
+      {
+        "file": "packages/api/dist/src/services/model-application.service.js",
+        "hash": "1262158721629343853"
+      },
+      {
+        "file": "packages/api/dist/src/services/model-application.service.js.map",
+        "hash": "3335237099078219480"
+      },
+      {
+        "file": "packages/api/dist/src/services/model.service.js",
+        "hash": "2421064701008375485"
+      },
+      {
+        "file": "packages/api/dist/src/services/model.service.js.map",
+        "hash": "9957918109516175498"
+      },
+      {
+        "file": "packages/api/dist/src/services/option.service.js",
+        "hash": "15449993596357405980"
+      },
+      {
+        "file": "packages/api/dist/src/services/option.service.js.map",
+        "hash": "8698865366825105169"
+      },
+      {
+        "file": "packages/api/dist/src/services/staff.service.js",
+        "hash": "6683715592995329532"
+      },
+      {
+        "file": "packages/api/dist/src/services/staff.service.js.map",
+        "hash": "15925318904416620463"
+      },
+      {
+        "file": "packages/api/dist/src/types/app.js",
+        "hash": "17057382363380861213"
+      },
+      {
+        "file": "packages/api/dist/src/types/app.js.map",
+        "hash": "8216786371512594629"
+      },
+      {
+        "file": "packages/api/dist/src/types/config.js",
+        "hash": "12604764618172117068"
+      },
+      {
+        "file": "packages/api/dist/src/types/config.js.map",
+        "hash": "18226528503415882472"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/api-response.dto.js",
+        "hash": "5713061904133383755"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/api-response.dto.js.map",
+        "hash": "1774230154421791203"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/error-response.dto.js",
+        "hash": "16077814906363247926"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/error-response.dto.js.map",
+        "hash": "8711549630362715075"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/staff-login-response.dto.js",
+        "hash": "1991180649849771559"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/staff-login-response.dto.js.map",
+        "hash": "11789564388431810351"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/staff-response.dto.js",
+        "hash": "14669221245714505673"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/staff-response.dto.js.map",
+        "hash": "4765486725820428685"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/staff.js",
+        "hash": "5736716104729207248"
+      },
+      {
+        "file": "packages/api/dist/src/types/dtos/staff.js.map",
+        "hash": "8593204268551970272"
+      },
+      {
+        "file": "packages/api/dist/src/types/email.js",
+        "hash": "10972850235796604381"
+      },
+      {
+        "file": "packages/api/dist/src/types/email.js.map",
+        "hash": "6059062206917683140"
+      },
+      {
+        "file": "packages/api/dist/src/types/file.js",
+        "hash": "17763006250364195920"
+      },
+      {
+        "file": "packages/api/dist/src/types/file.js.map",
+        "hash": "5328731510462892051"
+      },
+      {
+        "file": "packages/api/dist/src/types/index.js",
+        "hash": "7356800136062577581"
+      },
+      {
+        "file": "packages/api/dist/src/types/index.js.map",
+        "hash": "7866744243113186960"
+      },
+      {
+        "file": "packages/api/dist/src/types/jwt.js",
+        "hash": "3297016831842786944"
+      },
+      {
+        "file": "packages/api/dist/src/types/jwt.js.map",
+        "hash": "18178047321855082671"
+      },
+      {
+        "file": "packages/api/dist/src/types/model-application.js",
+        "hash": "9152287257901857094"
+      },
+      {
+        "file": "packages/api/dist/src/types/model-application.js.map",
+        "hash": "767174451609292790"
+      },
+      {
+        "file": "packages/api/dist/src/types/model.js",
+        "hash": "6324186168285607468"
+      },
+      {
+        "file": "packages/api/dist/src/types/model.js.map",
+        "hash": "259777273951619553"
+      },
+      {
+        "file": "packages/api/dist/src/types/paginated-data.js",
+        "hash": "13905407024953954327"
+      },
+      {
+        "file": "packages/api/dist/src/types/paginated-data.js.map",
+        "hash": "3693252206704140487"
+      },
+      {
+        "file": "packages/api/dist/src/types/staff.js",
+        "hash": "5736716104729207248"
+      },
+      {
+        "file": "packages/api/dist/src/types/staff.js.map",
+        "hash": "17713362971601280403"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/authentication.error.js",
+        "hash": "11524557896151340694"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/authentication.error.js.map",
+        "hash": "5461855869293840420"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/conflict.error.js",
+        "hash": "9534511537714406"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/conflict.error.js.map",
+        "hash": "14543285359202662933"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/forbidden.error.js",
+        "hash": "10605610578302094741"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/forbidden.error.js.map",
+        "hash": "7735129563887493656"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/invalid-argument.error.js",
+        "hash": "618405535999011888"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/invalid-argument.error.js.map",
+        "hash": "2543800961772792854"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/not-found.error.js",
+        "hash": "11139657072489955528"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/not-found.error.js.map",
+        "hash": "1482597321959030438"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/unauthorised.error.js",
+        "hash": "17330395128888277930"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/unauthorised.error.js.map",
+        "hash": "3471534911803919061"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/validation.error.js",
+        "hash": "5306108497938326765"
+      },
+      {
+        "file": "packages/api/dist/src/utils/errors/validation.error.js.map",
+        "hash": "4171594936771324277"
+      },
+      {
+        "file": "packages/api/dist/src/utils/logger.js",
+        "hash": "10156629321709074937"
+      },
+      {
+        "file": "packages/api/dist/src/utils/logger.js.map",
+        "hash": "16755954608724769242"
+      },
+      {
+        "file": "packages/api/dist/src/utils/mappers/staff.js",
+        "hash": "3080652734587326222"
+      },
+      {
+        "file": "packages/api/dist/src/utils/mappers/staff.js.map",
+        "hash": "16534014724892560823"
+      },
+      {
+        "file": "packages/api/dist/src/validators/config.js",
+        "hash": "12004440028173732848"
+      },
+      {
+        "file": "packages/api/dist/src/validators/config.js.map",
+        "hash": "1933720129805676874"
+      },
+      {
+        "file": "packages/dashboard/dist/assets/index-YO8LUSgG.js",
+        "hash": "227204008098221861"
+      },
+      {
+        "file": "packages/dashboard/dist/assets/index-dgtZx3sv.css",
+        "hash": "1380968444414462838"
+      },
+      {
+        "file": "packages/dashboard/dist/index.html",
+        "hash": "13860092236951477170"
+      },
+      {
+        "file": "packages/dashboard/dist/vite.svg",
+        "hash": "16046085400642193116"
+      },
+      {
+        "file": "packages/shared/dist/dtos/index.d.ts",
+        "hash": "3876125771454016311"
+      },
+      {
+        "file": "packages/shared/dist/dtos/index.d.ts.map",
+        "hash": "13733143514152264969"
+      },
+      {
+        "file": "packages/shared/dist/dtos/index.js",
+        "hash": "17562398546744010953"
+      },
+      {
+        "file": "packages/shared/dist/dtos/index.js.map",
+        "hash": "2793863906780359582"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/index.d.ts",
+        "hash": "10372618941377299999"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/index.d.ts.map",
+        "hash": "2113496933412908935"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/index.js",
+        "hash": "15650144192220782055"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/index.js.map",
+        "hash": "5879183772534825778"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/staff.d.ts",
+        "hash": "13749338578358059555"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/staff.d.ts.map",
+        "hash": "8847063018305497035"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/staff.js",
+        "hash": "5736716104729207248"
+      },
+      {
+        "file": "packages/shared/dist/dtos/requests/staff.js.map",
+        "hash": "14100591267323242251"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/api-response.d.ts",
+        "hash": "17960547342596517941"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/api-response.d.ts.map",
+        "hash": "457453522122335748"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/api-response.js",
+        "hash": "7384729771763679426"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/api-response.js.map",
+        "hash": "12357914824837317963"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/error-response.d.ts",
+        "hash": "16624794917811277433"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/error-response.d.ts.map",
+        "hash": "13710406850917016431"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/error-response.js",
+        "hash": "1003558816286667185"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/error-response.js.map",
+        "hash": "18042668252084430192"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/index.d.ts",
+        "hash": "13454580993340733076"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/index.d.ts.map",
+        "hash": "13090056767396537333"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/index.js",
+        "hash": "11247422362563087144"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/index.js.map",
+        "hash": "5384117390568504594"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/staff.d.ts",
+        "hash": "7746182707882522994"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/staff.d.ts.map",
+        "hash": "16396168005107001879"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/staff.js",
+        "hash": "5736716104729207248"
+      },
+      {
+        "file": "packages/shared/dist/dtos/responses/staff.js.map",
+        "hash": "15587336028029872954"
+      },
+      {
+        "file": "packages/shared/dist/index.d.ts",
+        "hash": "8501476486170948242"
+      },
+      {
+        "file": "packages/shared/dist/index.d.ts.map",
+        "hash": "8386925174664288380"
+      },
+      {
+        "file": "packages/shared/dist/index.js",
+        "hash": "9403666164929557542"
+      },
+      {
+        "file": "packages/shared/dist/index.js.map",
+        "hash": "11110420103664736600"
+      },
+      {
+        "file": "packages/shared/dist/types/index.d.ts",
+        "hash": "10424555015742552819"
+      },
+      {
+        "file": "packages/shared/dist/types/index.d.ts.map",
+        "hash": "18411038486031833511"
+      },
+      {
+        "file": "packages/shared/dist/types/index.js",
+        "hash": "828567823659317787"
+      },
+      {
+        "file": "packages/shared/dist/types/index.js.map",
+        "hash": "9015913640108994397"
+      },
+      {
+        "file": "packages/shared/dist/validators/index.d.ts",
+        "hash": "10372618941377299999"
+      },
+      {
+        "file": "packages/shared/dist/validators/index.d.ts.map",
+        "hash": "9523337193585903156"
+      },
+      {
+        "file": "packages/shared/dist/validators/index.js",
+        "hash": "15650144192220782055"
+      },
+      {
+        "file": "packages/shared/dist/validators/index.js.map",
+        "hash": "10620650343871364767"
+      },
+      {
+        "file": "packages/shared/dist/validators/staff.d.ts",
+        "hash": "15351700572472319651"
+      },
+      {
+        "file": "packages/shared/dist/validators/staff.d.ts.map",
+        "hash": "8098778237125020907"
+      },
+      {
+        "file": "packages/shared/dist/validators/staff.js",
+        "hash": "12120967946684037574"
+      },
+      {
+        "file": "packages/shared/dist/validators/staff.js.map",
+        "hash": "14728267060515711587"
+      },
+      {
+        "file": "prisma/migrations/20231023140902_init/migration.sql",
+        "hash": "18173964290825227507"
+      },
+      {
+        "file": "prisma/migrations/20231024051232_add_staff_username/migration.sql",
+        "hash": "8108530275772133729"
+      },
+      {
+        "file": "prisma/migrations/20231024051251_fix_staff_role_typo/migration.sql",
+        "hash": "12724946875050464106"
+      },
+      {
+        "file": "prisma/migrations/20231113015803_fix_staff_role_typo/migration.sql",
+        "hash": "1673484507692605528"
+      },
+      {
+        "file": "prisma/migrations/20231129072941_add_model/migration.sql",
+        "hash": "13085344639058604517"
+      },
+      {
+        "file": "prisma/migrations/migration_lock.toml",
+        "hash": "11493296588214560035"
+      },
+      {
+        "file": "prisma/schema.prisma",
+        "hash": "10303263737275561165"
+      },
+      {
+        "file": "src/app.ts",
+        "hash": "15044545974132978522"
+      },
+      {
+        "file": "src/config.ts",
+        "hash": "14408924798011733598"
+      },
+      {
+        "file": "src/constants/model-application.ts",
+        "hash": "579947517866952826"
+      },
+      {
+        "file": "src/constants/role.constant.ts",
+        "hash": "14184306576574600774"
+      },
+      {
+        "file": "src/controllers/index.ts",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/controllers/model.ts",
+        "hash": "14564715047309202228"
+      },
+      {
+        "file": "src/controllers/staff.controller.ts",
+        "hash": "3719789410380177859"
+      },
+      {
+        "file": "src/index.ts",
+        "hash": "17523723490569446147"
+      },
+      {
+        "file": "src/inversify.config.ts",
+        "hash": "15209779672512854989"
+      },
+      {
+        "file": "src/inversify.container.ts",
+        "hash": "3745639607074249568"
+      },
+      {
+        "file": "src/middlewares/auth.middleware.ts",
+        "hash": "12399589556210104801"
+      },
+      {
+        "file": "src/middlewares/error.middleware.ts",
+        "hash": "12047081755624738890"
+      },
+      {
+        "file": "src/prisma/client.ts",
+        "hash": "10196414560593996280"
+      },
+      {
+        "file": "src/routes/index.ts.ts",
+        "hash": "4872992497054271540"
+      },
+      {
+        "file": "src/routes/model.route.ts",
+        "hash": "3252167044497455532"
+      },
+      {
+        "file": "src/routes/staff.route.ts",
+        "hash": "9397854914832820131"
+      },
+      {
+        "file": "src/services/__tests__/auth.service.test.ts",
+        "hash": "8515839291522797933"
+      },
+      {
+        "file": "src/services/__tests__/model-application.test.ts",
+        "hash": "11135816222531550220"
+      },
+      {
+        "file": "src/services/__tests__/staff.service.test.ts",
+        "hash": "13727607826769704848"
+      },
+      {
+        "file": "src/services/auth.service.ts",
+        "hash": "14013254730499223645"
+      },
+      {
+        "file": "src/services/email.service.ts",
+        "hash": "11930815184706803891"
+      },
+      {
+        "file": "src/services/job.service.ts",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/services/model-application.service.ts",
+        "hash": "3945430413606084638"
+      },
+      {
+        "file": "src/services/model.service.ts",
+        "hash": "820434672620735821"
+      },
+      {
+        "file": "src/services/option.service.ts",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/services/staff.service.ts",
+        "hash": "12977906594262625991"
+      },
+      {
+        "file": "src/types/app.ts",
+        "hash": "8593138249189770806"
+      },
+      {
+        "file": "src/types/config.ts",
+        "hash": "12681430949493389097"
+      },
+      {
+        "file": "src/types/dtos/api-response.dto.ts",
+        "hash": "15551676068260398653"
+      },
+      {
+        "file": "src/types/dtos/error-response.dto.ts",
+        "hash": "9800911098609208333"
+      },
+      {
+        "file": "src/types/dtos/staff-login-response.dto.ts",
+        "hash": "10462793390868347462"
+      },
+      {
+        "file": "src/types/dtos/staff-response.dto.ts",
+        "hash": "908941706601072672"
+      },
+      {
+        "file": "src/types/dtos/staff.ts",
+        "hash": "506651511975704"
+      },
+      {
+        "file": "src/types/email.ts",
+        "hash": "16268821896217711999"
+      },
+      {
+        "file": "src/types/file.ts",
+        "hash": "12998076434372160438"
+      },
+      {
+        "file": "src/types/index.ts",
+        "hash": "14609836569411381969"
+      },
+      {
+        "file": "src/types/jwt.ts",
+        "hash": "1857232630827915533"
+      },
+      {
+        "file": "src/types/model-application.ts",
+        "hash": "14478854372981254296"
+      },
+      {
+        "file": "src/types/model.ts",
+        "hash": "10624972527912594585"
+      },
+      {
+        "file": "src/types/paginated-data.ts",
+        "hash": "9827915511177136760"
+      },
+      {
+        "file": "src/types/staff.ts",
+        "hash": "10946960777449805066"
+      },
+      {
+        "file": "src/utils/errors/authentication.error.ts",
+        "hash": "5008930699097129664"
+      },
+      {
+        "file": "src/utils/errors/conflict.error.ts",
+        "hash": "6862504619182524422"
+      },
+      {
+        "file": "src/utils/errors/forbidden.error.ts",
+        "hash": "6283391737691388731"
+      },
+      {
+        "file": "src/utils/errors/invalid-argument.error.ts",
+        "hash": "14461032526103049684"
+      },
+      {
+        "file": "src/utils/errors/not-found.error.ts",
+        "hash": "8334342057411478540"
+      },
+      {
+        "file": "src/utils/errors/unauthorised.error.ts",
+        "hash": "4949094968476648617"
+      },
+      {
+        "file": "src/utils/errors/validation.error.ts",
+        "hash": "1133757653919441198"
+      },
+      {
+        "file": "src/utils/logger.ts",
+        "hash": "16714155323965934681"
+      },
+      {
+        "file": "src/utils/mappers/staff.ts",
+        "hash": "18226766561718517943"
+      },
+      {
+        "file": "src/validators/config.ts",
+        "hash": "16555954245689978684"
+      },
+      {
+        "file": "src/validators/staff.ts",
+        "hash": "13648610834178917309"
+      },
+      {
+        "file": "tsconfig.build.json",
+        "hash": "14194186674539614869"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "8494429496938264846"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "7110242402894205520"
+      }
+    ]
+  }
+}

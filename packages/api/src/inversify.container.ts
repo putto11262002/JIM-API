@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { Container } from "inversify";
+import { Container, type interfaces } from "inversify";
 import StaffController from "./controllers/staff.controller";
 import { TYPES } from "./inversify.config";
 import { prisma } from "./prisma/client";
@@ -16,6 +16,12 @@ import logger from "./utils/logger";
 import AuthMiddleware from "./middlewares/auth.middleware";
 import { EmailService } from "./services/email.service";
 import { ModelApplicationService } from "./services/model-application.service";
+import { ModelApplicationController } from "./controllers/model-application.controller";
+import { ModelApplicationRouter } from "./routes/model-application.router";
+import {
+    type FileServiceOptions,
+    LocalFileService,
+} from "./services/file.service";
 
 const container = new Container();
 container.bind(TYPES.STAFF_SERVICE).to(StaffService);
@@ -32,6 +38,32 @@ container.bind(TYPES.AUTH_SERVICE).to(AuthService);
 container.bind(TYPES.EMAIL_SERVICE).to(EmailService).inSingletonScope();
 
 container.bind(TYPES.MODEL_APPLICATION_SERVICE).to(ModelApplicationService);
+container
+    .bind(TYPES.MODEL_APPLICATION_CONTROLLER)
+    .to(ModelApplicationController);
+container.bind(TYPES.MODEL_APPLICATION_ROUTER).to(ModelApplicationRouter);
+
+container
+    .bind(TYPES.FILE_SERVICE_FACTORY)
+    .toFactory((context: interfaces.Context) => {
+        return (
+            options: FileServiceOptions = {
+                uploadDir: config.uploadDir,
+                baseUrl: new URL("/uploads/", config.serverUrl).toString(),
+            }
+        ) => {
+            return new LocalFileService(options);
+        };
+    })
+    .whenTargetNamed(TYPES.LOCAL_FILE_SERVICE);
+
+container.bind(TYPES.FILE_SERVICE).toDynamicValue(
+    (context) =>
+        new LocalFileService({
+            uploadDir: config.uploadDir,
+            baseUrl: new URL("/uploads/", config.serverUrl).toString(),
+        })
+).whenTargetNamed(TYPES.LOCAL_FILE_SERVICE);
 
 container.bind(TYPES.CONFIG).toConstantValue(config);
 container.bind(TYPES.APP).to(App);

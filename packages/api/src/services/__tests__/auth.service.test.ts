@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Container } from "inversify";
 import { AuthService } from "../auth.service";
 import { TYPES } from "../../inversify.config";
-import type { AppConfig } from "../../types";
+import type { AppConfig } from "../../config";
 import bcrypt from "bcrypt";
 import type { CreateJwtPayload, JwtPayload } from "../../types/jwt";
 import jwt from "jsonwebtoken";

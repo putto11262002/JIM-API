@@ -1,10 +1,10 @@
-import { inject, injectable } from "inversify";
+import { inject, injectable, named } from "inversify";
 import type { CreateModelInput, Model } from "../types/model";
 import type {
     CreateModelApplicationInput,
     ModelApplication,
     ModelApplicationQuery,
-} from "../types/model-application";
+} from "@jimmodel/shared";
 import type { PaginatedData } from "../types/paginated-data";
 import { type Prisma, PrismaClient } from "@prisma/client";
 import { TYPES } from "../inversify.config";
@@ -13,6 +13,7 @@ import { IModelService } from "./model.service";
 import { InvalidArgumentError } from "../utils/errors/invalid-argument.error";
 import { ModelApplicationStatus } from "../constants/model-application";
 import ConstraintViolationError from "../utils/errors/conflict.error";
+import { IFileService } from "./file.service";
 
 export interface IModelApplicationService {
     createApplication: (
@@ -37,10 +38,24 @@ export class ModelApplicationService implements IModelApplicationService {
     @inject(TYPES.MODEL_SERVICE)
     private readonly modelService!: IModelService;
 
+    @inject(TYPES.FILE_SERVICE) @named(TYPES.LOCAL_FILE_SERVICE)
+    private readonly fileService!: IFileService;
+
     async createApplication(
         application: CreateModelApplicationInput
     ): Promise<ModelApplication> {
-        // save applicaiton to database
+
+        const images: Prisma.ModelApplicationImageCreateWithoutApplicationInput[] = []
+        // Save file to storage
+        for (const image of application.images ?? []) {
+            const savedImage = await this.fileService.createFile(image.path)
+            images.push({
+                url: savedImage.url,
+                type: image.type
+            })
+        }
+
+        // Save applicaiton to database
         const savedApplication = await this.prisma.modelApplication.create({
             data: {
                 ...application,
@@ -48,7 +63,7 @@ export class ModelApplicationService implements IModelApplicationService {
                     create: application.experiences ?? [],
                 },
                 images: {
-                    create: application.images ?? [],
+                    create: images,
                 },
             },
 
@@ -57,7 +72,8 @@ export class ModelApplicationService implements IModelApplicationService {
                 images: true,
             },
         });
-        // send email notifications along with application summary and link to application
+
+        // Send email notifications along with application summary and link to application
         await this.mailService.sendEmail({
             to: ["example.com"], // TODO - get from config
             subject: "New Model Application",
@@ -204,8 +220,6 @@ export class ModelApplicationService implements IModelApplicationService {
                 url: image.url,
                 caption: image.caption,
                 type: image.type,
-                height: image.height,
-                width: image.width,
             };
             images.push(_image);
         }
@@ -231,7 +245,7 @@ export class ModelApplicationService implements IModelApplicationService {
                 .charAt(0)
                 .toUpperCase()}.`,
             lineId: application.lineId,
-            whatsApp: application.whatsApp,
+            whatsApp: application.whatsapp,
             weChat: application.weChat,
             instagram: application.instagram,
             facebook: application.facebook,

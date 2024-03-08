@@ -8,6 +8,8 @@ import type Router from "koa-router";
 import { TYPES } from "../inversify.config";
 import NotFoundError from "../utils/errors/not-found.error";
 import AuthenticationError from "../utils/errors/authentication.error";
+import { InvalidArgumentError } from "../utils/errors/invalid-argument.error";
+import ConstraintViolationError from "../utils/errors/conflict.error";
 
 function ErrorMiddleware(): Router.IMiddleware {
     const logger = container.get<ILogger>(TYPES.LOGGER);
@@ -15,7 +17,7 @@ function ErrorMiddleware(): Router.IMiddleware {
         try {
             await next();
         } catch (err) {
-            logger.error("", err);
+            console.error(err)
             if (err instanceof ValidationError) {
                 const response: ErrorResponse = {
                     message: err.message,
@@ -26,6 +28,28 @@ function ErrorMiddleware(): Router.IMiddleware {
                 ctx.body = response;
                 return;
             }
+
+
+            if (err instanceof InvalidArgumentError) {
+                const response: ErrorResponse = {
+                    message: err.message,
+                    statusCode: 400,
+                };
+                ctx.status = 400;
+                ctx.body = response;
+                return;
+            }
+
+            if (err instanceof ConstraintViolationError) {
+                const response: ErrorResponse = {
+                    message: err.message,
+                    statusCode: 400,
+                };
+                ctx.status = 400;
+                ctx.body = response;
+                return;
+            }
+
 
             if (err instanceof AuthenticationError) {
                 const response: ErrorResponse = {

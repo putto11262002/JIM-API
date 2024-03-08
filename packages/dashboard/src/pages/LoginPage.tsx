@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StaffLoginSchema, StaffLoginDTO } from "@jimmodel/shared";
+
 import { useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -19,13 +19,15 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { loginThunk } from "../redux/thunk/auth-thunk";
 import { AuthStatus } from "../redux/auth-reducer";
+import {  z } from "zod";
+import { StaffLoginFormSchema } from "../schemas/staff";
 export default function LoginPage() {
   // const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { status, isLogin, error } = useAppSelector((state) => state.auth);
-  const form = useForm<StaffLoginDTO>({
-    resolver: zodResolver(StaffLoginSchema),
+  const form = useForm<z.infer<typeof StaffLoginFormSchema>>({
+    resolver: zodResolver(StaffLoginFormSchema),
     defaultValues: {
       usernameOrEmail: "",
       password: "",
@@ -44,7 +46,7 @@ export default function LoginPage() {
   //   },
   // });
 
-  function handleLogin(data: StaffLoginDTO) {
+  function handleLogin(data: z.infer<typeof StaffLoginFormSchema>) {
     dispatch(loginThunk(data));
   }
 

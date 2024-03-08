@@ -1,5 +1,7 @@
 import axios from "axios";
 import { StaffAuthService } from "../services/auth";
+import { store } from "../redux/store";
+import { logoutSuccess } from "../redux/auth-reducer";
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -37,6 +39,7 @@ axiosClient.interceptors.response.use(
   
           // Optionally, redirect the user to the login page or handle the error in another way
           // For now, just reject the promise with the original error
+          store.dispatch(logoutSuccess())
           return Promise.reject(error);
         }
       }

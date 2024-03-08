@@ -1,15 +1,21 @@
 import { injectable } from "inversify";
 import { ConfigSchema } from "./validators/config";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 @injectable()
-class AppConfig {
+export class AppConfig {
     public readonly port: number;
     public readonly jwtSecret: string;
     public readonly jwtAccessTokenExpiration: string;
     public readonly jwtRefreshTokenExpiration: string;
+    public readonly uploadDir: string;
+    public readonly serverUrl: string;
     constructor() {
         // Load configs and validate
         const configValidation = ConfigSchema.safeParse({
@@ -31,6 +37,8 @@ class AppConfig {
         this.jwtSecret = data.jwtSecret ?? "secret";
         this.jwtAccessTokenExpiration = "1m";
         this.jwtRefreshTokenExpiration = "3m";
+        this.uploadDir = process.env.UPLOAD_DIR ?? path.join(__dirname, "../uploads");
+        this.serverUrl = process.env.SERVER_URL ?? "http://localhost:3001";
     }
 }
 

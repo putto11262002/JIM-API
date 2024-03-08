@@ -16,6 +16,14 @@ export const TYPES = {
     EMAIL_SERVICE: Symbol.for("EmailService"),
 
     MODEL_APPLICATION_SERVICE: Symbol.for("ModelApplicationService"),
+    MODEL_APPLICATION_CONTROLLER: Symbol.for("ModelApplicationController"),
+    MODEL_APPLICATION_ROUTER: Symbol.for("ModelApplicationRouter"),
+
+
+    // File related classes
+    FILE_SERVICE: Symbol.for("LocalFileService"),
+    FILE_SERVICE_FACTORY: Symbol.for("FileService"),
+    LOCAL_FILE_SERVICE: Symbol.for("LocalFileService"),
 
     // Application levels clases
     PRISMA: Symbol.for("Prisma"),

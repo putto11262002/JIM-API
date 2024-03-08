@@ -1,4 +1,4 @@
-import { StaffResponseDTO } from "@jimmodel/shared";
+import { StaffResponseDTO, StaffWithoutPassword } from "@jimmodel/shared";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import { RootState } from "./store";
 import { AppError } from "../types/app-error";
@@ -33,7 +33,7 @@ export const authSlice = createSlice({
             state.error = null;
             state.staff = null;
         },
-        loginSuccess: (state, action: PayloadAction<StaffResponseDTO>) => {
+        loginSuccess: (state, action: PayloadAction<StaffWithoutPassword>) => {
             state.isLogin = true;
             state.staff = action.payload;
             state.status = AuthStatus.SUCCESS

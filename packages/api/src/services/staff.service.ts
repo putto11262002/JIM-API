@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import type { StaffRole, StaffWithoutPassword } from "../types/staff";
 import ConstraintViolationError from "../utils/errors/conflict.error";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../inversify.config";
@@ -7,63 +6,9 @@ import { IAuthService } from "./auth.service";
 import AuthenticationError from "../utils/errors/authentication.error";
 import _ from "lodash";
 import type { PaginatedData } from "../types/paginated-data";
+import type { CreateStaffInput, StaffRefreshTokenResult, StaffLoginResult, StaffQuery, Staff, StaffRole, StaffWithoutPassword, UpdateStaffInput, UpdateStaffPasswordInput } from "@jimmodel/shared";
+import { InvalidArgumentError } from "../utils/errors/invalid-argument.error";
 
-export type CreateStaffInput = {
-    firstName: string;
-    lastName: string;
-    email: string;
-    username: string;
-    password: string;
-    role: StaffRole;
-};
-
-/**
- * @field accessToken Access token
- * @field refreshToken Refresh token
- * @field staff Staff details without password
- */
-export type LoginResult = {
-    accessToken: string;
-    refreshToken: string;
-    staff: StaffWithoutPassword;
-};
-
-/**
- * @field q Search query for username, email, first name, last name
- * @field roles Filter by roles
- * @field sortBy Sort by field
- * @field sortOrder Sort order
- * @field limit Limit the number of results
- * @field offset Offset the results
- */
-export type StaffQuery = {
-    q?: string;
-    roles?: string[];
-    sortBy?: string;
-    sortOrder?: "asc" | "desc";
-    page?: number;
-    pageSize?: number;
-};
-
-/**
- * @field data list of Staff details without password
- * @field offset Offset the results
- * @field limit Limit the number of results
- * @field total Total number of staff that matched the query
- */
-export type StaffResult = {
-    data: StaffWithoutPassword[];
-    offset: number;
-    limit: number;
-    total: number;
-};
-
-
-export type RefreshTokenResult = {
-    accessToken: string;
-    refreshToken: string;
-    staff: StaffWithoutPassword;
-}
 
 export interface IStaffService {
     /**
@@ -78,7 +23,7 @@ export interface IStaffService {
      * @param password
      * @returns accessToken, refreshToken, and staff details, see {@link LoginResult}
      */
-    login: (usernameOrEmail: string, password: string) => Promise<LoginResult>;
+    login: (usernameOrEmail: string, password: string) => Promise<StaffLoginResult>;
 
     /**
      *
@@ -116,7 +61,7 @@ export interface IStaffService {
      * @param refreshToken 
      * @returns 
      */
-    refresh: (refreshToken: string) => Promise<RefreshTokenResult>
+    refresh: (refreshToken: string) => Promise<StaffRefreshTokenResult>
 
 
     /**
@@ -125,6 +70,18 @@ export interface IStaffService {
      * @returns 
      */
     logout: (accessToken: string) => Promise<void>;
+
+
+
+    /**
+     * Update staff first name, last name, role
+     */
+    updateStaff: (id: string, input: UpdateStaffInput) => Promise<void>
+
+    /**
+     * Update staff password
+     */
+    updateStaffPassword: (id: string, input: UpdateStaffPasswordInput) => Promise<void>
 }
 
 @injectable()
@@ -134,6 +91,10 @@ class StaffService implements IStaffService {
 
     @inject(TYPES.AUTH_SERVICE)
     private readonly authService!: IAuthService;
+
+    private removeStaffPassword(staff: Staff): StaffWithoutPassword {
+        return _.omit(staff, ["password"])
+    }
 
     public async createStaff(
         input: CreateStaffInput
@@ -164,25 +125,14 @@ class StaffService implements IStaffService {
             data: input,
         });
 
-        const returnedStaff: StaffWithoutPassword = {
-            id: staff.id,
-            email: staff.email,
-            username: staff.username,
-            firstName: staff.firstName,
-            lastName: staff.lastName,
-            createdAt: staff.createdAt,
-            updatedAt: staff.updatedAt,
-            role: staff.role,
-            logout: staff.logout
-        };
 
-        return returnedStaff;
+        return this.removeStaffPassword(staff)
     }
 
     public async login(
         usernameOrEmail: string,
         password: string
-    ): Promise<LoginResult> {
+    ): Promise<StaffLoginResult> {
         const staff = await this.prisma.staff.findFirst({
             where: {
                 OR: [
@@ -197,7 +147,7 @@ class StaffService implements IStaffService {
         });
 
         if (staff === null) {
-            throw new AuthenticationError("StaffWithoutPassword not found");
+            throw new AuthenticationError("Staff not found");
         }
 
         const isPasswordValid = await this.authService.comparePassword(
@@ -232,7 +182,7 @@ class StaffService implements IStaffService {
         return {
             accessToken,
             refreshToken,
-            staff: _.omit(staff, ["password"]),
+            staff: this.removeStaffPassword(staff),
         };
     }
 
@@ -249,7 +199,7 @@ class StaffService implements IStaffService {
             return staff;
         }
 
-        return _.omit(staff, ["password"]);
+        return this.removeStaffPassword(staff);
     }
 
     public async getStaffByEmail(
@@ -265,7 +215,7 @@ class StaffService implements IStaffService {
             return staff;
         }
 
-        return _.omit(staff, ["password"]);
+        return this.removeStaffPassword(staff);
     }
 
     public async getStaffByUsername(
@@ -281,7 +231,7 @@ class StaffService implements IStaffService {
             return staff;
         }
 
-        return _.omit(staff, ["password"]);
+        return this.removeStaffPassword(staff);
     }
 
     public async getStaffs(
@@ -314,6 +264,7 @@ class StaffService implements IStaffService {
                         mode: "insensitive",
                     },
                 },
+                
             ];
         }
 
@@ -323,7 +274,7 @@ class StaffService implements IStaffService {
             };
         }
 
-        const page = query.page ?? 10;
+        const page = query.page ?? 1;
         const pageSize = query.pageSize ?? 10;
 
         const [staffs, total] = await Promise.all([
@@ -331,10 +282,10 @@ class StaffService implements IStaffService {
                 where: _query,
                 orderBy: {
                     [query.sortBy ?? Prisma.StaffScalarFieldEnum.updatedAt]:
-                        query.sortOrder ?? "asc",
+                        query.sortOrder ?? "desc",
                 },
                 take: pageSize,
-                skip: ((page ?? 1) - 1) * (pageSize ?? 10),
+                skip: (page - 1) * pageSize ,
                 select: {
                     id: true,
                     username: true,
@@ -358,13 +309,13 @@ class StaffService implements IStaffService {
             totalPage: Math.ceil(total / pageSize),
             page,
             pageSize,
-            hasNextPage: total < pageSize * pageSize,
+            hasNextPage: total > page * pageSize,
             hasPreviousPage: page > 1,
         };
         return paginatedData;
     }
 
-    public async refresh(refreshToken: string): Promise<RefreshTokenResult> {
+    public async refresh(refreshToken: string): Promise<StaffRefreshTokenResult> {
         const payload = this.authService.verifyRefreshToken(refreshToken)
         const staff = await this.prisma.staff.findUnique({where: {id: payload.id}})
         if (staff == null) {
@@ -385,7 +336,7 @@ class StaffService implements IStaffService {
         return {
             accessToken,
             refreshToken: newRefreshToken,
-            staff: _.omit(staff, ["password"])
+            staff: this.removeStaffPassword(staff)
         };
 
     }
@@ -398,6 +349,21 @@ class StaffService implements IStaffService {
             return
         }
         await this.prisma.staff.update({where: {id: payload?.id}, data: {logout: true}})
+    }
+
+    public async updateStaff(id: string, input: UpdateStaffInput): Promise<void> {
+        const updatedStaff = await this.prisma.staff.update({where: {id}, data: input})
+        if (updatedStaff === null){
+            throw new InvalidArgumentError("invalid staff id")
+        }
+    }
+
+    public async updateStaffPassword(id: string, input: UpdateStaffPasswordInput): Promise<void> {
+        const hashedPassword = await this.authService.hashPassword(input.password)
+        const updatedStaff = await this.prisma.staff.update({where: {id}, data: {password: hashedPassword}})
+        if(updatedStaff === null){
+            throw new InvalidArgumentError("invalid staff id")
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
-import { AuthStatus } from "../redux/auth-reducer";
+import { useAppSelector } from "../../redux/hooks";
+import { AuthStatus } from "../../redux/auth-reducer";
 
 export default function ProtectedRoute({
   children,

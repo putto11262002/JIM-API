@@ -22,12 +22,12 @@ class StaffRouter implements IAppRouter {
         this.staffController = staffController;
         this.authMiddleware = authMiddleware;
         this.router.post(
-            "/admin/staffs",
+            "/staffs",
             authMiddleware.gaurdStaff(StaffRole.ADMIN),
             this.staffController.createStaff.bind(this.staffController)
         );
         this.router.get(
-            "/admin/staffs",
+            "/staffs",
             authMiddleware.gaurdStaff(StaffRole.ADMIN),
             this.staffController.getStaffs.bind(this.staffController)
         );
@@ -67,6 +67,19 @@ class StaffRouter implements IAppRouter {
             ),
             this.staffController.logout.bind(this.staffController)
         );
+
+        this.router.put(
+            "/staffs/:id",
+            this.authMiddleware.gaurdStaff(StaffRole.ADMIN),
+            this.staffController.updateStaffById.bind(this.staffController)
+        );
+
+
+        this.router.put(
+            "/staffs/:id/password",
+            this.authMiddleware.gaurdStaff(StaffRole.ADMIN),
+            this.staffController.updateStaffPasswordById.bind(this.staffController)
+        )
     }
 
     public getRoutes(): Router.IMiddleware {

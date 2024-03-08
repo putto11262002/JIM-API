@@ -1,4 +1,4 @@
-import { AppConfig } from "./types/config";
+import { AppConfig } from "./config";
 import Koa from "koa";
 import type { ILogger } from "./utils/logger";
 import type { Server } from "http";
@@ -44,7 +44,7 @@ class App {
          */
 
         this.koaApp.use(cors({origin: "*"}))
-        this.koaApp.use(koaBody());
+        this.koaApp.use(koaBody({}));
 
         this.koaApp.use(ErrorMiddleware());
 

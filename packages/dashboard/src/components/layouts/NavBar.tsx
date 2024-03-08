@@ -31,7 +31,7 @@ export default function NavBar() {
     function renderMenuItems() {
       return menuItems.map((item) => {
         return (
-          <li key={item.path} className="text-sm text-slate-400 hover:text-slate-600">
+          <li key={item.path} className="text-slate-400 hover:text-slate-600">
             <NavLink
               to={item.path}
               className={({ isActive }) => (isActive ? "text-slate-700" : "")}
@@ -49,13 +49,13 @@ export default function NavBar() {
 
   return (
     <div className="w-screen border-b border-b-slate-200">
-    <div className="flex items-center max-w-[700px]  py-3 px-2 mx-auto">
+    <div className="flex items-center max-w-[700px]  py-4 px-2 mx-auto">
           <h1 className="grow-0 font-bold text-slate-900">J.I.M.</h1>
           <nav className="grow px-4 pl-6">
             <ul className="flex gap-6">{renderMenuItems()}</ul>
           </nav>
           <div className="flex gap-3 items-center">
-            <h2 className="text-sm">Hi {staff?.firstName}</h2>
+            <h2 className="">Hi <span className="font-bold">{staff?.firstName}</span></h2>
             <DropdownMenu>
                 <DropdownMenuTrigger><ChevronDown /></DropdownMenuTrigger>
                 <DropdownMenuContent>

@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  STAFF_ROOT
+  STAFF_ADMIN
+  STAFF_GENERAL
+}
+
 model Staff {
   id        String    @id @default(uuid())
   firstName String
@@ -21,35 +27,35 @@ model Staff {
 }
 
 enum StaffRole {
-  ADMIN
-  SCOUT
-  BOOKER
+  STAFF_ADMIN
+ STAFF_GENERAL
+  STAFF_ROOT
 }
 
 enum ModelApplicationStatus {
   PENDING
   ACCEPTED
-  REJECTED
+  ARCHIVED
 }
 
 model ModelApplicationExperience {
   id            String           @id @default(uuid())
   applicationId String
   application   ModelApplication @relation(fields: [applicationId], references: [id])
-  year          Int
+  year          String
   media         String
   country       String
   product       String
-  details       String
+  details       String?
 }
 
 model ModelApplicationImage {
-  id            String           @id @default(uuid())
+  fileId    String @id() 
   type          String
-  caption       String
+  caption       String?
   url           String
-  height        Int
-  width         Int
+  // height        Int
+  // width         Int
   application   ModelApplication @relation(fields: [applicationId], references: [id])
   applicationId String
   createdAt     DateTime         @default(now())
@@ -62,11 +68,11 @@ model ModelApplication {
   lastName      String
   phoneNumber   String
   email         String
-  lineId        String
-  weChat        String
-  facebook      String
-  instagram     String
-  whatsApp      String
+  lineId        String?
+  weChat        String?
+  facebook      String?
+  instagram     String?
+  whatsapp      String?
   dateOfBirth   DateTime
   gender        String
   nationality   String
@@ -78,7 +84,7 @@ model ModelApplication {
   country       String
   experiences   ModelApplicationExperience[]
   talents       String[]
-  aboutMe       String
+  aboutMe       String?
   height        String
   weight        String
   bust          String
@@ -95,11 +101,12 @@ model ModelApplication {
 
 model ModelImage {
   id        String   @id @default(uuid())
-  caption   String
+  caption   String?
   type      String
   url       String
-  height    Int
-  width     Int
+  fileId String
+  // height    Int
+  // width     Int
   model     Model    @relation(fields: [modelId], references: [id])
   modelId   String
   createdAt DateTime @default(now())
@@ -111,7 +118,7 @@ model ModelMeasurement {
   model              Model   @relation(fields: [modelId], references: [id])
   height             String
   weight             String
-  bust               String
+  bust               String?
   collar             String?
   aroundArmpit       String?
   aroundArmToWrist1  String?
@@ -124,7 +131,7 @@ model ModelMeasurement {
   chestHeight        String?
   chestWidth         String?
   waist              String?
-  hips               String
+  hips               String?
   shoulder           String?
   frontShoulder      String?
   frontLength        String?
@@ -134,19 +141,19 @@ model ModelMeasurement {
   braSize            String?
   suitDressSize      String?
   shoeSize           String?
-  hairColor          String
-  eyeColor           String
+  hairColor          String?
+  eyeColor           String?
 }
 
 model ModelExperience {
   id      String @id @default(uuid())
   modelId String
   model   Model  @relation(fields: [modelId], references: [id])
-  year    Int
+  year    String
   media   String
   country String
   product String
-  details String
+  details String?
 }
 
 model Model {
@@ -157,8 +164,8 @@ model Model {
   phoneNumber                  String
   email                        String
   lineId                       String?
-  whatsApp                     String?
-  weChat                       String?
+  whatsapp                     String?
+  wechat                       String?
   instagram                    String?
   facebook                     String?
   dateOfBirth                  DateTime
@@ -166,9 +173,9 @@ model Model {
   nationality                  String?
   ethnicity                    String?
   countryOfResidence           String?
-  spokenLanguage               String?
-  passportNo                   String?
-  idCardNo                     String?
+  spokenLanguages               String[]
+  passportNumber                  String?
+  idCardNumber                  String?
   taxId                        String?
   occupation                   String?
   highestLevelOfEducation      String?
@@ -189,7 +196,7 @@ model Model {
   emergencyContactPhoneNumber  String?
   emergencyContactRelationship String?
   images                       ModelImage[]
-  measurements                 ModelMeasurement?
+  measurement             ModelMeasurement?
   createdAt                    DateTime          @default(now())
   updatedAt                    DateTime          @updatedAt
 }
@@ -200,4 +207,15 @@ model Job {
 
 model Option {
   id String @id @default(uuid())
+}
+
+
+model FileMetaData {
+  id        String   @id @default(uuid())
+  path String
+  url String
+  mimeType String
+  size Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

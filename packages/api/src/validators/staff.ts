@@ -1,14 +1,25 @@
 import {Prisma} from "@prisma/client"
 import { z } from "zod";
+import { StaffRole } from "@jimmodel/shared";
 
 export const CreateStaffSchema = z.object({
-    firstName: z.string().min(2).max(255),
-    lastName: z.string().min(2).max(255),
-    email: z.string().email(),
-    username: z.string().min(2).max(50),
+    firstName: z.string().min(1).max(255),
+    lastName: z.string().min(1).max(255),
+    email: z.string().email("invalid email"),
+    username: z.string().min(6, "must contain at least 6 characters").max(50),
     password: z.string().min(8).max(50),
     role: z.enum(["ADMIN", "SCOUT", "BOOKER"]),
 });
+
+export const UpdateStaffSchema = z.object({
+    firstName: z.string().min(1).max(255),
+    lastName: z.string().min(1).max(255),
+    role: z.nativeEnum(StaffRole)
+})
+
+export const UpdateStaffPasswordSchema = z.object({
+    password: z.string().min(8).max(50)
+})
 
 export const StaffLoginSchema = z.object({
     usernameOrEmail: z.string().min(1, "usernameOrEmail is required"),
@@ -17,12 +28,24 @@ export const StaffLoginSchema = z.object({
 
 export const StaffQuerySchema = z.object({
     q: z.string().optional(),
-    roles: z.array(z.enum(["ADMIN", "SCOUT", "BOOKER"])).optional(),
+    roles: z.string().transform((val, ctx) => {
+        const rolesArr = val.split(",")
+        const roles: StaffRole[] = []
+        for (const role of rolesArr){
+            if (role in StaffRole) {
+                roles.push(role as StaffRole)
+            }else{
+                ctx.addIssue({code: z.ZodIssueCode.custom, path: ['roles'], message: `stuff role must be a comma-separated list of valid roles: ${Object.values(StaffRole).join(", ")}`})
+                return z.NEVER
+            }
+        }
+        return roles
+    }).optional(),
     sortBy: z
         .nativeEnum(Prisma.StaffScalarFieldEnum)
         .optional()
-        .default("username"),
-    sortOrder: z.enum(["asc", "desc"]).optional().default("asc"),
+        .default("updatedAt"),
+    sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
     pageSize: z
         .number()
         .or(z.string())
@@ -45,7 +68,7 @@ export const StaffQuerySchema = z.object({
         .or(z.string())
         .optional()
         .transform((val, ctx) => {
-            const defaultVal = 0;
+            const defaultVal = 1;
             if (typeof val === "undefined") return defaultVal;
 
             if (typeof val === "number") return val;

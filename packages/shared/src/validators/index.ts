@@ -1,1 +1,1 @@
-export * from "./staff"
+export {}

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { AppConfig } from "../types";
+import { AppConfig } from "../config";
 import { TYPES } from "../inversify.config";
 import type { CreateJwtPayload, JwtPayload } from "../types/jwt";
 import AuthenticationError from "../utils/errors/authentication.error";

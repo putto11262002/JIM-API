@@ -1,14 +1,16 @@
 import {
-    CreateStaffSchema,
-    StaffLoginSchema,
-    StaffQuerySchema,
-    type StaffResponseDTO,
-    type StaffLoginResponseDTO,
-    StaffRefreshTokenSchema,
     type ApiResponse,
-    type StaffRefreshTokenResponseDTO,
+    type StaffLoginResult,
+    type StaffWithoutPassword,
+    type StaffRefreshTokenResult,
 } from "@jimmodel/shared";
 import ValidationError from "../utils/errors/validation.error";
+import {    CreateStaffSchema,
+    StaffLoginSchema,
+    StaffQuerySchema,
+    StaffRefreshTokenSchema,
+    UpdateStaffPasswordSchema,
+    UpdateStaffSchema,} from "../validators/staff"
 
 import { type IStaffService } from "../services/staff.service";
 import { inject, injectable } from "inversify";
@@ -16,8 +18,8 @@ import { TYPES } from "../inversify.config";
 import type Router from "koa-router";
 import NotFoundError from "../utils/errors/not-found.error";
 import type { IAppRouterContext } from "../types/app";
-import { mapStaffToResponse } from "../utils/mappers/staff";
 import type { PaginatedData } from "../types/paginated-data";
+import { InvalidArgumentError } from "../utils/errors/invalid-argument.error";
 export interface IStaffController {
     createStaff: Router.IMiddleware;
     login: Router.IMiddleware;
@@ -26,6 +28,8 @@ export interface IStaffController {
     getMe: Router.IMiddleware;
     refreshToken: Router.IMiddleware;
     logout: Router.IMiddleware;
+    updateStaffById: Router.IMiddleware;
+    updateStaffPasswordById: Router.IMiddleware
 }
 @injectable()
 class StaffController implements IStaffController {
@@ -65,14 +69,9 @@ class StaffController implements IStaffController {
             password
         );
 
-        const staffLoginResponse: StaffLoginResponseDTO = {
-            accessToken: loginResult.accessToken,
-            refreshToken: loginResult.refreshToken,
-            staff: mapStaffToResponse(loginResult.staff),
-        };
-        const response: ApiResponse<StaffLoginResponseDTO> = {
+        const response: ApiResponse<StaffLoginResult> = {
             message: "Login successful",
-            data: staffLoginResponse,
+            data: loginResult,
         };
         ctx.body = response;
     }
@@ -84,10 +83,8 @@ class StaffController implements IStaffController {
             throw new NotFoundError("Staff does not exist");
         }
 
-        const staffResponse: StaffResponseDTO = mapStaffToResponse(staff);
-
-        const response: ApiResponse<StaffResponseDTO> = {
-            data: staffResponse,
+        const response: ApiResponse<StaffWithoutPassword> = {
+            data: staff,
         };
 
         ctx.body = response;
@@ -112,7 +109,7 @@ class StaffController implements IStaffController {
             pageSize,
         });
 
-        const response: ApiResponse<PaginatedData<StaffResponseDTO>> = {
+        const response: ApiResponse<PaginatedData<StaffWithoutPassword>> = {
             data: paginatedStaffs,
         };
 
@@ -125,13 +122,13 @@ class StaffController implements IStaffController {
         const staff = await this.staffService.getStaffById(auth.id);
 
         if (staff === null) {
-            throw Error("Id in auth does not match any staff");
+            throw new InvalidArgumentError(
+                "Id in auth does not match any staff"
+            );
         }
 
-        const staffResponse: StaffResponseDTO = mapStaffToResponse(staff);
-
-        const response: ApiResponse<StaffResponseDTO> = {
-            data: staffResponse,
+        const response: ApiResponse<StaffWithoutPassword> = {
+            data: staff,
         };
 
         ctx.body = response;
@@ -151,12 +148,8 @@ class StaffController implements IStaffController {
 
         const result = await this.staffService.refresh(token);
 
-        const response: ApiResponse<StaffRefreshTokenResponseDTO> = {
-            data: {
-                staff: mapStaffToResponse(result.staff),
-                refreshToken: result.refreshToken,
-                accessToken: result.accessToken,
-            },
+        const response: ApiResponse<StaffRefreshTokenResult> = {
+            data: result,
         };
 
         ctx.body = response;
@@ -167,6 +160,28 @@ class StaffController implements IStaffController {
         await this.staffService.logout(auth.id);
         ctx.status = 204;
     }
+
+    public async updateStaffById(ctx: IAppRouterContext): Promise<void> {
+        const validation = UpdateStaffSchema.safeParse(ctx.request.body)
+        if (!validation.success){
+            throw new ValidationError("invalid update staff payload", validation.error.formErrors.fieldErrors)
+        }
+        const {id} = ctx.params
+        await this.staffService.updateStaff(id, validation.data)
+        ctx.status = 204
+    }
+
+    public async updateStaffPasswordById(ctx: IAppRouterContext): Promise<void> {
+        const validation = UpdateStaffPasswordSchema.safeParse(ctx.request.body)
+        if (!validation.success){
+            throw new ValidationError("invalid update staff password payload", validation.error.formErrors.fieldErrors)
+        }
+        const {id} = ctx.params
+        await this.staffService.updateStaffPassword(id, validation.data)
+        ctx.status = 204
+    }
+
+
 }
 
 export default StaffController;

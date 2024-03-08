@@ -13,8 +13,9 @@ export type ModelApplication = _ModelApplication & {
 
 export type CreateModelApplicationInput = Omit<
     Prisma.ModelApplicationCreateInput,
-    "experiences" | "images"
+    "experiences" | "images" | "createdAt" | "updatedAt" | "status" | "talents"
 > & {
+    talents?: string[]
     experiences?: Prisma.ModelApplicationExperienceCreateWithoutApplicationInput[];
     images?: Prisma.ModelApplicationImageCreateWithoutApplicationInput[];
 };
