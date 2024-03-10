@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const PaginatedQuerySchema = z.object({
@@ -35,4 +36,8 @@ export const PaginatedQuerySchema = z.object({
         }
         return parsed;
     }),
+    sortBy: z
+        .nativeEnum(Prisma.StaffScalarFieldEnum)
+        .optional(),
+    sortOrder: z.enum(["asc", "desc"]).optional(),
 })

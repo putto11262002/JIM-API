@@ -22,6 +22,7 @@ model Staff {
   password  String
   role      StaffRole
   logout    Boolean   @default(true)
+  bookings  Booking[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -197,6 +198,7 @@ model Model {
   emergencyContactRelationship String?
   images                       ModelImage[]
   measurement             ModelMeasurement?
+  bookings                     Booking[]
   createdAt                    DateTime          @default(now())
   updatedAt                    DateTime          @updatedAt
 }
@@ -216,6 +218,42 @@ model FileMetaData {
   url String
   mimeType String
   size Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ARCHIVED
+  CANCELED
+}
+
+model Booking {
+  id String @id @default(uuid())
+  title String
+  client String
+  clientAddress String?
+  personIncharge String?
+  mediaReleased String?
+  periodReleased String?
+  territoriesReleased String?
+  shootingStartDate DateTime?
+  shootingEndDate DateTime
+  fittingStartDate DateTime?
+  fittingEndDate DateTime?
+  finalMeetingDate DateTime?
+  workingHour String?
+  venueOfShoot String?
+  feeAsAgreed String?
+  overtimePerHour String?
+  termsOfPayment String?
+  cancellationFee String?
+  contractDetails String?
+  status BookingStatus
+  bookedBy Staff  @relation(fields: [bookedById], references: [id])
+  bookedById String
+  models Model[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

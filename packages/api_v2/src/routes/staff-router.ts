@@ -1,7 +1,7 @@
 import express from "express";
 import staffController from "../controllers/staff-controller";
 import { staffAuthMiddleware } from "../middlewares/staff-auth-middleware";
-import { StaffRole } from "../types/staff";
+import { StaffRole } from "../types/staff-type";
 
 const staffRouter = express.Router();
 

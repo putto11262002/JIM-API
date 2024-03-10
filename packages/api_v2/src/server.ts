@@ -5,7 +5,7 @@ import router from "./routes"
 import { errorHandler } from "./middlewares/error-handler";
 import staffService from "./services/staff-service";
 import { CreateStaffInput } from "@jimmodel/shared";
-import { StaffRole } from "./types/staff";
+import { StaffRole } from "./types/staff-type";
 import ConstraintViolationError from "./lib/errors/constraint-violation-error";
 import ApiError from "./lib/errors/api-error";
 

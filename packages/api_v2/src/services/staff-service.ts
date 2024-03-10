@@ -20,7 +20,7 @@ import {
   StaffUpdateInput,
   StaffUpdatePasswordInput,
   StaffGetQuery,
-} from "../types/staff";
+} from "../types/staff-type";
 import AuthenticationError from "../lib/errors/authentication-error";
 import { JWTPayload } from "../types/jwt";
 import NotFoundError from "../lib/errors/not-found-error";
