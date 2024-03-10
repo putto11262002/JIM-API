@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StaffRole, StaffWithoutPassword, UpdateStaffInput } from "@jimmodel/shared";
+import { StaffRole,  StaffWithoutSecrets, StaffUpdateInput } from "@jimmodel/shared";
 import {
   Select,
   SelectTrigger,
@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../../ui/select";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../ui/button";
@@ -21,10 +21,13 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { useToast } from "../../ui/use-toast";
+import { useUpdateStaff } from "../../../hooks/staff/useUpdateStaff";
+
+import { Alert, AlertDescription } from "../../ui/alert";
 
 type UpdateStaffProfileFormProps = {
-  staff: StaffWithoutPassword;
-  api: (payload: UpdateStaffInput) => Promise<void>
+  staff: StaffWithoutSecrets;
+  updateFn: (payload: StaffUpdateInput) => Promise<void>
 };
 
 const UpdateStaffProfileFormSchema = z.object({
@@ -35,32 +38,37 @@ const UpdateStaffProfileFormSchema = z.object({
 
 export default function UpdateStaffProfileForm({
   staff,
-  api
+  updateFn
 }: UpdateStaffProfileFormProps) {
   const form = useForm<z.infer<typeof UpdateStaffProfileFormSchema>>({
     resolver: zodResolver(UpdateStaffProfileFormSchema),
     defaultValues: staff,
   });
-  const queryClient = useQueryClient()
+
   const {toast} = useToast()
 
-  const { mutate: handleUpdateStaff, isPending } = useMutation({
-    mutationFn: async (
-      payload: z.infer<typeof UpdateStaffProfileFormSchema>
-    ) => {
-       await api(payload)
-    },
+  const { update, isPending, error } = useUpdateStaff({
+    updateFn,
     onSuccess: () => {
         toast({title: "Successfully updated staff profile"})
-        queryClient.invalidateQueries({queryKey: ["staffs"]})
-    }
+       
+    },
   });
+
+  
   return (
     <Form {...form}>
       <form
         className="grid grid-cols-2 gap-2"
-        onSubmit={form.handleSubmit((data) => handleUpdateStaff(data))}
+        onSubmit={form.handleSubmit((data) => update(data))}
       >
+        <div className="col-span-2">
+        {error && (
+          <Alert variant="destructive" className="my-3">
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        )}
+        </div>
         <FormField
           control={form.control}
           name="firstName"

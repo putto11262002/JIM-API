@@ -9,13 +9,12 @@ import {
 } from "../../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateStaffPasswordInput } from "@jimmodel/shared";
+import { StaffUpdatePasswordInput } from "@jimmodel/shared";
 import { Input } from "../../ui/input";
-import { useMutation } from "@tanstack/react-query";
 import { Button } from "../../ui/button";
 import { useToast } from "../../ui/use-toast";
-import { errorParser } from "../../../lib/error-parser";
-import { useState } from "react";
+import { useUpdateStaffPassword } from "../../../hooks/staff/useUpdateStaffPassword";
+import { Alert, AlertDescription } from "../../ui/alert";
 
 const UpdateStaffPasswordFormSchema = z
   .object({
@@ -28,51 +27,52 @@ const UpdateStaffPasswordFormSchema = z
   });
 
 type UpdateStaffPasswordFormProps = {
-  api: (payload: UpdateStaffPasswordInput) => void;
+  updateFn: (payload: StaffUpdatePasswordInput) => Promise<void>;
 };
 
 export default function UpdateStaffPasswordForm({
-  api,
+  updateFn,
 }: UpdateStaffPasswordFormProps) {
   const form = useForm<z.infer<typeof UpdateStaffPasswordFormSchema>>({
     resolver: zodResolver(UpdateStaffPasswordFormSchema),
   });
-  const [errorMesssage, setErrorMessage] = useState<string | null>(null)
+  
   const {toast} = useToast()
 
-  const {mutate: handleUpdatePassword, isPending} = useMutation({
-    mutationFn: async (
-      formData: z.infer<typeof UpdateStaffPasswordFormSchema>
-    ) => api({ password: formData.password }),
+  const {update, isPending, error} = useUpdateStaffPassword({
+    updateFn: updateFn,
     onSuccess: () => {
       toast({title: "Successfully updated staff password"})
-      form.reset()
+      form.reset({password: "", confirmPassword: ""})
     },
-    onError: (err) => {
-      console.log(err)
-      const appError = errorParser(err)
-      setErrorMessage(appError.message)
-    }
   });
 
   return (
     <Form {...form}>
       <form
         className="space-y-2"
-        onSubmit={form.handleSubmit((data) => handleUpdatePassword(data))}
+        onSubmit={form.handleSubmit((data) => update({newPassword: data.password}))}
       >
+          <div className="col-span-2">
+        {error && (
+          <Alert variant="destructive" className="my-3">
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
+        )}
+        </div>
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+          
+             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
-          )}
+  )}
         />
 
         <FormField

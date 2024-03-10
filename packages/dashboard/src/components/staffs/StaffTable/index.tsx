@@ -1,11 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { StaffWithoutPassword } from "@jimmodel/shared";
+import { StaffWithoutSecrets } from "@jimmodel/shared";
 import { DataTable } from "../../shared/DataTable";
 import { Button } from "../../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import UpdateStaffDialog from "../UpdateStaffDialog";
+import { AppError } from "../../../types/app-error";
 
-const columns: ColumnDef<StaffWithoutPassword>[] = [
+const columns: ColumnDef<StaffWithoutSecrets>[] = [
   {
     accessorKey: "firstName",
     header: "First Name",
@@ -39,20 +40,23 @@ const columns: ColumnDef<StaffWithoutPassword>[] = [
 ];
 
 type StaffTableProps = {
-  data: StaffWithoutPassword[];
+  data: StaffWithoutSecrets[];
   pagination: { page: number; pageSize: number; totalPage: number };
   onPageChange: (page: number) => void;
   isLoading?: boolean
+  error: AppError | null
 };
 
 export default function StaffTable({
   data,
   pagination,
   onPageChange,
-  isLoading = false
+  isLoading = false,
+  error
 }: StaffTableProps) {
   return (
     <DataTable
+    error={error}
     isLoading={isLoading}
       pagination={pagination}
       columns={columns}

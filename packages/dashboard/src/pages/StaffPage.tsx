@@ -1,46 +1,24 @@
 import { Input } from "../components/ui/input";
 // import { Button } from "../components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import axiosClient from "../lib/axios";
+
 import {
-  ApiResponse,
-  PaginatedData,
-  StaffWithoutPassword,
+  StaffGetQuery,
 } from "@jimmodel/shared";
 import AddStaffDialog from "../components/staffs/AddStaffDialog";
 import { useState } from "react";
 import StaffTable from "../components/staffs/StaffTable";
-import { GenericAbortSignal } from "axios";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { StaffRole } from "@prisma/client";
-import { StaffQuerySchema } from "../schemas/staff";
-import { z } from "zod";
+import { useGetStaffs } from "../hooks/staff/useGetStaffs";
 const pageSize = 10;
 
 
 export default function StaffPage() {
   const [page, setPage] = useState<number>(1);
-  const [query, setQuery] = useState<z.infer<typeof StaffQuerySchema>>({});
+  const [query, setQuery] = useState<StaffGetQuery>({});
 
 
-  const { data, isPending } = useQuery({
-    queryKey: ["staffs", page, query],
-    queryFn: async ({ signal }: { signal: GenericAbortSignal }) => {
-      const val = StaffQuerySchema.safeParse({page, pageSize, ...query})
-      if (!val.success){
-        console.error(val.error)
-        throw new Error("failed to validate queries")
-      }
-      
-      const res = await axiosClient.get("/staffs", {
-        params: val.data,
-        signal,
-      });
-      const data = res.data as ApiResponse<PaginatedData<StaffWithoutPassword>>;
-      return data.data;
-    },
-    
-  });
+  const { data, isPending, error } = useGetStaffs({ query, page })
 
   function handlePageChange(_page: number) {
     if (page < 1 || page > (data?.totalPage ?? 0)) return;
@@ -49,23 +27,23 @@ export default function StaffPage() {
 
   return (
     <>
-      <div className="flex justify-between py-4">
-        <div className="flex gap-3">
+      <div className="flex justify-between py-4 gap-3">
+        <div className="flex gap-3 grow">
           <Input
             onChange={(e) => {
               setQuery((prevQuery) => ({ ...prevQuery, q: e.target.value }));
               setPage(1);
             }}
             placeholder="Name, Email..."
-            className=""
+            className="w-2/5"
           />
 
           <Select onValueChange={(value) => {
-            setQuery(prevQuery => ({...prevQuery, roles: value}))
+            setQuery(prevQuery => ({ ...prevQuery, roles: value === "*" ? undefined : [value as StaffRole] }))
             setPage(1)
-            }}>
-            <SelectTrigger defaultValue={"*"}>
-              <SelectValue  placeholder="Roles"/>
+          }}>
+            <SelectTrigger className="w-1/5" defaultValue={"*"}>
+              <SelectValue placeholder="Roles" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="*">All</SelectItem>
@@ -74,10 +52,6 @@ export default function StaffPage() {
               ))}
             </SelectContent>
           </Select>
-          {/* <Button   className="bg-white text-current hover:bg-white border">
-            Advance Filter
-          </Button> */}
-          {/* <Button onClick={() => console.log(form.getValues())}>Search</Button> */}
         </div>
 
         <div>
@@ -86,6 +60,7 @@ export default function StaffPage() {
       </div>
       <div>
         <StaffTable
+          error={error}
           isLoading={isPending}
           pagination={{ page, pageSize, totalPage: data?.totalPage ?? 0 }}
           data={data?.data || []}

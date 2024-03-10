@@ -1,6 +1,6 @@
 import { Prisma, Booking as _Booking, BookingStatus as _BookingStatus } from "@prisma/client";
 import { z } from "zod";
-import { BookingCreateSchema, BookingGetQuerySchema, BookingUpdateSchema } from "../schemas/booking-schema";
+import { BookingCreateSchema, BookingGetQuerySchema, BookingUpdateSchema } from "@jimmodel/shared/src/schemas/booking-schema";
 
 export type Booking = _Booking;
 

@@ -5,7 +5,7 @@ import AuthenticationError from "../lib/errors/authentication-error";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 import AuthorizationError from "../lib/errors/authorization-error";
-import { BaseAuthResource, JWTPayload } from "../types/jwt";
+import { BaseAuthResource, JWTPayload } from "@jimmodel/shared";
 import NotFoundError from "../lib/errors/not-found-error";
 
 /**
@@ -73,7 +73,7 @@ export function authMiddleware<T extends BaseAuthResource>(
       return next();
     }
 
-    throw new AuthorizationError("Unauthorized")
+    throw new AuthorizationError("Operation not allowed")
   }catch(err){
     next(err)
   }

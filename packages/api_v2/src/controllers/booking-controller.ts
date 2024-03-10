@@ -1,6 +1,6 @@
 import express from "express"
 import { validate } from "../lib/validation";
-import { BookingAddModelSchema, BookingCreateSchema, BookingGetQuerySchema, BookingUpdateSchema } from "../schemas/booking-schema";
+import { BookingAddModelSchema, BookingCreateSchema, BookingGetQuerySchema, BookingUpdateSchema } from "@jimmodel/shared/src/schemas/booking-schema";
 import bookingService from "../services/booking-service";
 interface IBookingController {
     create: express.Handler;

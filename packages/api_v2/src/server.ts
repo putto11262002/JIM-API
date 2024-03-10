@@ -4,10 +4,10 @@ import http from "http";
 import router from "./routes"
 import { errorHandler } from "./middlewares/error-handler";
 import staffService from "./services/staff-service";
-import { CreateStaffInput } from "@jimmodel/shared";
-import { StaffRole } from "./types/staff-type";
+import { StaffCreateInput } from "@jimmodel/shared";
+import { StaffRole } from "@jimmodel/shared/src/types/staff-type";
 import ConstraintViolationError from "./lib/errors/constraint-violation-error";
-import ApiError from "./lib/errors/api-error";
+import cors from "cors"
 
 // Runs when the server starts listening
 function onServerListening() {
@@ -20,10 +20,10 @@ async function beforeServerStart(...fns: (() => Promise<void>)[]){
 
 async function createRootUser(){
  try{
-  const rootStaff: CreateStaffInput = {
+  const rootStaff: StaffCreateInput = {
     email: "root@example.com",
     password: "password",
-    role: StaffRole.STAFF_ROOT,
+    role: StaffRole.ROOT,
     username: "root",
     firstName: "Root",
     lastName: "User"
@@ -39,6 +39,8 @@ async function createRootUser(){
 
 async function startServer() {
   const app = express();
+
+  app.use(cors({origin: config.ALLOWED_ORIGINS}))
 
   app.use(express.json())
 

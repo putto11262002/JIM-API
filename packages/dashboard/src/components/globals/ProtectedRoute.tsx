@@ -8,18 +8,18 @@ export default function ProtectedRoute({
 }: {
   children?: React.ReactNode;
 }) {
-  const { status, isLogin } = useAppSelector((state) => state.auth);
+  const { status } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
  
 
   useEffect(() => {
-    if (status !== AuthStatus.LOADING && !isLogin) {
+    if (status === AuthStatus.UNAUTHENTICATED) {
       navigate("/login");
     }
-  }, [status, isLogin, navigate]);
+  }, [status, navigate]);
 
 
-  if (status === AuthStatus.LOADING) {
+  if (status === AuthStatus.IDLE) {
     return <div>Loading...</div>;
   }
 

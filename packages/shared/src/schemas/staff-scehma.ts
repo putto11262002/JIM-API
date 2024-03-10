@@ -32,8 +32,8 @@ export const StaffUpdateSchema = z.object({
 
 export const StaffGetQuerySchema = z.object({
     q: z.string().optional(),
-    roles: z.string().optional().transform((val, ctx) => {
-        if (!val) return []
+    roles: z.array(z.nativeEnum(StaffRole)).or(z.string().transform((val, ctx) => {
+        if (!val) return undefined
         const rolesArr = val.split(",")
         const roles: StaffRole[] = []
         for (const role of rolesArr){
@@ -45,12 +45,11 @@ export const StaffGetQuerySchema = z.object({
             }
         }
         return roles
-    }),
+    })).optional(),
     sortBy: z
         .nativeEnum(Prisma.StaffScalarFieldEnum)
-        .optional()
-        .default("updatedAt"),
-    sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+        .optional(),
+    sortOrder: z.enum(["asc", "desc"]).optional(),
     page: PaginatedQuerySchema.shape.page,
     pageSize: PaginatedQuerySchema.shape.pageSize,
    

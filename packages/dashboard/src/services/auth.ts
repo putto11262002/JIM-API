@@ -1,67 +1,103 @@
 import {
-  StaffLoginDTO,
-  ApiResponse,
+  PaginatedData,
+  StaffCreateInput,
+  StaffGetQuery,
+  StaffLoginInput,
   StaffLoginResult,
-  StaffRefreshTokenResult,
+  StaffUpdateInput,
+  StaffWithoutSecrets,
 } from "@jimmodel/shared";
-import axios from "axios";
-import axiosClient from "../lib/axios";
 
-const axiosClientWithToken = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-});
+import axiosClient, { axiosClientWithToken } from "../lib/axios";
+import { GenericAbortSignal } from "axios";
 
-export class StaffAuthService {
-  public static async login(payload: StaffLoginDTO) {
-    const response = await axiosClientWithToken.post("/staffs/login", payload);
-    const loginResult = response.data as ApiResponse<StaffLoginResult>;
-    localStorage.setItem("refreshToken", loginResult.data.refreshToken);
-    localStorage.setItem("accessToken", loginResult.data.accessToken);
-
-    return loginResult;
-  }
-
-  public static async refreshToken() {
-    const token = localStorage.getItem("refreshToken");
-    const res = await axiosClientWithToken.post("/staffs/refresh", { token });
-    const result = res.data as ApiResponse<StaffRefreshTokenResult>;
-
-    localStorage.setItem("refreshToken", result.data.refreshToken);
-    localStorage.setItem("accessToken", result.data.accessToken);
-
-    return result;
-  }
-
-
-  public static setAccessToken(token: string) { 
-    return localStorage.setItem("accessToken", token);
-  }
-
-  public static getAccessToken(): string | null {
-    return localStorage.getItem("accessToken");
-  }
-
-  public static setRefreshToken(token: string) {
-    return localStorage.setItem("refreshToken", token);
-  }
-
-  public static getRefreshToken(): string | null {
-    return localStorage.getItem("refreshToken");
-  }
-
-  public static clearAccessToken(){
-    localStorage.removeItem("accessToken")
-  }
-
-  public static clearRefreshToken(){
-    localStorage.removeItem("refreshToken")
-  }
-
-  public static async logout() {
-    await axiosClient.post("staffs/logout");
-    this.clearAccessToken()
-    this.clearRefreshToken()
-    
-  }
-
+async function create(payload: StaffCreateInput) {
+  const response = await axiosClient.post("/staffs", payload);
+  return response.data as StaffWithoutSecrets;
 }
+
+
+async function login(payload: StaffLoginInput) {
+  const response = await axiosClientWithToken.post("/staffs/login", payload);
+  const loginResult = response.data as StaffLoginResult;
+  setRefreshToken(loginResult.refreshToken);
+  setAccessToken(loginResult.accessToken);
+
+  return loginResult;
+}
+
+async function refreshToken() {
+  const token = localStorage.getItem("refreshToken");
+
+  if (token === undefined || token === null) {
+    throw new Error("No refresh token");
+  }
+  const res = await axiosClientWithToken.post("/staffs/refresh-token", { token });
+  const result = res.data as StaffLoginResult;
+
+  setRefreshToken(result.refreshToken);
+  setAccessToken(result.accessToken);
+
+  return result;
+}
+
+async function logout() {
+  await axiosClient.post("staffs/logout");
+  clearAccessToken()
+  clearRefreshToken()
+  
+}
+
+async function getAll(query: StaffGetQuery, signal: GenericAbortSignal){
+  const res = await axiosClient.get("/staffs", {
+    params: {...query, roles: query.roles?.join(",")},
+    signal
+  });
+  return res.data as PaginatedData<StaffWithoutSecrets>
+}
+
+
+async function updateById(id: string, payload: StaffUpdateInput) {
+  await axiosClient.put(`/staffs/${id}`, payload);
+}
+
+function setAccessToken(token: string) { 
+  return localStorage.setItem("accessToken", token);
+}
+
+function getAccessToken(): string | null {
+  return localStorage.getItem("accessToken");
+}
+
+function setRefreshToken(token: string) {
+  return localStorage.setItem("refreshToken", token);
+}
+
+function getRefreshToken(): string | null {
+  return localStorage.getItem("refreshToken");
+}
+
+function clearAccessToken(){
+  localStorage.removeItem("accessToken")
+}
+
+function clearRefreshToken(){
+  localStorage.removeItem("refreshToken")
+}
+
+
+const staffService = {
+  login,
+  refreshToken,
+  logout,
+  getAccessToken,
+  getRefreshToken,
+  create,
+  updateById,
+  clearAccessToken,
+  clearRefreshToken,
+  getAll
+};
+
+
+export default staffService;

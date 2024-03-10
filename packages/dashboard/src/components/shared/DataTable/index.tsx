@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import { Button } from "../../ui/button";
+import { AppError } from "../../../types/app-error";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
@@ -24,6 +25,7 @@ type DataTableProps<TData, TValue> = {
   };
   onPageChange: (page: number) => void;
   isLoading?: boolean
+  error: AppError | null
 };
 
 export function DataTable<TData, TValue>({
@@ -31,7 +33,8 @@ export function DataTable<TData, TValue>({
   data,
   pagination,
   onPageChange,
-  isLoading = false
+  isLoading = false,
+  error
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -55,6 +58,8 @@ export function DataTable<TData, TValue>({
     if (!table.getCanPreviousPage()) return;
     onPageChange(table.getState().pagination.pageIndex);
   }
+
+  console.log(error)
 
   return (
     <>
@@ -86,7 +91,12 @@ export function DataTable<TData, TValue>({
                 >
                   Loading...
                 </TableCell>
-              </TableRow> : table.getRowModel().rows?.length ? (
+              </TableRow> : error !== null ?   <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {error.message}
+                </TableCell> :   table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { refreshTokenThunk } from "../../redux/thunk/auth-thunk";
-import { useAppDispatch } from "../../redux/hooks";
+import { useRefreshToken } from "../../hooks/staff/useRefreshToken";
 
 
 export default function InitApp({children}: {children?: React.ReactNode}) {
-    const dispatch = useAppDispatch()
+    const {refreshToken} = useRefreshToken()
     
     useEffect(() => {
-        dispatch(refreshTokenThunk())
+        refreshToken()
       }, []);
   return (
     <>

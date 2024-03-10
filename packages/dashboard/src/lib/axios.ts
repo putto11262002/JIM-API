@@ -1,7 +1,12 @@
 import axios from "axios";
-import { StaffAuthService } from "../services/auth";
-import { store } from "../redux/store";
-import { logoutSuccess } from "../redux/auth-reducer";
+// import { store } from "../redux/store";
+import staffService from "../services/auth";
+// import { unauthenticate } from "../redux/auth-reducer";
+
+
+export const axiosClientWithToken = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+});
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -12,6 +17,8 @@ axiosClient.interceptors.request.use((config) => {
   config.headers.Authorization = token ? `Bearer ${token}` : "";
   return config;
 })
+
+
 
 axiosClient.interceptors.response.use(
     (response) => {
@@ -26,10 +33,10 @@ axiosClient.interceptors.response.use(
   
         try {
           // Attempt to refresh the token
-          const result = await StaffAuthService.refreshToken();
+          const result = await staffService.refreshToken();
   
           // Update the headers with the new token
-          axiosClient.defaults.headers.common.Authorization = `Bearer ${result.data.accessToken}`;
+          axiosClient.defaults.headers.common.Authorization = `Bearer ${result.accessToken}`;
   
           // Retry the original request with the new token
           return axiosClient(originalRequest);
@@ -37,9 +44,7 @@ axiosClient.interceptors.response.use(
           // Handle the case when the refresh token request fails
           console.error('Error refreshing token:', refreshError);
   
-          // Optionally, redirect the user to the login page or handle the error in another way
-          // For now, just reject the promise with the original error
-          store.dispatch(logoutSuccess())
+          // store.dispatch(unauthenticate())
           return Promise.reject(error);
         }
       }
@@ -47,7 +52,7 @@ axiosClient.interceptors.response.use(
       // If the error is not due to an expired token, or the refresh token fails, reject the promise
       return Promise.reject(error);
     }
-  );
+);
   
 
 export default axiosClient;

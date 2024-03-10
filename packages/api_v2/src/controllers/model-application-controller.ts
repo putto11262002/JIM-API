@@ -2,7 +2,7 @@ import express from "express";
 import {
   CreateModelApplicationSchema,
   ModelApplicationQuerySchema,
-} from "../schemas/model-application-schema";
+} from "@jimmodel/shared";
 import { prisma } from "../prisma";
 import localFileService from "../services/local-file-service";
 import {

@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import config from "../config";
 import jwt, { JwtPayload } from "jsonwebtoken"
-import { JWTPayload } from "../types/jwt";
+import { JWTPayload } from "@jimmodel/shared/src/types/jwt";
 import AuthenticationError from "./errors/authentication-error";
 
 /**

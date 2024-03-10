@@ -6,7 +6,7 @@ import {
   StaffRefreshTokenSchema,
   StaffUpdatePasswordSchema,
   StaffUpdateSchema,
-} from "../schemas/staff-scehma";
+} from "@jimmodel/shared/src/schemas/staff-scehma";
 import { validate } from "../lib/validation";
 import staffService from "../services/staff-service";
 export interface IStaffController {
@@ -100,6 +100,7 @@ async function getAll(
 ) {
   try {
     const query = validate(req.query, StaffGetQuerySchema);
+    console.log(query)
     const paginatedStaff = await staffService.getAll(query);
     res.json(paginatedStaff);
   } catch (err) {

@@ -1,6 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { z } from "zod";
-import { StaffCreateSchema } from "../schemas/staff-scehma";
 import { prisma } from "../prisma";
 import {
   compare,
@@ -9,7 +7,6 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../lib/auth";
-import ConstraintViolationError from "../lib/errors/constraint-violation-error";
 import {
   StaffCreateInput,
   Staff,
@@ -20,12 +17,14 @@ import {
   StaffUpdateInput,
   StaffUpdatePasswordInput,
   StaffGetQuery,
-} from "../types/staff-type";
+  JWTPayload,
+  PaginatedData
+  
+} from "@jimmodel/shared";
+import ConstraintViolationError from "../lib/errors/constraint-violation-error";
 import AuthenticationError from "../lib/errors/authentication-error";
-import { JWTPayload } from "../types/jwt";
-import NotFoundError from "../lib/errors/not-found-error";
-import { PaginatedData } from "@jimmodel/shared";
 import { buildPaginatedData } from "../lib/paginated-data";
+import NotFoundError from "../lib/errors/not-found-error";
 
 export interface IStaffService {
   create(staff: StaffCreateInput): Promise<StaffWithoutSecrets>;
@@ -83,10 +82,10 @@ async function create(
     select: selectWithoutSecrets,
   });
 
-  if (inputStaff.role === StaffRole.STAFF_ROOT) {
+  if (inputStaff.role === StaffRole.ROOT) {
     const rootStaff = await prisma.staff.findFirst({
       where: {
-        role: StaffRole.STAFF_ROOT,
+        role: StaffRole.ROOT,
       },
     });
     if (rootStaff !== null) {
@@ -104,7 +103,7 @@ async function create(
   const hashedPassword = await hash(inputStaff.password);
   inputStaff.password = hashedPassword;
   const createdStaff = prisma.staff.create({
-    data: { ...inputStaff, role: inputStaff.role ?? StaffRole.STAFF_GENERAL },
+    data: { ...inputStaff, role: inputStaff.role ?? StaffRole.GENERAL },
     select: selectWithoutSecrets,
   });
 
@@ -193,10 +192,14 @@ async function updateById(
   }
 
   if (
-    staff.role === StaffRole.STAFF_ROOT &&
-    staffInput.role !== StaffRole.STAFF_ROOT && staffInput.role !== undefined
+    staff.role === StaffRole.ROOT &&
+    staffInput.role !== StaffRole.ROOT && staffInput.role !== undefined
   ) {
     throw new ConstraintViolationError("Cannot change root staff role");
+  }
+
+  if (staff.role !== StaffRole.ROOT && staffInput.role === StaffRole.ROOT) {
+    throw new ConstraintViolationError("Cannot change staff role to root");
   }
 
   const updatedStaff = await prisma.staff.update({
@@ -251,27 +254,31 @@ async function getAll(
       {
         firstName: {
           startsWith: query.q,
+          mode: "insensitive",
         },
       },
       {
         lastName: {
-          contains: query.q,
+          startsWith: query.q,
+          mode: "insensitive",
         },
       },
       {
         username: {
           startsWith: query.q,
+          mode: "insensitive",
         },
       },
       {
         email: {
           startsWith: query.q,
+          mode: "insensitive",
         },
       },
     ];
   }
 
-  if (query.roles.length > 0) {
+  if (query.roles && query.roles.length > 0) {
     where.role = {
       in: query.roles,
     };

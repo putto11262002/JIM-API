@@ -13,6 +13,7 @@ export const ConfigSchema = z.object({
     ACCESS_TOKEN_EXPIRATION: z.string().default("15m"),
     REFRESH_TOKEN_EXPIRATION: z.string().default("7d"),
     SALT_ROUNDS: z.number().or(z.string().transform((v) => parseInt(v, 10))).default(10),
+    ALLOWED_ORIGINS: z.array(z.string()).or(z.string().transform((v) => v.split(","))),
 })
 
 export type Config = z.infer<typeof ConfigSchema>
@@ -27,6 +28,8 @@ function ParseConfig(): Config {
         JWT_ROUNDS: process.env.JWT_ROUNDS,
         JWT_SECRET: process.env.JWT_SECRET,
         SALT_ROUNDS: process.env.SALT_ROUNDS,
+        ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
+        
     })
 
     if (!validation.success){

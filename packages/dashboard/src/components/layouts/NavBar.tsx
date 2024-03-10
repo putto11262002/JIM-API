@@ -1,8 +1,8 @@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { logoutThunk } from "../../redux/thunk/auth-thunk";
+import { useAppSelector } from "../../redux/hooks";
+import { useLogout } from "../../hooks/staff/useLogout";
 
 
 const menuItems = [
@@ -26,7 +26,7 @@ const menuItems = [
 
 export default function NavBar() {
     const { staff } = useAppSelector((state) => state.auth);
-    const dispatch = useAppDispatch()
+    const {logout} = useLogout()
 
     function renderMenuItems() {
       return menuItems.map((item) => {
@@ -43,9 +43,7 @@ export default function NavBar() {
       });
     }
 
-    function handleLogout() {
-        dispatch(logoutThunk())
-    }
+   
 
   return (
     <div className="w-screen border-b border-b-slate-200">
@@ -62,7 +60,7 @@ export default function NavBar() {
                     <DropdownMenuItem>
                         <p>Settings</p>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout}>
+                    <DropdownMenuItem onClick={() => logout()}>
                         <p>Logout</p>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

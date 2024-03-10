@@ -6,7 +6,7 @@ import {
   DialogDescription,
 } from "../../ui/dialog";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../../ui/button";
 import { DialogHeader } from "../../ui/dialog";
 import { useForm } from "react-hook-form";
@@ -31,23 +31,17 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosClient from "../../../lib/axios";
-
 import { useToast } from "../../ui/use-toast";
-import { errorParser } from "../../../lib/error-parser";
 import { Alert, AlertDescription } from "../../ui/alert";
 import { CreateStaffFormSchema } from "../../../schemas/staff";
-
-
-
+import { useCreateStaff } from "../../../hooks/staff/useCreateStaff";
 
 
 export default function AddStaffDialog() {
-  const [errorMessage, setErrorMessage] = useState<null | string>(null);
+  
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const { toast } = useToast();
-  const queryClient = useQueryClient()
+
 
   const form = useForm<z.infer<typeof CreateStaffFormSchema>>({
     resolver: zodResolver(CreateStaffFormSchema),
@@ -61,27 +55,15 @@ export default function AddStaffDialog() {
     },
   });
 
-  const { mutate: handleAddStaff } = useMutation({
-    mutationFn: async (formData: z.infer<typeof CreateStaffFormSchema>) => {
-      const res = await axiosClient.post("/staffs", formData);
-      const data = res.data;
-      toast({ title: data.message });
-      setOpenDialog(false)
-      setErrorMessage(null)
-    },
-    onError: (err) => {
-      const appError = errorParser(err);
-      setErrorMessage(appError.message);
-    },
+  const {create, error} = useCreateStaff({
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["staffs"]})
-    }
-  });
+      form.reset()
+      setOpenDialog(false)
+      toast({title: "Successfully created staff"})
+    },
+  })
 
-  useEffect(() => {
-    setErrorMessage(null)
-    form.reset()
-  }, [openDialog])
+
 
   return (
     <Dialog open={openDialog}  onOpenChange={setOpenDialog}>
@@ -90,23 +72,23 @@ export default function AddStaffDialog() {
           <Plus className="mr-3" /> Staff
         </Button>
       </DialogTrigger>
-      <DialogContent className="">
+      <DialogContent  className="max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="">Add Staff</DialogTitle>
           <DialogDescription>
             Add a new staff to the application
           </DialogDescription>
         </DialogHeader>
-        {errorMessage && (
+        {error && (
           <Alert variant="destructive" className="my-3">
-            <AlertDescription>{errorMessage}</AlertDescription>
+            <AlertDescription>{error.message}</AlertDescription>
           </Alert>
         )}
         <div className="">
           <Form {...form}>
             <form
               className="grid grid-cols-2 gap-2"
-              onSubmit={form.handleSubmit((data) => handleAddStaff(data))}
+              onSubmit={form.handleSubmit((data) => create(data))}
             >
               <FormField
                 control={form.control}

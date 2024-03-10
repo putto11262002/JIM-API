@@ -3,7 +3,7 @@ import axiosClient from "../lib/axios"
 import { useToast } from "../components/ui/use-toast"
 import { useNavigate } from "react-router-dom"
 import { AppErrorType } from "../types/app-error"
-import { errorParser } from "../lib/error-parser"
+import { getAppError } from "../lib/error"
 
 export default function CalendarPage() {
   const {toast} = useToast()
@@ -15,7 +15,7 @@ export default function CalendarPage() {
         const res = await axiosClient.get("/staffs/me")
       console.log(res.data)
       }catch(err){
-        const errRes = errorParser(err)
+        const errRes = getAppError(err)
         if (errRes.type === AppErrorType.AUTH_ERROR){
           navigate("/login")
           return 

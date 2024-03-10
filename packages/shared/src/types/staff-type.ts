@@ -1,5 +1,5 @@
 import { Staff as _Staff, StaffRole as _StaffRole } from "@prisma/client"
-import { StaffGetQuerySchema as StaffGetQuerySchema, StaffCreateSchema as StaffCreateSchema, StaffLoginSchema, StaffUpdatePasswordSchema, StaffUpdateSchema } from "../schemas/staff-scehma"
+import { StaffGetQuerySchema as StaffGetQuerySchema, StaffCreateSchema as StaffCreateSchema, StaffLoginSchema, StaffUpdatePasswordSchema, StaffUpdateSchema, StaffRefreshTokenSchema } from "@jimmodel/shared/src/schemas/staff-scehma"
 import z, { TypeOf } from "zod"
 export type Staff = _Staff
 export type StaffWithoutSecrets = Omit<Staff, "password" | "logout">
@@ -23,3 +23,5 @@ export type StaffUpdateInput = z.infer<typeof StaffUpdateSchema>
 export type StaffUpdatePasswordInput = z.infer<typeof StaffUpdatePasswordSchema>
 
 export type StaffGetQuery = z.infer<typeof StaffGetQuerySchema>
+
+export type StaffRefreshTokenInput = z.infer<typeof StaffRefreshTokenSchema>

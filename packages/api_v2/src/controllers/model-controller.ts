@@ -1,5 +1,5 @@
 import express from "express"
-import { CreateModelExperienceSchema, CreateModelImageSchema, CreateModelSchema, GetModelQuerySchema, UpdateModelSchema } from "../schemas/model-schema"
+import { CreateModelExperienceSchema, CreateModelImageSchema, CreateModelSchema, GetModelQuerySchema, UpdateModelSchema } from "@jimmodel/shared/src/schemas/model-schema"
 import { prisma } from "../prisma"
 import NotFoundError from "../lib/errors/not-found-error"
 import { extractSingleFilesFromRequest } from "../lib/request"

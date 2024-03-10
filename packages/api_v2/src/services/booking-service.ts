@@ -1,11 +1,11 @@
-import { PaginatedData } from "@jimmodel/shared";
 import {
   Booking,
   BookingCreateInput,
   BookingGetQuery,
   BookingStatus,
   BookingUpdateInput,
-} from "../types/booking-type";
+  PaginatedData
+} from "@jimmodel/shared";
 import staffService from "./staff-service";
 import { prisma } from "../prisma";
 import { Prisma } from "@prisma/client";

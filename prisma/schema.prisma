@@ -28,9 +28,9 @@ model Staff {
 }
 
 enum StaffRole {
-  STAFF_ADMIN
- STAFF_GENERAL
-  STAFF_ROOT
+  ADMIN
+ GENERAL
+  ROOT
 }
 
 enum ModelApplicationStatus {

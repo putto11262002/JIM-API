@@ -1,5 +1,5 @@
 import NotFoundError from "../lib/errors/not-found-error";
-import { Model } from "../types/model-type";
+import { Model } from "@jimmodel/shared";
 import {prisma} from "../prisma";
 export interface IModelService {
     getById(id: string): Promise<Model>;

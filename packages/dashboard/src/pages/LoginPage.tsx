@@ -11,53 +11,33 @@ import { useForm } from "react-hook-form";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-
+import { useAppSelector } from "../redux/hooks";
 import { useNavigate } from "react-router-dom";
-import { loginThunk } from "../redux/thunk/auth-thunk";
 import { AuthStatus } from "../redux/auth-reducer";
 import {  z } from "zod";
 import { StaffLoginFormSchema } from "../schemas/staff";
+import { useLogin } from "../hooks/staff/useLogin";
 export default function LoginPage() {
-  // const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
-  const { status, isLogin, error } = useAppSelector((state) => state.auth);
+
+  const {login, error} = useLogin()
+
+  const { status } = useAppSelector((state) => state.auth);
+
   const form = useForm<z.infer<typeof StaffLoginFormSchema>>({
     resolver: zodResolver(StaffLoginFormSchema),
-    defaultValues: {
-      usernameOrEmail: "",
-      password: "",
-    },
   });
-
-  // const { mutate: handleLogin } = useMutation({
-  //   mutationFn: async (data: StaffLoginDTO) => {
-  //     const loginRes = await StaffAuthService.login(data);
-  //     setErrorMsg(null);
-  //     dispatch(login(loginRes.data.staff));
-  //   },
-  //   onError: (error) => {
-  //     const errRes = StaffAuthService.handleError(error);
-  //     setErrorMsg(errRes.message);
-  //   },
-  // });
-
-  function handleLogin(data: z.infer<typeof StaffLoginFormSchema>) {
-    dispatch(loginThunk(data));
-  }
 
   useEffect(() => {
     if (
-      status !== AuthStatus.LOADING &&
-      isLogin
+      status === AuthStatus.AUTHENTICATED
     ) {
       navigate("/");
     }
-  }, [status, isLogin, navigate]);
+  }, [status, navigate]);
 
   return (
     <FormLayout className="pt-[30vh] flex justify-center items-center">
@@ -77,7 +57,7 @@ export default function LoginPage() {
         <Form {...form}>
           <form
             className="space-y-3"
-            onSubmit={form.handleSubmit((data) => handleLogin(data))}
+            onSubmit={form.handleSubmit((data) => login(data))}
           >
             <FormField
               name="usernameOrEmail"
