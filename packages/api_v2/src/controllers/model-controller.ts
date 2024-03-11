@@ -1,5 +1,5 @@
 import express from "express"
-import { CreateModelExperienceSchema, CreateModelImageSchema, CreateModelSchema, GetModelQuerySchema, UpdateModelSchema } from "@jimmodel/shared/src/schemas/model-schema"
+import { ModelExperienceCreateSchema, CreateModelImageSchema, ModelCreateSchema, GetModelQuerySchema, UpdateModelSchema } from "@jimmodel/shared/src/schemas/model-schema"
 import { prisma } from "../prisma"
 import NotFoundError from "../lib/errors/not-found-error"
 import { extractSingleFilesFromRequest } from "../lib/request"
@@ -21,7 +21,7 @@ interface IModelController {
 async function createModel(req: express.Request, res: express.Response, next: express.NextFunction) {
     try{
 
-        const validation = CreateModelSchema.safeParse(req.body)
+        const validation = ModelCreateSchema.safeParse(req.body)
         if (!validation.success){
             throw zodErrorToValidationError(validation.error)
         }
@@ -98,7 +98,7 @@ async function addModelExperience(req: express.Request, res: express.Response, n
             throw new NotFoundError("Model not found")
         }
 
-        const validation = CreateModelExperienceSchema.safeParse(req.body)   
+        const validation = ModelExperienceCreateSchema.safeParse(req.body)   
         if (!validation.success){
             throw zodErrorToValidationError(validation.error)
         }

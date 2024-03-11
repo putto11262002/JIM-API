@@ -59,7 +59,6 @@ export function DataTable<TData, TValue>({
     onPageChange(table.getState().pagination.pageIndex);
   }
 
-  console.log(error)
 
   return (
     <>
@@ -101,9 +100,10 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+    
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell className="py-2" key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -126,13 +126,16 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex py-4 space-x-4 justify-end">
-        <Button disabled={!table.getCanPreviousPage()} onClick={previousPage}>
+      <div className="flex py-4 space-x-8 justify-end items-center">
+     {pagination.totalPage > 0 &&  <p className="font-medium text-sm"> Page {pagination.page} of {pagination.totalPage}</p>}
+       <div className="space-x-4"> 
+       <Button variant="outline" disabled={!table.getCanPreviousPage()} onClick={previousPage}>
           Previous
         </Button>
-        <Button disabled={!table.getCanNextPage()} onClick={nextPage}>
+        <Button variant="outline" disabled={!table.getCanNextPage()} onClick={nextPage}>
           Next
         </Button>
+       </div>
       </div>
     </>
   );

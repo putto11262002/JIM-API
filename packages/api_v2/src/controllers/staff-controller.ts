@@ -100,7 +100,6 @@ async function getAll(
 ) {
   try {
     const query = validate(req.query, StaffGetQuerySchema);
-    console.log(query)
     const paginatedStaff = await staffService.getAll(query);
     res.json(paginatedStaff);
   } catch (err) {
@@ -146,7 +145,6 @@ async function getSelf(
   next: express.NextFunction
 ) {
   try {
-    console.log(req.auth.id)
    const staff = await staffService.getById(req.auth.id);
     return res.json(staff);
   } catch (err) {

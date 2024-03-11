@@ -7,3 +7,8 @@ export type PaginatedData<T> = {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
 };
+
+export type paginatedDataQuery = {
+    page?: number;
+    pageSize?: number;
+}

@@ -30,10 +30,10 @@ import {
   SelectContent,
 } from "../components/ui/select";
 import {
-  ModelApplication,
+  ModelApplication, ModelApplicationCreateInput, ModelApplicationExperienceCreateInput,
 } from "@jimmodel/shared";
 import { useMutation } from "@tanstack/react-query";
-import _ from "lodash";
+// import _ from "lodash";
 import axiosClient from "../lib/axios";
 
 function FormSection({
@@ -75,10 +75,10 @@ const CreateModelApplicationFormSchema = z.object({
   phoneNumber: z.string(),
   email: z.string().email(),
   lineId: z.string().optional(),
-  weChat: z.string().optional(),
+  wechat: z.string().optional(),
   facebook: z.string().optional(),
   instagram: z.string().optional(),
-  whatsApp: z.string().optional(),
+  whatsapp: z.string().optional(),
   dateOfBirth: z.date(),
   gender: z.string(),
   nationality: z.string(),
@@ -89,7 +89,7 @@ const CreateModelApplicationFormSchema = z.object({
   zipCode: z.string(),
   country: z.string(),
   talents: z.array(z.string().min(1, "Required")).optional(),
-  abooutMe: z.string(),
+  aboutMe: z.string(),
   experiences: z
     .array(
       z.object({
@@ -156,47 +156,19 @@ export default function ApplicationSubmissionPage() {
     mutationFn: async (
       data: z.infer<typeof CreateModelApplicationFormSchema>
     ) => {
-      const formData = new FormData();
-      Object.entries(
-        _.omit(data, [
-          "midlengthImage",
-          "closeUpImage",
-          "fullLengthImage",
-          "experiences",
-          "talents",
-          "dateOfBirth",
-        ])
-      ).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+     
+      
 
-      formData.append("dateOfBirth", data.dateOfBirth.toISOString());
-      data.experiences?.forEach((experience, index) => {
-        formData.append(
-          `experiences[${index}].year`,
-          experience.year.toString()
-        );
-        // formData.append(`experiences[]media`, experience.media);
-        // formData.append(`experiences[]country`, experience.country);
-        // formData.append(`experiences[]product`, experience.product);
-        // experience.details !== undefined &&
-        //   formData.append(`experiences[]details`, experience.details);
-        // formData.append(`experiences[]`, )
-      });
-      // formData.append("experiences", JSON.stringify(data.experiences));
+      const res = await axiosClient.post("/model-applications", data, {})
 
-      data.talents?.forEach((talent, index) => {
-        formData.append(`talents[${index}]`, talent);
-      });
+    // return res.data;
 
-
-      formData.append("midlengthImage", data.midlengthImage);
-      formData.append("closeUpImage", data.closeUpImage);
-      formData.append("fullLengthImage", data.fullLengthImage);
-
-      const res = await axiosClient.post("/model-applications", formData, {headers: {'Content-Type': 'multipart/form-data'}})
-
-    return res.data;
+    const formData = new FormData();
+    formData.append("midlengthImage", data.midlengthImage);
+    formData.append("closeupImage", data.closeUpImage);
+    formData.append("fulllengthImage", data.fullLengthImage);
+    const res2 = await axiosClient.post("/model-applications/" + res.data.id + "/images", formData, {headers: {"Content-Type": "multipart/form-data"}})
+    console.log(res2)
     },
   });
 
@@ -442,7 +414,7 @@ export default function ApplicationSubmissionPage() {
 
               <FormField
                 control={form.control}
-                name="weChat"
+                name="wechat"
                 render={({ field }) => (
                   <FormItem className="">
                     <FormLabel>WeChat</FormLabel>
@@ -456,7 +428,7 @@ export default function ApplicationSubmissionPage() {
 
               <FormField
                 control={form.control}
-                name="whatsApp"
+                name="whatsapp"
                 render={({ field }) => (
                   <FormItem className="">
                     <FormLabel>WhatsApp</FormLabel>
@@ -573,7 +545,7 @@ export default function ApplicationSubmissionPage() {
             <FormSection title="Modeling Bio">
               <FormField
                 control={form.control}
-                name="abooutMe"
+                name="aboutMe"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
                     <FormLabel>About Me</FormLabel>
@@ -738,7 +710,7 @@ export default function ApplicationSubmissionPage() {
                   variant={"outline"}
                   onClick={() => {
                     const experiences = form.getValues().experiences || [];
-                    experiences.push({} as ModelApplication["experiences"][0]);
+                    experiences.push({}  );
                     form.setValue("experiences", experiences);
                   }}
                 >

@@ -4,6 +4,7 @@ import {
   addImageToModelApplicationController,
   archiveModelApplicationController,
   createModelApplicationController,
+  getModelApplicationController,
   getModelApplicationsController,
 } from "../controllers/model-application-controller";
 import upload from "../middlewares/upload";
@@ -23,6 +24,7 @@ modelApplicationRouter.post(
   addImageToModelApplicationController
 );
 
+modelApplicationRouter.get("/:id", getModelApplicationController)
 
 modelApplicationRouter.post("/:id/accept", staffAuthMiddleware(),acceptModelApplicationController)
 

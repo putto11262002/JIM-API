@@ -19,8 +19,8 @@ const menuItems = [
       path: "/models",
     },
     {
-      title: "Bookings",
-      path: "/booking",
+      title: "Applications",
+      path: "/model-applications",
     },
   ];
 

@@ -5,7 +5,13 @@ import { prisma } from "../prisma";
 import fs from "fs/promises";
 import path from "path";
 import {v4 as uuid} from "uuid"
+import NotFoundError from "../lib/errors/not-found-error";
 
+export interface IFIleService {
+  saveFile: (file: Express.Multer.File) => Promise<FileMetaData>;
+  deleteFile: (id: string) => Promise<void>;
+  getFileMetaData: (id: string) => Promise<FileMetaData>;
+}
 
 
 async function saveFile(file: Express.Multer.File): Promise<FileMetaData> {
@@ -43,7 +49,14 @@ async function deleteFile(id: string): Promise<void> {
   await prisma.fileMetaData.delete({ where: { id } });
 }
 
+async function getFileMetaData(id: string): Promise<FileMetaData> {
+  const fileMetaData = await prisma.fileMetaData.findUnique({ where: { id } });
+  if (fileMetaData === null) throw new NotFoundError("File not found");
+  return fileMetaData;
+}
+
 export default {
   saveFile,
   deleteFile,
+  getFileMetaData
 };
