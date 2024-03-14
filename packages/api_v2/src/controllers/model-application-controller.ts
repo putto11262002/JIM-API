@@ -11,7 +11,10 @@ import {
   Prisma,
 } from "@prisma/client";
 import { PaginatedData } from "@jimmodel/shared";
-import { extractSingleFilesFromRequest } from "../lib/request";
+import {
+  extractFileFromRequest,
+  extractSingleFilesFromRequest,
+} from "../lib/request";
 import NotFoundError from "../lib/errors/not-found-error";
 import ConstraintViolationError from "../lib/errors/constraint-violation-error";
 import ValidationError, {
@@ -44,59 +47,52 @@ export async function addImageToModelApplicationController(
   try {
     const modelApplicationId = req.params.id;
 
-    const midlengthImage = extractSingleFilesFromRequest(req, "midlengthImage");
-    const fulllengthImage = extractSingleFilesFromRequest(
-      req,
-      "fulllengthImage"
+    const images = extractFileFromRequest(req, "images");
+
+    // const midlengthImage = extractSingleFilesFromRequest(req, "midlengthImage");
+    // const fulllengthImage = extractSingleFilesFromRequest(
+    //   req,
+    //   "fulllengthImage"
+    // );
+    // const closeupImage = extractSingleFilesFromRequest(req, "closeupImage");
+
+    // if (
+    //   midlengthImage === undefined &&
+    //   fulllengthImage === undefined &&
+    //   closeupImage === undefined
+    // ) {
+    //   throw new ValidationError("No image files found in the request");
+    // }
+
+    // // Check if thes files are images
+    // if (
+    //   midlengthImage !== undefined &&
+    //   midlengthImage.mimetype.startsWith("image/") === false
+    // ) {
+    //   throw new ValidationError("Midlength image is not an image file");
+    // }
+
+    // if (
+    //   fulllengthImage !== undefined &&
+    //   fulllengthImage.mimetype.startsWith("image/") === false
+    // ) {
+    //   throw new ValidationError("Fulllength image is not an image file");
+    // }
+
+    // if (
+    //   closeupImage !== undefined &&
+    //   closeupImage.mimetype.startsWith("image/") === false
+    // ) {
+    //   throw new ValidationError("Closeup image is not an image file");
+    // }
+
+    await modelApplicationService.addImages(
+      modelApplicationId,
+      (Array.isArray(images) ? images : [images]).map((image) => ({
+        type: "polaroid",
+        image,
+      }))
     );
-    const closeupImage = extractSingleFilesFromRequest(req, "closeupImage");
-
-    if (
-      midlengthImage === undefined &&
-      fulllengthImage === undefined &&
-      closeupImage === undefined
-    ) {
-      throw new ValidationError("No image files found in the request");
-    }
-
-    // Check if thes files are images
-    if (
-      midlengthImage !== undefined &&
-      midlengthImage.mimetype.startsWith("image/") === false
-    ) {
-      throw new ValidationError("Midlength image is not an image file");
-    }
-
-    if (
-      fulllengthImage !== undefined &&
-      fulllengthImage.mimetype.startsWith("image/") === false
-    ) {
-      throw new ValidationError("Fulllength image is not an image file");
-    }
-
-    if (
-      closeupImage !== undefined &&
-      closeupImage.mimetype.startsWith("image/") === false
-    ) {
-      throw new ValidationError("Closeup image is not an image file");
-    }
-
-    
-
-    await modelApplicationService.addImages(modelApplicationId, [
-      {
-        type: "midlength",
-        image: midlengthImage,
-      },
-      {
-        type: "fulllength",
-        image: fulllengthImage,
-      },
-      {
-        type: "closeup",
-        image: closeupImage,
-      },
-    ]);
     // const [
     //   midlengthImageMetaData,
     //   fulllengthImageMetaData,
@@ -319,9 +315,9 @@ export async function getModelApplicationsController(
   next: express.NextFunction
 ) {
   try {
-   const query = validate(req.query, ModelApplicationQuerySchema)
+    const query = validate(req.query, ModelApplicationQuerySchema);
 
-   const paginatedApplication = await modelApplicationService.getAll(query);
+    const paginatedApplication = await modelApplicationService.getAll(query);
 
     // const where: Prisma.ModelApplicationWhereInput = {};
     // if (query.q !== undefined) {
@@ -386,7 +382,6 @@ export async function getModelApplicationsController(
   }
 }
 
-
 export async function getModelApplicationController(
   req: express.Request,
   res: express.Response,
@@ -394,7 +389,9 @@ export async function getModelApplicationController(
 ) {
   try {
     const modelApplicationId = req.params.id;
-    const modelApplication = await modelApplicationService.getById(modelApplicationId);
+    const modelApplication = await modelApplicationService.getById(
+      modelApplicationId
+    );
     res.json(modelApplication);
   } catch (err) {
     next(err);

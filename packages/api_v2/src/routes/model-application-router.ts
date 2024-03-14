@@ -1,13 +1,13 @@
 import express from "express";
 import {
-    acceptModelApplicationController,
+  acceptModelApplicationController,
   addImageToModelApplicationController,
   archiveModelApplicationController,
   createModelApplicationController,
   getModelApplicationController,
   getModelApplicationsController,
 } from "../controllers/model-application-controller";
-import upload from "../middlewares/upload";
+import upload, { uploadMiddleware } from "../middlewares/upload";
 import router from ".";
 import { staffAuthMiddleware } from "../middlewares/staff-auth-middleware";
 const modelApplicationRouter = express.Router();
@@ -16,20 +16,30 @@ modelApplicationRouter.post("/", createModelApplicationController);
 
 modelApplicationRouter.post(
   "/:id/images",
-  upload.fields([
-    { name: "midlengthImage", maxCount: 1 },
-    { name: "fulllengthImage", maxCount: 1 },
-    { name: "closeupImage", maxCount: 1 },
-  ]),
+  uploadMiddleware([{ name: "images", maxCount: 5 }], {
+    allowedMimetype: ["image/png", "image/jpg", "image/jpeg"],
+  }),
   addImageToModelApplicationController
 );
 
-modelApplicationRouter.get("/:id", getModelApplicationController)
+modelApplicationRouter.get("/:id", getModelApplicationController);
 
-modelApplicationRouter.post("/:id/accept", staffAuthMiddleware(),acceptModelApplicationController)
+modelApplicationRouter.post(
+  "/:id/accept",
+  staffAuthMiddleware(),
+  acceptModelApplicationController
+);
 
-modelApplicationRouter.post("/:id/archive", staffAuthMiddleware(),archiveModelApplicationController)
+modelApplicationRouter.post(
+  "/:id/archive",
+  staffAuthMiddleware(),
+  archiveModelApplicationController
+);
 
-modelApplicationRouter.get("/", staffAuthMiddleware(),getModelApplicationsController)
+modelApplicationRouter.get(
+  "/",
+  staffAuthMiddleware(),
+  getModelApplicationsController
+);
 
 export default modelApplicationRouter;

@@ -143,7 +143,6 @@ async function accept(modelApplicationId: string): Promise<Model>{
       country: modelApplication.country,
       talents: modelApplication.talents,
       aboutMe: modelApplication.aboutMe,
-      measurement:  {
         height: modelApplication.height,
         weight: modelApplication.weight,
         bust: modelApplication.bust,
@@ -152,7 +151,7 @@ async function accept(modelApplicationId: string): Promise<Model>{
         shoeSize: modelApplication.shoeSize,
         eyeColor: modelApplication.eyeColor,
         hairColor: modelApplication.hairColor,
-      }
+      
     };
 
     const model = await modelService.create(
@@ -161,7 +160,7 @@ async function accept(modelApplicationId: string): Promise<Model>{
 
     for (const image of modelApplication.images){
       const fileMetaData = await localFileService.getFileMetaData(image.fileId)
-        await modelService.addImage(model.id, {file: fileMetaData, type: image.type})
+        await modelService.addImage(model.id, {image: fileMetaData, type: image.type})
     }
 
     for(const experience of modelApplication.experiences){

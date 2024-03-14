@@ -1,14 +1,16 @@
 import NotFoundError from "../lib/errors/not-found-error";
-import { Model, ModelCreateInput, FileMetaData, ModelExperienceCreateInput } from "@jimmodel/shared";
+import { Model, ModelCreateInput, FileMetaData, ModelExperienceCreateInput, ModelUpdateInput } from "@jimmodel/shared";
 import {prisma} from "../prisma";
 import {  Prisma } from "@prisma/client";
 import localFileService from "./local-file-service";
 export interface IModelService {
     getById(id: string): Promise<Model>;
     create(modelInput: ModelCreateInput): Promise<Model>;
-    addImage(modelId: string, image: {file: Express.Multer.File | FileMetaData, type: string}): Promise<void>
+    updateById(modelId: string, modelInput: ModelUpdateInput): Promise<Model>
+    addImage(modelId: string, image: {image: Express.Multer.File | FileMetaData, type: string}): Promise<void>
     removeModelImage(imageId: string): Promise<void>
-    addExperience(modelId: string, experience: ModelExperienceCreateInput): Promise<void>
+    addExperience(modelId: string, experience: ModelExperienceCreateInput | ModelExperienceCreateInput[]): Promise<void>
+
 }
 
 async function getById(id: string): Promise<Model> {
@@ -21,39 +23,34 @@ async function getById(id: string): Promise<Model> {
 
 const modelInclude = Prisma.validator<Prisma.ModelInclude>()({
     images: true,
-    experiences: true,
-    measurement: true
+    experiences: true
 })
 
 async function create(modelInput: ModelCreateInput): Promise<Model> {
     const model = await prisma.model.create({
         data: {
             ...modelInput,
-            measurement: {
-                create: modelInput.measurement
-            },
-
         },
         include: modelInclude
     })
     return model;
 }
 
-async function addImage(modelId: string, image:{file:  Express.Multer.File | FileMetaData, type: string}): Promise<void> {
+async function addImage(modelId: string, image: {image:  Express.Multer.File | FileMetaData, type: string}): Promise<void> {
     const model = await prisma.model.findUnique({
         where: {
             id: modelId
-        }
+        },
     })
     if (model === null){
         throw new NotFoundError("Model not found")
     }
     let savedImage: FileMetaData;
 
-    if ('buffer' in image.file){
-        savedImage = await localFileService.saveFile(image.file)
+    if ('originalname' in image.image){
+        savedImage = await localFileService.saveFile(image.image)
     }else{
-        savedImage = image.file;
+        savedImage = image.image;
     }
 
     await prisma.modelImage.create({
@@ -70,6 +67,24 @@ async function addImage(modelId: string, image:{file:  Express.Multer.File | Fil
         }
     })
 
+}
+
+async function updateById(modelId: string, modelInput: ModelUpdateInput): Promise<Model>{
+    const model = await prisma.model.findUnique({where: {id: modelId}})
+
+    if (model === null){
+        throw new NotFoundError("Model not found")
+    }
+
+    const updatedModel = await prisma.model.update({
+        where: {
+            id: modelId
+        },
+        data: modelInput,
+        include: modelInclude
+    })
+
+    return updatedModel;
 }
 
 async function removeModelImage(imageId: string): Promise<void>{
@@ -92,7 +107,7 @@ async function removeModelImage(imageId: string): Promise<void>{
     localFileService.deleteFile(image.fileId)
 }
 
-async function addExperience(modelId: string, experience: ModelExperienceCreateInput): Promise<void>{
+async function addExperience(modelId: string, experience: ModelExperienceCreateInput[] | ModelExperienceCreateInput): Promise<void>{
     const model = await prisma.model.findUnique({
         where: {
             id: modelId
@@ -103,15 +118,16 @@ async function addExperience(modelId: string, experience: ModelExperienceCreateI
         throw new NotFoundError("Model not found")
     }
 
-    await prisma.modelExperience.create({
-        data: {
-            ...experience,
-            model: {
-                connect: {
-                    id: modelId
-                }
-            }
-        }
+    if (!Array.isArray(experience)){
+        experience = [experience]
+    }
+
+
+    await prisma.modelExperience.createMany({
+        data: experience.map((exp) => ({
+            ...exp,
+            modelId
+        }))
     })
 }
 
@@ -121,7 +137,8 @@ const modelService: IModelService = {
     create,
     addImage,
     removeModelImage,
-    addExperience
+    addExperience,
+    updateById
 }
 
 export default modelService;

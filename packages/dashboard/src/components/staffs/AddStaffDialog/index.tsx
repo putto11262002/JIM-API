@@ -68,8 +68,8 @@ export default function AddStaffDialog() {
   return (
     <Dialog open={openDialog}  onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
-        <Button className="">
-          <Plus className="mr-3" /> Staff
+        <Button className="" variant={"outline"}>
+          <Plus className="mr-3 h-4 w-4" /> Staff
         </Button>
       </DialogTrigger>
       <DialogContent  className="max-h-[80vh] overflow-auto">

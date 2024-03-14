@@ -126,8 +126,8 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex py-4 space-x-8 justify-end items-center">
-     {pagination.totalPage > 0 &&  <p className="font-medium text-sm"> Page {pagination.page} of {pagination.totalPage}</p>}
+     {pagination.totalPage > 0 && <div className="flex py-4 space-x-8 justify-end items-center">
+ <p className="font-medium text-sm"> Page {pagination.page} of {pagination.totalPage}</p>
        <div className="space-x-4"> 
        <Button variant="outline" disabled={!table.getCanPreviousPage()} onClick={previousPage}>
           Previous
@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
           Next
         </Button>
        </div>
-      </div>
+      </div>}
     </>
   );
 }

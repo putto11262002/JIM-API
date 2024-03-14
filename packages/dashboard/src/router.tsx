@@ -6,9 +6,12 @@ import CalendarPage from "./pages/CalendarPage";
 import PrimaryLayout from "./components/layouts/PrimaryLayout";
 import InitApp from "./components/globals/InitApp";
 import StaffPage from "./pages/StaffPage";
-import ApplicationSubmissionPage from "./pages/ApplicationSubmissionPage";
+import ApplicationSubmissionPage from "./pages/model-application-submission";
 import AppilcationPage from "./pages/AppilcationPage";
 import ApplicationDetailsPage from "./pages/ApplicationDetailsPage";
+import ModelPage from "./pages/model";
+import AddModelPage from "./pages/add-model";
+import UpdateModelPage from "./pages/update-model";
 
 const router = createBrowserRouter([
   {
@@ -41,9 +44,22 @@ const router = createBrowserRouter([
                 element: <ApplicationDetailsPage/>
               },
               {
+                path: "/models",
+                element: <ModelPage/>
+              },
+              {
                 path: "*",
                 element: <NotFoundPage />,
               },
+              {
+                path: "/models/add",
+                element: <AddModelPage/>
+              },
+              {
+                path: "/models/:id/update",
+                element: <UpdateModelPage/>
+              }
+              
             ]
           }
     

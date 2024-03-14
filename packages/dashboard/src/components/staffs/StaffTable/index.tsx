@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { StaffWithoutSecrets } from "@jimmodel/shared";
-import { DataTable } from "../../shared/DataTable";
+import { DataTable } from "../../shared/data-table";
 import { Button } from "../../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import UpdateStaffDialog from "../UpdateStaffDialog";

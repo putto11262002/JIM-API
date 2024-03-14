@@ -34,6 +34,24 @@ export function extractSingleFilesFromRequest(
 }
 
 
+export function extractFileFromRequest(req: express.Request, fieldname: string): Express.Multer.File | Express.Multer.File[] {
+  const file = req.file;
+  const files = req.files
+
+  if (!files && !file) {
+    throw new ValidationError("No file in the request");
+  }
+
+  const targetFile = file || (Array.isArray(files) ? files : files?.[fieldname])
+
+ 
+  if (targetFile === undefined) {
+    throw new ValidationError("No file in the request");
+  }
+  return targetFile
+}
+
+
 /**
  * Extracts the token from the request's authorization header.
  * 

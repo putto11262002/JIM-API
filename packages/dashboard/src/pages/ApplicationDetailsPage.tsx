@@ -15,6 +15,7 @@ import {
 import { useAcceptApplication } from "../hooks/application/useAcceptApplication";
 import { useToast } from "../components/ui/use-toast";
 import { useArchiveApplication } from "../hooks/application/useArchiveApplication";
+import ImageGallery from "../components/shared/image-gallery";
 
 function Section({
   title,
@@ -143,7 +144,8 @@ function ApplicationDetailsPage() {
             </Section>
 
             <Section title="Images">
-              <ImageGrid images={data?.images ?? []} />
+              {/* <ImageGrid images={data?.images ?? []} /> */}
+              <ImageGallery images={data?.images || []}/>
             </Section>
 
             <div className="py-3 pb-5 space-x-4">
@@ -172,19 +174,6 @@ function ApplicationDetailsPage() {
 }
 
 export default ApplicationDetailsPage;
-
-function ImageGrid({ images }: { images: ModelApplication["images"] }) {
-  return (
-    <div className="grid grid-cols-2 gap-4">
-      {images.map((image) => (
-        <div className="">
-          <img src={image.url} alt="Model Application Image" />
-          <p className="pt-1">{image.type}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function ExperienceTable({
   experiences,

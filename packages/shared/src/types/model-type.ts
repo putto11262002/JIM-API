@@ -1,21 +1,34 @@
-import { Prisma, Model as _Model } from "@prisma/client";
-import { z } from "zod";
-import { ModelCreateSchema } from "../schemas";
+import { ModelExperience, ModelImage as _ModelImage, Prisma, Model as _Model } from "@prisma/client";
+import {  paginatedDataQuery } from "./pagingated-data-type";
 
-export type Model = _Model;
+export type ModelImage = _ModelImage
+
+export type Model = _Model & {
+    images?: ModelImage[]
+    experiences?: ModelExperience[]
+};
 
 
-export type ModelCreateInput = Omit<Prisma.ModelCreateInput, "experiences" | "images" | "bookings" | "measurement">  & {
-    measurement: Prisma.ModelMeasurementCreateWithoutModelInput
+export type ModelCreateInput = Omit<Prisma.ModelCreateInput, "experiences" | "images" | "talents">  & {
+    talents?: string[]
 }
 
-export type ModelUpdateInput = Omit<Prisma.ModelUpdateInput, "experiences" | "images" | "bookings" | "measurement">  & {
-    measurement?: Prisma.ModelMeasurementUpdateInput
+export type ModelUpdateInput = Omit<Prisma.ModelUpdateInput, "experiences" | "images">  & {
+    talents?: string[]
 }
 
 export type ModelImageCreateInput = Prisma.ModelImageCreateWithoutModelInput
 
 export type ModelExperienceCreateInput = Prisma.ModelExperienceCreateWithoutModelInput
 
+export type EncodedModelGetQuery = {
+    q?: string
+    order?: string
+    page?: number
+    pageSize?: number
+}
 
-
+export type ModelGetQuery = {
+    q?: string
+    order?: {[key: string]: "asc" | "desc" | undefined}
+} & paginatedDataQuery

@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { AppError } from "../../types/app-error";
-import { DataTable } from "../shared/DataTable";
+import { DataTable } from "../shared/data-table";
 import { Link } from "react-router-dom";
 
 const columns: ColumnDef<ModelApplication>[] = [

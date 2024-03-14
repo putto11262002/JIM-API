@@ -10,7 +10,7 @@ export default function PrimaryLayout({
   return (
     <>
       <NavBar />
-      <div className="px-2 pt-4 md:px-0"><main className="mx-auto max-w-[800px] w-full">{children || <Outlet />}</main></div>
+      <div className="px-2 pt-4 pb-8 md:px-0"><main className="mx-auto max-w-[800px] w-full">{children || <Outlet />}</main></div>
     </>
   );
 }

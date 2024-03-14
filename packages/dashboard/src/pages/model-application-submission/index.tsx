@@ -6,35 +6,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../components/ui/form";
-import { Input } from "../components/ui/input";
-import { Plus, X } from "lucide-react";
+} from "../../components/ui/form";
+import { Input } from "../../components/ui/input";
+import { CheckCircle, Loader2, Plus, X, XCircle } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../components/ui/popover";
-import { Button } from "../components/ui/button";
-import { cn } from "../lib/utils";
+} from "../../components/ui/popover";
+import { Button } from "../../components/ui/button";
+import { cn } from "../../lib/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../components/ui/calendar";
-import { Textarea } from "../components/ui/textarea";
+import { Calendar } from "../../components/ui/calendar";
+import { Textarea } from "../../components/ui/textarea";
 import {
   Select,
   SelectItem,
   SelectTrigger,
   SelectValue,
   SelectContent,
-} from "../components/ui/select";
-import {
-  ModelApplication, ModelApplicationCreateInput, ModelApplicationExperienceCreateInput,
-} from "@jimmodel/shared";
+} from "../../components/ui/select";
 import { useMutation } from "@tanstack/react-query";
-// import _ from "lodash";
-import axiosClient from "../lib/axios";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import modelApplicationService from "../../services/applications";
 
 function FormSection({
   title,
@@ -68,11 +66,10 @@ function FormSubSection({
 }
 
 const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
-
 const CreateModelApplicationFormSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  phoneNumber: z.string(),
+  firstName: z.string().min(1, "Required"),
+  lastName: z.string().min(1, "Required"),
+  phoneNumber: z.string().min(1, "Required"),
   email: z.string().email(),
   lineId: z.string().optional(),
   wechat: z.string().optional(),
@@ -80,35 +77,35 @@ const CreateModelApplicationFormSchema = z.object({
   instagram: z.string().optional(),
   whatsapp: z.string().optional(),
   dateOfBirth: z.date(),
-  gender: z.string(),
-  nationality: z.string(),
-  ethnicity: z.string(),
-  address: z.string(),
-  city: z.string(),
-  region: z.string(),
-  zipCode: z.string(),
-  country: z.string(),
+  gender: z.string().min(1, "Required"),
+  nationality: z.string().min(1, "Required"),
+  ethnicity: z.string().min(1, "Required"),
+  address: z.string().min(1, "Required"),
+  city: z.string().min(1, "Required"),
+  region: z.string().min(1, "Required"),
+  zipCode: z.string().min(1, "Required"),
+  country: z.string().min(1, "Required"),
   talents: z.array(z.string().min(1, "Required")).optional(),
-  aboutMe: z.string(),
+  aboutMe: z.string().min(1, "Required"),
   experiences: z
     .array(
       z.object({
-        year: z.string(),
-        media: z.string(),
-        country: z.string(),
-        product: z.string(),
+        year: z.string().min(1, "Required"),
+        media: z.string().min(1, "Required"),
+        country: z.string().min(1, "Required"),
+        product: z.string().min(1, "Required"),
         details: z.string().optional(),
       })
     )
     .optional(),
-  height: z.string(),
-  weight: z.string(),
-  bust: z.string(),
-  hips: z.string(),
-  suitDressSize: z.string(),
-  shoeSize: z.string(),
-  eyeColor: z.string(),
-  hairColor: z.string(),
+  height: z.string().min(1, "Required"),
+  weight: z.string().min(1, "Required"),
+  bust: z.string().min(1, "Required"),
+  hips: z.string().min(1, "Required"),
+  suitDressSize: z.string().min(1, "Required"),
+  shoeSize: z.string().min(1, "Required"),
+  eyeColor: z.string().min(1, "Required"),
+  hairColor: z.string().min(1, "Required"),
   midlengthImage: z
     .any()
     .refine((file) => file instanceof File, "Required")
@@ -125,6 +122,7 @@ const CreateModelApplicationFormSchema = z.object({
     .refine((file) => allowedImageTypes.includes(file?.type), "Invalid image")
     .refine((file) => file?.size < 5000000, "File size must be less than 5MB"),
 });
+
 
 const Gender = {
   MALE: "male",
@@ -145,6 +143,7 @@ const Ethnicity = {
 };
 
 export default function ApplicationSubmissionPage() {
+  const [submitted, setSubmitted] = useState(false);
   const form = useForm<z.infer<typeof CreateModelApplicationFormSchema>>({
     resolver: zodResolver(CreateModelApplicationFormSchema),
   });
@@ -152,25 +151,65 @@ export default function ApplicationSubmissionPage() {
   const talents = form.watch("talents") || [];
   const experiences = form.watch("experiences") || [];
 
-  const {mutate: handleSubmitApplication} = useMutation({
+  const {
+    mutate: handleSubmitApplication,
+    isPending,
+    isError,
+  } = useMutation({
     mutationFn: async (
       data: z.infer<typeof CreateModelApplicationFormSchema>
     ) => {
-     
-      
+      const application = await modelApplicationService.create(data);
 
-      const res = await axiosClient.post("/model-applications", data, {})
-
-    // return res.data;
-
-    const formData = new FormData();
-    formData.append("midlengthImage", data.midlengthImage);
-    formData.append("closeupImage", data.closeUpImage);
-    formData.append("fulllengthImage", data.fullLengthImage);
-    const res2 = await axiosClient.post("/model-applications/" + res.data.id + "/images", formData, {headers: {"Content-Type": "multipart/form-data"}})
-    console.log(res2)
+      await modelApplicationService.addImages(application.id, [
+        data.midlengthImage,
+        data.closeUpImage,
+        data.fullLengthImage,
+      ]);
+    },
+    onSuccess: () => {
+      setSubmitted(true);
     },
   });
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center space-y-3 mt-20">
+        <XCircle className="text-danger" />
+        <p className="font-medium">
+          An error occured while submitting your application
+        </p>
+        <Link className="underline" to={"http://jimmodel.com"}>
+          go to home page
+        </Link>
+      </div>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <div className="flex flex-col items-center space-y-3 mt-20">
+        <Loader2 className="animate-spin" />
+        <p className="font-medium">Submitting your application</p>
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center mt-20 space-y-3">
+        <CheckCircle className="text-success " />
+        <p className="font-medium">Thank you for your application</p>
+        <p className="font-medium text-sm">
+          Your application have been received. We will reach back to you as soon
+          as possible
+        </p>
+        <Link className="underline mt-5" to={"http://jimmodel.com"}>
+          go to home page
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="">
@@ -182,7 +221,9 @@ export default function ApplicationSubmissionPage() {
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit((data) => handleSubmitApplication(data))}
+            onSubmit={form.handleSubmit((data) =>
+              handleSubmitApplication(data)
+            )}
             className="pt-6 pb-3 space-y-2"
           >
             <FormSection title="Personal Information">
@@ -710,7 +751,7 @@ export default function ApplicationSubmissionPage() {
                   variant={"outline"}
                   onClick={() => {
                     const experiences = form.getValues().experiences || [];
-                    experiences.push({}  );
+                    experiences.push({year: "", media: "", product: "", country: ""});
                     form.setValue("experiences", experiences);
                   }}
                 >

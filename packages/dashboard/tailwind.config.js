@@ -1,5 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+
+import colors from "tailwindcss/colors"
+
+
+export default{
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -50,6 +54,12 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+       danger: {
+        DEFAULT: colors.red['600']
+       },
+       success: {
+        DEFAULT: colors.green['600']
+       }
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,5 +82,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [import("tailwindcss-animate")],
 }

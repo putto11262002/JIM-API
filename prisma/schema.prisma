@@ -29,7 +29,7 @@ model Staff {
 
 enum StaffRole {
   ADMIN
- GENERAL
+  GENERAL
   ROOT
 }
 
@@ -51,7 +51,7 @@ model ModelApplicationExperience {
 }
 
 model ModelApplicationImage {
-  fileId    String @id() 
+  fileId        String           @id()
   type          String
   caption       String?
   url           String
@@ -94,6 +94,8 @@ model ModelApplication {
   shoeSize      String
   eyeColor      String
   hairColor     String
+  // profileImage ModelImage @relation(fields: [profileImageId], references: [id])
+  // profileImageId String
   images        ModelApplicationImage[]
   status        ModelApplicationStatus       @default(PENDING)
   createdAt     DateTime                     @default(now())
@@ -105,51 +107,17 @@ model ModelImage {
   caption   String?
   type      String
   url       String
-  fileId String
-  // height    Int
-  // width     Int
+  fileId    String
   model     Model    @relation(fields: [modelId], references: [id])
   modelId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model ModelMeasurement {
-  modelId            String  @id
-  model              Model   @relation(fields: [modelId], references: [id])
-  height             String
-  weight             String
-  bust               String?
-  collar             String?
-  aroundArmpit       String?
-  aroundArmToWrist1  String?
-  aroundArmToWrist2  String?
-  aroundArmToWrist3  String?
-  armLength1         String?
-  armLength2         String?
-  aroundThickToAnkle String?
-  trousersLength     String?
-  chestHeight        String?
-  chestWidth         String?
-  waist              String?
-  hips               String?
-  shoulder           String?
-  frontShoulder      String?
-  frontLength        String?
-  backShoulder       String?
-  backLength         String?
-  crotch             String?
-  braSize            String?
-  suitDressSize      String?
-  shoeSize           String?
-  hairColor          String?
-  eyeColor           String?
-}
-
 model ModelExperience {
-  id      String @id @default(uuid())
+  id      String  @id @default(uuid())
   modelId String
-  model   Model  @relation(fields: [modelId], references: [id])
+  model   Model   @relation(fields: [modelId], references: [id])
   year    String
   media   String
   country String
@@ -174,9 +142,9 @@ model Model {
   nationality                  String?
   ethnicity                    String?
   countryOfResidence           String?
-  spokenLanguages               String[]
-  passportNumber                  String?
-  idCardNumber                  String?
+  spokenLanguages              String[]
+  passportNumber               String?
+  idCardNumber                 String?
   taxId                        String?
   occupation                   String?
   highestLevelOfEducation      String?
@@ -185,20 +153,44 @@ model Model {
   region                       String?
   zipCode                      String?
   country                      String?
-  experiences                  ModelExperience[]
   talents                      String[]
   aboutMe                      String?
   medicalBackground            String?
   tattoos                      String?
   scars                        String?
   underwareShooting            Boolean?
-  inTown                       Boolean           @default(false)
   emergencyContactName         String?
   emergencyContactPhoneNumber  String?
   emergencyContactRelationship String?
+  height                       String
+  weight                       String
+  bust                         String?
+  collar                       String?
+  aroundArmpit                 String?
+  aroundArmToWrist1            String?
+  aroundArmToWrist2            String?
+  aroundArmToWrist3            String?
+  armLength1                   String?
+  armLength2                   String?
+  aroundThickToAnkle           String?
+  trousersLength               String?
+  chestHeight                  String?
+  chestWidth                   String?
+  waist                        String?
+  hips                         String?
+  shoulder                     String?
+  frontShoulder                String?
+  frontLength                  String?
+  backShoulder                 String?
+  backLength                   String?
+  crotch                       String?
+  braSize                      String?
+  suitDressSize                String?
+  shoeSize                     String?
+  hairColor                    String?
+  eyeColor                     String?
   images                       ModelImage[]
-  measurement             ModelMeasurement?
-  bookings                     Booking[]
+  experiences                  ModelExperience[]
   createdAt                    DateTime          @default(now())
   updatedAt                    DateTime          @updatedAt
 }
@@ -211,13 +203,12 @@ model Option {
   id String @id @default(uuid())
 }
 
-
 model FileMetaData {
   id        String   @id @default(uuid())
-  path String
-  url String
-  mimeType String
-  size Int
+  path      String
+  url       String
+  mimeType  String
+  size      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -230,30 +221,29 @@ enum BookingStatus {
 }
 
 model Booking {
-  id String @id @default(uuid())
-  title String
-  client String
-  clientAddress String?
-  personIncharge String?
-  mediaReleased String?
-  periodReleased String?
+  id                  String        @id @default(uuid())
+  title               String
+  client              String
+  clientAddress       String?
+  personIncharge      String?
+  mediaReleased       String?
+  periodReleased      String?
   territoriesReleased String?
-  shootingStartDate DateTime?
-  shootingEndDate DateTime
-  fittingStartDate DateTime?
-  fittingEndDate DateTime?
-  finalMeetingDate DateTime?
-  workingHour String?
-  venueOfShoot String?
-  feeAsAgreed String?
-  overtimePerHour String?
-  termsOfPayment String?
-  cancellationFee String?
-  contractDetails String?
-  status BookingStatus
-  bookedBy Staff  @relation(fields: [bookedById], references: [id])
-  bookedById String
-  models Model[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  shootingStartDate   DateTime?
+  shootingEndDate     DateTime
+  fittingStartDate    DateTime?
+  fittingEndDate      DateTime?
+  finalMeetingDate    DateTime?
+  workingHour         String?
+  venueOfShoot        String?
+  feeAsAgreed         String?
+  overtimePerHour     String?
+  termsOfPayment      String?
+  cancellationFee     String?
+  contractDetails     String?
+  status              BookingStatus
+  bookedBy            Staff         @relation(fields: [bookedById], references: [id])
+  bookedById          String
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 }

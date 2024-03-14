@@ -27,7 +27,7 @@ export default function StaffPage() {
 
   return (
     <>
-      <div className="flex justify-between py-4 gap-3">
+      <div className="flex justify-between py-2 gap-3">
         <div className="flex gap-3 grow">
           <Input
             onChange={(e) => {
@@ -58,7 +58,7 @@ export default function StaffPage() {
           <AddStaffDialog />
         </div>
       </div>
-      <div>
+      <div className="py-4">
         <StaffTable
           error={error}
           isLoading={isPending}
