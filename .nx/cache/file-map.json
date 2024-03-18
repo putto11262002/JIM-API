@@ -10,146 +10,6 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
-      "@jimmodel/shared": [
-        {
-          "file": "packages/shared/.gitignore",
-          "hash": "15041412395937261383"
-        },
-        {
-          "file": "packages/shared/package.json",
-          "hash": "1457155689244159705",
-          "deps": [
-            "npm:zod",
-            "npm:typescript",
-            "npm:prisma",
-            "npm:@prisma/client"
-          ]
-        },
-        {
-          "file": "packages/shared/src/dtos/index.ts",
-          "hash": "12216914052100301036"
-        },
-        {
-          "file": "packages/shared/src/dtos/requests/index.ts",
-          "hash": "9495515419639811302"
-        },
-        {
-          "file": "packages/shared/src/dtos/requests/staff.ts",
-          "hash": "4247836279996444625"
-        },
-        {
-          "file": "packages/shared/src/dtos/responses/api-response.ts",
-          "hash": "11243066704747424624"
-        },
-        {
-          "file": "packages/shared/src/dtos/responses/error-response.ts",
-          "hash": "2769305007781161432"
-        },
-        {
-          "file": "packages/shared/src/dtos/responses/index.ts",
-          "hash": "10758838466499881313"
-        },
-        {
-          "file": "packages/shared/src/dtos/responses/staff.ts",
-          "hash": "12693512148907863801"
-        },
-        {
-          "file": "packages/shared/src/index.ts",
-          "hash": "6422208887050013040"
-        },
-        {
-          "file": "packages/shared/src/schemas/block.ts",
-          "hash": "13613193458094908519"
-        },
-        {
-          "file": "packages/shared/src/schemas/calendar.ts",
-          "hash": "16550962258679723422"
-        },
-        {
-          "file": "packages/shared/src/schemas/index.ts",
-          "hash": "10205515458556287076"
-        },
-        {
-          "file": "packages/shared/src/schemas/job.ts",
-          "hash": "17699536095010297258"
-        },
-        {
-          "file": "packages/shared/src/schemas/model-application-schema.ts",
-          "hash": "6691202261594137420"
-        },
-        {
-          "file": "packages/shared/src/schemas/model-schema.ts",
-          "hash": "3605927508095703913"
-        },
-        {
-          "file": "packages/shared/src/schemas/paginated-data.ts",
-          "hash": "16492940955465054316"
-        },
-        {
-          "file": "packages/shared/src/schemas/staff-scehma.ts",
-          "hash": "14712396579002453637"
-        },
-        {
-          "file": "packages/shared/src/types/block.ts",
-          "hash": "11587029865686037497"
-        },
-        {
-          "file": "packages/shared/src/types/calendar.ts",
-          "hash": "8428712654147314339"
-        },
-        {
-          "file": "packages/shared/src/types/file-meta-data-type.ts",
-          "hash": "14457497541163513974"
-        },
-        {
-          "file": "packages/shared/src/types/index.ts",
-          "hash": "17914615775884855613"
-        },
-        {
-          "file": "packages/shared/src/types/job.ts",
-          "hash": "2166805995711958904"
-        },
-        {
-          "file": "packages/shared/src/types/jwt.ts",
-          "hash": "13449945247969011159"
-        },
-        {
-          "file": "packages/shared/src/types/model-application-type.ts",
-          "hash": "12022605269603500931"
-        },
-        {
-          "file": "packages/shared/src/types/model-type.ts",
-          "hash": "10734755650381077455"
-        },
-        {
-          "file": "packages/shared/src/types/pagingated-data-type.ts",
-          "hash": "4422209949026613683"
-        },
-        {
-          "file": "packages/shared/src/types/staff-type.ts",
-          "hash": "7091506891346055271"
-        },
-        {
-          "file": "packages/shared/src/utils/index.ts",
-          "hash": "6747610561823209087"
-        },
-        {
-          "file": "packages/shared/src/utils/zod.ts",
-          "hash": "13590649555200387278"
-        },
-        {
-          "file": "packages/shared/src/validators/index.ts",
-          "hash": "5351412798757831531"
-        },
-        {
-          "file": "packages/shared/tsconfig.json",
-          "hash": "8463281612782965973"
-        },
-        {
-          "file": "packages/shared/tsconfig.tsbuildinfo",
-          "hash": "5731989498543873720"
-        }
-      ],
       "@jimmodel/api": [
         {
           "file": "packages/api/.gitignore",
@@ -356,150 +216,6 @@
         {
           "file": "packages/api/tsconfig.json",
           "hash": "16305114912909143972"
-        }
-      ],
-      "@jimmodel/database": [
-        {
-          "file": "packages/database/dist/index.js",
-          "hash": "5014689434508807291"
-        },
-        {
-          "file": "packages/database/index.ts",
-          "hash": "5804680738783145642"
-        },
-        {
-          "file": "packages/database/package.json",
-          "hash": "7409167835779911936",
-          "deps": [
-            "npm:@prisma/client",
-            "npm:@types/node",
-            "npm:prisma",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/database/prisma/migrations/20231023140902_init/migration.sql",
-          "hash": "18173964290825227507"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20231024051232_add_staff_username/migration.sql",
-          "hash": "8108530275772133729"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20231024051251_fix_staff_role_typo/migration.sql",
-          "hash": "12724946875050464106"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20231113015803_fix_staff_role_typo/migration.sql",
-          "hash": "1673484507692605528"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20231129072941_add_model/migration.sql",
-          "hash": "13085344639058604517"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240108024234_add_logout/migration.sql",
-          "hash": "4749023688059268517"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240306085648_fix_typo/migration.sql",
-          "hash": "12043760048532690057"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240306094350_/migration.sql",
-          "hash": "17789162014763614824"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240307055756_fix_model_fields_typo/migration.sql",
-          "hash": "14561551988601783220"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240308074031_/migration.sql",
-          "hash": "8990685260645305322"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240308103105_add_booking/migration.sql",
-          "hash": "17468194324725194353"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240308132820_/migration.sql",
-          "hash": "2887743791837418239"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240310120410_change_staff_role_enum/migration.sql",
-          "hash": "8472340054511591067"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240311062504_fix_typo/migration.sql",
-          "hash": "2524469583004509697"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240312084907_change_field_name/migration.sql",
-          "hash": "12579528041559205654"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240313032827_merge_measurement_with_model/migration.sql",
-          "hash": "3406807588480848091"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240314080725_add_job/migration.sql",
-          "hash": "1314569968547435063"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240314084349_add_job_status/migration.sql",
-          "hash": "17994599348663200532"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240314134523_fix_typo/migration.sql",
-          "hash": "5822184603053042888"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240315182524_add_booking_type/migration.sql",
-          "hash": "14445399617392207853"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318040624_add_staff_color/migration.sql",
-          "hash": "13438033301715601586"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318041602_make_color_required/migration.sql",
-          "hash": "5522751087277761508"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318042527_add_model_nmae/migration.sql",
-          "hash": "9553996108204537964"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318065015_add_booking_message/migration.sql",
-          "hash": "12436891533764706402"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318071509_remove_booking_message/migration.sql",
-          "hash": "15260408616106022209"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318074049_add_block/migration.sql",
-          "hash": "6008837639773977002"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318095611_fix_typo/migration.sql",
-          "hash": "6153298476781605578"
-        },
-        {
-          "file": "packages/database/prisma/migrations/20240318105726_reove_unused_fields/migration.sql",
-          "hash": "9299171506466797641"
-        },
-        {
-          "file": "packages/database/prisma/migrations/migration_lock.toml",
-          "hash": "11493296588214560035"
-        },
-        {
-          "file": "packages/database/prisma/schema.prisma",
-          "hash": "87624821263051633"
-        },
-        {
-          "file": "packages/database/tsconfig.json",
-          "hash": "9416703574787719360"
         }
       ],
       "@jimmodel/dashboard": [
@@ -1072,6 +788,301 @@
           "file": "packages/dashboard/vite.config.ts",
           "hash": "10238225751718759799"
         }
+      ],
+      "@jimmodel/database": [
+        {
+          "file": "packages/database/.npmignore",
+          "hash": "12482163693427146257"
+        },
+        {
+          "file": "packages/database/dist/index.d.ts",
+          "hash": "6819077451686689717"
+        },
+        {
+          "file": "packages/database/dist/index.d.ts.map",
+          "hash": "16680869692676299142"
+        },
+        {
+          "file": "packages/database/dist/index.js",
+          "hash": "5014689434508807291"
+        },
+        {
+          "file": "packages/database/index.ts",
+          "hash": "5863888387515270643"
+        },
+        {
+          "file": "packages/database/package.json",
+          "hash": "10146496346416499131",
+          "deps": [
+            "npm:@prisma/client",
+            "npm:@types/node",
+            "npm:prisma",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/database/prisma/migrations/20231023140902_init/migration.sql",
+          "hash": "18173964290825227507"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20231024051232_add_staff_username/migration.sql",
+          "hash": "8108530275772133729"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20231024051251_fix_staff_role_typo/migration.sql",
+          "hash": "12724946875050464106"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20231113015803_fix_staff_role_typo/migration.sql",
+          "hash": "1673484507692605528"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20231129072941_add_model/migration.sql",
+          "hash": "13085344639058604517"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240108024234_add_logout/migration.sql",
+          "hash": "4749023688059268517"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240306085648_fix_typo/migration.sql",
+          "hash": "12043760048532690057"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240306094350_/migration.sql",
+          "hash": "17789162014763614824"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240307055756_fix_model_fields_typo/migration.sql",
+          "hash": "14561551988601783220"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240308074031_/migration.sql",
+          "hash": "8990685260645305322"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240308103105_add_booking/migration.sql",
+          "hash": "17468194324725194353"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240308132820_/migration.sql",
+          "hash": "2887743791837418239"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240310120410_change_staff_role_enum/migration.sql",
+          "hash": "8472340054511591067"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240311062504_fix_typo/migration.sql",
+          "hash": "2524469583004509697"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240312084907_change_field_name/migration.sql",
+          "hash": "12579528041559205654"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240313032827_merge_measurement_with_model/migration.sql",
+          "hash": "3406807588480848091"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240314080725_add_job/migration.sql",
+          "hash": "1314569968547435063"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240314084349_add_job_status/migration.sql",
+          "hash": "17994599348663200532"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240314134523_fix_typo/migration.sql",
+          "hash": "5822184603053042888"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240315182524_add_booking_type/migration.sql",
+          "hash": "14445399617392207853"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318040624_add_staff_color/migration.sql",
+          "hash": "13438033301715601586"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318041602_make_color_required/migration.sql",
+          "hash": "5522751087277761508"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318042527_add_model_nmae/migration.sql",
+          "hash": "9553996108204537964"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318065015_add_booking_message/migration.sql",
+          "hash": "12436891533764706402"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318071509_remove_booking_message/migration.sql",
+          "hash": "15260408616106022209"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318074049_add_block/migration.sql",
+          "hash": "6008837639773977002"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318095611_fix_typo/migration.sql",
+          "hash": "6153298476781605578"
+        },
+        {
+          "file": "packages/database/prisma/migrations/20240318105726_reove_unused_fields/migration.sql",
+          "hash": "9299171506466797641"
+        },
+        {
+          "file": "packages/database/prisma/migrations/migration_lock.toml",
+          "hash": "11493296588214560035"
+        },
+        {
+          "file": "packages/database/prisma/schema.prisma",
+          "hash": "87624821263051633"
+        },
+        {
+          "file": "packages/database/tsconfig.json",
+          "hash": "9026662780883752927"
+        }
+      ],
+      "@jimmodel/shared": [
+        {
+          "file": "packages/shared/.gitignore",
+          "hash": "15041412395937261383"
+        },
+        {
+          "file": "packages/shared/package.json",
+          "hash": "8641505940076154027",
+          "deps": [
+            "npm:zod",
+            "@jimmodel/database",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/shared/src/dtos/index.ts",
+          "hash": "12216914052100301036"
+        },
+        {
+          "file": "packages/shared/src/dtos/requests/index.ts",
+          "hash": "9495515419639811302"
+        },
+        {
+          "file": "packages/shared/src/dtos/requests/staff.ts",
+          "hash": "4247836279996444625"
+        },
+        {
+          "file": "packages/shared/src/dtos/responses/api-response.ts",
+          "hash": "11243066704747424624"
+        },
+        {
+          "file": "packages/shared/src/dtos/responses/error-response.ts",
+          "hash": "2769305007781161432"
+        },
+        {
+          "file": "packages/shared/src/dtos/responses/index.ts",
+          "hash": "10758838466499881313"
+        },
+        {
+          "file": "packages/shared/src/dtos/responses/staff.ts",
+          "hash": "12693512148907863801"
+        },
+        {
+          "file": "packages/shared/src/index.ts",
+          "hash": "5568752944000661157"
+        },
+        {
+          "file": "packages/shared/src/schemas/block.ts",
+          "hash": "13613193458094908519"
+        },
+        {
+          "file": "packages/shared/src/schemas/calendar.ts",
+          "hash": "16550962258679723422"
+        },
+        {
+          "file": "packages/shared/src/schemas/index.ts",
+          "hash": "10205515458556287076"
+        },
+        {
+          "file": "packages/shared/src/schemas/job.ts",
+          "hash": "17699536095010297258"
+        },
+        {
+          "file": "packages/shared/src/schemas/model-application-schema.ts",
+          "hash": "6691202261594137420"
+        },
+        {
+          "file": "packages/shared/src/schemas/model-schema.ts",
+          "hash": "3605927508095703913"
+        },
+        {
+          "file": "packages/shared/src/schemas/paginated-data.ts",
+          "hash": "16492940955465054316"
+        },
+        {
+          "file": "packages/shared/src/schemas/staff-scehma.ts",
+          "hash": "14712396579002453637"
+        },
+        {
+          "file": "packages/shared/src/types/block.ts",
+          "hash": "4340447694089960029"
+        },
+        {
+          "file": "packages/shared/src/types/calendar.ts",
+          "hash": "8428712654147314339"
+        },
+        {
+          "file": "packages/shared/src/types/file-meta-data-type.ts",
+          "hash": "14457497541163513974"
+        },
+        {
+          "file": "packages/shared/src/types/index.ts",
+          "hash": "17914615775884855613"
+        },
+        {
+          "file": "packages/shared/src/types/job.ts",
+          "hash": "2166805995711958904"
+        },
+        {
+          "file": "packages/shared/src/types/jwt.ts",
+          "hash": "13449945247969011159"
+        },
+        {
+          "file": "packages/shared/src/types/model-application-type.ts",
+          "hash": "12022605269603500931"
+        },
+        {
+          "file": "packages/shared/src/types/model-type.ts",
+          "hash": "10734755650381077455"
+        },
+        {
+          "file": "packages/shared/src/types/pagingated-data-type.ts",
+          "hash": "4422209949026613683"
+        },
+        {
+          "file": "packages/shared/src/types/staff-type.ts",
+          "hash": "7091506891346055271"
+        },
+        {
+          "file": "packages/shared/src/utils/index.ts",
+          "hash": "6747610561823209087"
+        },
+        {
+          "file": "packages/shared/src/utils/zod.ts",
+          "hash": "13590649555200387278"
+        },
+        {
+          "file": "packages/shared/src/validators/index.ts",
+          "hash": "5351412798757831531"
+        },
+        {
+          "file": "packages/shared/tsconfig.json",
+          "hash": "8463281612782965973"
+        },
+        {
+          "file": "packages/shared/tsconfig.tsbuildinfo",
+          "hash": "5731989498543873720"
+        }
       ]
     },
     "nonProjectFiles": [
@@ -1085,7 +1096,7 @@
       },
       {
         "file": ".gitignore",
-        "hash": "7856790824776746675"
+        "hash": "3755114773706223890"
       },
       {
         "file": "docker/db.docker-compose.yml",
@@ -1097,35 +1108,11 @@
       },
       {
         "file": "package-lock.json",
-        "hash": "1564363980717389819"
+        "hash": "16787908806601915929"
       },
       {
         "file": "package.json",
         "hash": "1746756651787029409"
-      },
-      {
-        "file": "packages/db/migrations/20231023140902_init/migration.sql",
-        "hash": "18173964290825227507"
-      },
-      {
-        "file": "packages/db/migrations/20231024051232_add_staff_username/migration.sql",
-        "hash": "8108530275772133729"
-      },
-      {
-        "file": "packages/db/migrations/20231024051251_fix_staff_role_typo/migration.sql",
-        "hash": "12724946875050464106"
-      },
-      {
-        "file": "packages/db/migrations/20231113015803_fix_staff_role_typo/migration.sql",
-        "hash": "1673484507692605528"
-      },
-      {
-        "file": "packages/db/migrations/20231129072941_add_model/migration.sql",
-        "hash": "13085344639058604517"
-      },
-      {
-        "file": "packages/db/migrations/migration_lock.toml",
-        "hash": "11493296588214560035"
       },
       {
         "file": "prisma/migrations/20231023140902_init/migration.sql",

@@ -9,12 +9,11 @@
     "build": "tsc"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "prisma": "*",
-    "@prisma/client": "*"
+    "typescript": "^5.3.3"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@jimmodel/database": "*"
   },
   "author": "Put",
   "description": "Suthisrisinlpa"

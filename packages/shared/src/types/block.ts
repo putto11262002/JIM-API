@@ -1,4 +1,4 @@
-import {Prisma, Block as _Block} from "@prisma/client"
+import {Prisma, Block as _Block} from "@jimmodel/database"
 import { Model } from "./model-type"
 
 

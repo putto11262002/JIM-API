@@ -66,6 +66,13 @@
             },
             "configurations": {}
           },
+          "postinstall": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "postinstall"
+            },
+            "configurations": {}
+          },
           "nx-release-publish": {
             "dependsOn": [
               "^nx-release-publish"
@@ -11708,17 +11715,12 @@
       },
       {
         "source": "@jimmodel/shared",
+        "target": "@jimmodel/database",
+        "type": "static"
+      },
+      {
+        "source": "@jimmodel/shared",
         "target": "npm:typescript",
-        "type": "static"
-      },
-      {
-        "source": "@jimmodel/shared",
-        "target": "npm:prisma",
-        "type": "static"
-      },
-      {
-        "source": "@jimmodel/shared",
-        "target": "npm:@prisma/client",
         "type": "static"
       }
     ],

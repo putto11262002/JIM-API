@@ -1,10 +1,16 @@
 {
   "name": "@jimmodel/database",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "prisma/schema.prisma"
+  ],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "postinstall": "prisma generate"
   },
   "author": "",
   "license": "ISC",
