@@ -34,6 +34,7 @@ const UpdateStaffProfileFormSchema = z.object({
   firstName: z.string().min(1, "first name is required"),
   lastName: z.string().min(1, "last name is required"),
   role: z.nativeEnum(StaffRole, { required_error: "staff role is required" }),
+  color: z.string(),
 });
 
 export default function UpdateStaffProfileForm({
@@ -91,6 +92,20 @@ export default function UpdateStaffProfileForm({
               <FormLabel>Last Name</FormLabel>
               <FormControl>
                 <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+<FormField
+          control={form.control}
+          name="color"
+          render={({ field }) => (
+            <FormItem className="col-span-2">
+              <FormLabel>Color</FormLabel>
+              <FormControl>
+                <Input type="color" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

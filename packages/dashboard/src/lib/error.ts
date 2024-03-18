@@ -47,3 +47,20 @@ export function errorInterceptor(err: unknown, cb: (error: AppError) => void) {
   }
   cb(error)
 }
+
+
+export function errorInterceptorV2<T, K>(fn: (arg: T) => Promise<K>, arg: T) {
+  try {
+    return fn(arg);
+  } catch (err) {
+    const error = getAppError(err);
+    if (error.statusCode === 401) {
+      staffService.clearAccessToken();
+      staffService.clearRefreshToken();
+      store.dispatch(unauthenticate());
+      throw error;
+    }
+
+    throw error;
+  }
+}

@@ -8,6 +8,7 @@ export const CreateStaffFormSchema = z.object({
     password: z.string().min(8).max(50),
     role: z.nativeEnum(StaffRole),
     confirmPassword: z.string().min(1, "comfirm password is required"),
+    color: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "password must match",
     path: ["confirmPassword"],

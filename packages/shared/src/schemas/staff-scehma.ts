@@ -10,6 +10,7 @@ export const StaffCreateSchema = z.object({
     username: z.string().min(6, "must contain at least 6 characters").max(50),
     password: z.string().min(8).max(50),
     role: z.nativeEnum(StaffRole).optional(),
+    color: z.string(),
 });
 
 
@@ -27,7 +28,8 @@ export const StaffRefreshTokenSchema = z.object({
 export const StaffUpdateSchema = z.object({
     firstName: z.string().min(1).max(255).optional(),
     lastName: z.string().min(1).max(255).optional(),
-    role: z.nativeEnum(StaffRole).optional()
+    role: z.nativeEnum(StaffRole).optional(),
+    color: z.string().optional(),
 })
 
 export const StaffGetQuerySchema = z.object({

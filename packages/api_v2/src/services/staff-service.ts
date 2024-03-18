@@ -51,6 +51,7 @@ const selectWithoutSecrets = Prisma.validator<Prisma.StaffSelect>()({
   logout: false,
   createdAt: true,
   updatedAt: true,
+  color: true
 });
 
 function whereEmailOrUsername(

@@ -22,6 +22,10 @@ const menuItems = [
       title: "Applications",
       path: "/model-applications",
     },
+    {
+      title: "Jobs",
+      path :"/jobs"
+    }
   ];
 
 export default function NavBar() {
@@ -46,8 +50,8 @@ export default function NavBar() {
    
 
   return (
-    <div className="w-screen border-b border-b-slate-200">
-    <div className="flex items-center max-w-[700px]  py-4 px-2 mx-auto">
+    <div className="w-screen border-b border-b-slate-200 z-5 bg-white">
+    <div className="flex items-center max-w-[700px]  py-4 px-2 mx-auto h-14">
           <h1 className="grow-0 font-bold text-slate-900">J.I.M.</h1>
           <nav className="grow px-4 pl-6">
             <ul className="flex gap-6">{renderMenuItems()}</ul>

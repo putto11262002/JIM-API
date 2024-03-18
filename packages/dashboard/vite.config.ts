@@ -9,7 +9,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@components": path.resolve(__dirname, "./src/components"),
-      "@assetss": path.resolve(__dirname, "./src/assets"),
+      "@assets": path.resolve(__dirname, "./src/assets"),
       ".prisma/client/index-browser": "../../node_modules/.prisma/client/index-browser.js"
     
     }

@@ -5,7 +5,6 @@ import { ReactNode, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import modelService from "../../services/model";
 import { Link } from "react-router-dom";
-import { Separator } from "../../components/ui/separator";
 import { PersonalForm } from "../../components/model/personal-form";
 import { ModelContactForm } from "../../components/model/contact-form";
 import { ModelAddressForm } from "../../components/model/address-form";
@@ -19,9 +18,8 @@ import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { AppError } from "../../types/app-error";
 import { errorInterceptor } from "../../lib/error";
-import { SideBar } from "../../components/model/form-side-menu";
-
-
+import { SideBar } from "../../components/shared/form-side-menu";
+import PageTitle from "../../components/shared/page-title";
 
 type ModelCreateForm = z.infer<typeof ModelCreateFormSchema>;
 
@@ -108,7 +106,7 @@ function AddModelPage() {
 
   const { create, isPending, error } = useCreateModel({
     onSuccess: (model) => {
-      setCreatedModel(model)
+      setCreatedModel(model);
       setFormData({});
       setFormIndex(0);
     },
@@ -166,13 +164,10 @@ function AddModelPage() {
           </div>
         </AlertDialogContent>
       </AlertDialog>
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold">Add Model</h2>
-        <p className="text-muted-foreground">
-          Add a model record to the database
-        </p>
-      </div>
-      <Separator className="my-6" />
+      <PageTitle
+        title="Add Model"
+        subtitle="Add a model record to the database"
+      />
 
       <div className="flex">
         <div className="">

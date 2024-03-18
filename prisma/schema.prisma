@@ -22,9 +22,10 @@ model Staff {
   password  String
   role      StaffRole
   logout    Boolean   @default(true)
-  bookings  Booking[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  color     String
+  Job       Job[]
 }
 
 enum StaffRole {
@@ -129,6 +130,7 @@ model Model {
   id                           String            @id @default(uuid())
   firstName                    String
   lastName                     String
+  name String
   nickname                     String?
   phoneNumber                  String
   email                        String
@@ -193,10 +195,10 @@ model Model {
   experiences                  ModelExperience[]
   createdAt                    DateTime          @default(now())
   updatedAt                    DateTime          @updatedAt
-}
-
-model Job {
-  id String @id @default(uuid())
+  Job                          Job?              @relation(fields: [jobId], references: [id])
+  jobId                        String?
+  Booking                      Booking?          @relation(fields: [bookingId], references: [id])
+  bookingId                    String?
 }
 
 model Option {
@@ -220,20 +222,68 @@ enum BookingStatus {
   CANCELED
 }
 
+// model Booking {
+//   id                  String        @id @default(uuid())
+//   title               String
+//   client              String
+//   clientAddress       String?
+//   personIncharge      String?
+//   mediaReleased       String?
+//   periodReleased      String?
+//   territoriesReleased String?
+//   shootingStartDate   DateTime?
+//   shootingEndDate     DateTime
+//   fittingStartDate    DateTime?
+//   fittingEndDate      DateTime?
+//   finalMeetingDate    DateTime?
+//   workingHour         String?
+//   venueOfShoot        String?
+//   feeAsAgreed         String?
+//   overtimePerHour     String?
+//   termsOfPayment      String?
+//   cancellationFee     String?
+//   contractDetails     String?
+//   status              BookingStatus
+//   // bookedBy            Staff         @relation(fields: [bookedById], references: [id])
+//   // bookedById          String
+//   createdAt           DateTime      @default(now())
+//   updatedAt           DateTime      @updatedAt
+// }
+
 model Booking {
-  id                  String        @id @default(uuid())
+  id        String   @id @default(uuid())
+  models    Model[]
+  job       Job      @relation(fields: [jobId], references: [id])
+  jobId     String
+  start     DateTime
+  end       DateTime
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum JobStatus {
+  PENDING
+  CONFIRMED
+  ARCHIVED
+  // CANCELED
+}
+
+model Job {
+  id                  String    @id @default(uuid())
   title               String
   client              String
   clientAddress       String?
-  personIncharge      String?
+  personInCharge      String?
   mediaReleased       String?
   periodReleased      String?
   territoriesReleased String?
-  shootingStartDate   DateTime?
-  shootingEndDate     DateTime
-  fittingStartDate    DateTime?
-  fittingEndDate      DateTime?
-  finalMeetingDate    DateTime?
+  models              Model[]
+  // shootingStartDate   DateTime?
+  // shootingEndDate     DateTime
+  // fittingStartDate    DateTime?
+  // fittingEndDate      DateTime?
+  // finalMeetingDate    DateTime?
   workingHour         String?
   venueOfShoot        String?
   feeAsAgreed         String?
@@ -241,9 +291,11 @@ model Booking {
   termsOfPayment      String?
   cancellationFee     String?
   contractDetails     String?
-  status              BookingStatus
-  bookedBy            Staff         @relation(fields: [bookedById], references: [id])
-  bookedById          String
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  // status              BookingStatus
+  createdBy           Staff     @relation(fields: [createdById], references: [id])
+  createdById         String
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  bookings            Booking[]
+  status              JobStatus
 }

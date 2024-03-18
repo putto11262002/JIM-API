@@ -940,6 +940,23 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@jimmodel/api_v2@file:/Users/putsuthisrisinlpa/Development/jimmodel/jimmodel-ts/packages/api_v2":
+  version "1.0.0"
+  resolved "file:packages/api_v2"
+  dependencies:
+    "@jimmodel/shared" "*"
+    "@prisma/client" "*"
+    bcrypt "^5.1.1"
+    cors "^2.8.5"
+    dayjs "^1.11.10"
+    dotenv "^16.4.5"
+    express "^4.18.3"
+    jsonwebtoken "^9.0.2"
+    multer "^1.4.5-lts.1"
+    sharp "^0.33.2"
+    uuid "^9.0.1"
+    zod "^3.22.4"
+
 "@jimmodel/api@file:/Users/putsuthisrisinlpa/Development/jimmodel/jimmodel-ts/packages/api":
   version "1.0.0"
   resolved "file:packages/api"
@@ -968,8 +985,9 @@
   resolved "file:packages/dashboard"
   dependencies:
     "@hookform/resolvers" "^3.3.2"
-    "@jimmodel/shared" "^1.0.0"
+    "@jimmodel/shared" "*"
     "@prisma/client" "^5.7.1"
+    "@radix-ui/react-alert-dialog" "^1.0.5"
     "@radix-ui/react-dialog" "^1.0.5"
     "@radix-ui/react-dropdown-menu" "^2.0.6"
     "@radix-ui/react-label" "^2.0.2"
@@ -1456,6 +1474,19 @@
   integrity sha512-yQ8oGX2GVsEYMWGxcovu1uGWPCxV5BFfeeYxqPmuAzUyLT9qmaMXSAhXpb0WrspIeqYzdJpkh2vHModJPgRIaw==
   dependencies:
     "@babel/runtime" "^7.13.10"
+
+"@radix-ui/react-alert-dialog@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@radix-ui/react-alert-dialog/-/react-alert-dialog-1.0.5.tgz"
+  integrity sha512-OrVIOcZL0tl6xibeuGt5/+UxoT2N27KCFOPjFyfXMnchxSHZ/OW7cCX2nGlIYJrbHK/fczPcFzAwvNBB6XBNMA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-dialog" "1.0.5"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-slot" "1.0.2"
 
 "@radix-ui/react-arrow@1.0.3":
   version "1.0.3"
@@ -2689,22 +2720,6 @@ anymatch@^3.0.3, anymatch@~3.1.2:
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
-
-"api_v2@file:/Users/putsuthisrisinlpa/Development/jimmodel/jimmodel-ts/packages/api_v2":
-  version "1.0.0"
-  resolved "file:packages/api_v2"
-  dependencies:
-    "@jimmodel/shared" "*"
-    "@prisma/client" "*"
-    bcrypt "^5.1.1"
-    cors "^2.8.5"
-    dotenv "^16.4.5"
-    express "^4.18.3"
-    jsonwebtoken "^9.0.2"
-    multer "^1.4.5-lts.1"
-    sharp "^0.33.2"
-    uuid "^9.0.1"
-    zod "^3.22.4"
 
 append-field@^1.0.0:
   version "1.0.0"

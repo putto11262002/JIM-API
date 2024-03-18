@@ -26,7 +26,8 @@ async function createRootUser(){
     role: StaffRole.ROOT,
     username: "root",
     firstName: "Root",
-    lastName: "User"
+    lastName: "User",
+    color: "#000000"
   }
   await staffService.create(rootStaff)
 

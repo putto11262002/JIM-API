@@ -17,7 +17,7 @@ import { ModelExperienceForm } from "../../components/model/experience-form";
 import { ModelMeausrementForm } from "../../components/model/measurement-form";
 import { Loader2 } from "lucide-react";
 import MediaForm from "../../components/model/media-form";
-import { SideBar } from "../../components/model/form-side-menu";
+import { SideBar } from "../../components/shared/form-side-menu";
 
 
 
@@ -173,6 +173,7 @@ function UpdateModelPage() {
         </p>
       </div>
       <Separator className="my-6" />
+
 
       <div className="flex">
         <div className="">

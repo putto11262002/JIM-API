@@ -9,8 +9,9 @@ export type Model = _Model & {
 };
 
 
-export type ModelCreateInput = Omit<Prisma.ModelCreateInput, "experiences" | "images" | "talents">  & {
+export type ModelCreateInput = Omit<Prisma.ModelCreateInput, "experiences" | "images" | "talents" | "name">  & {
     talents?: string[]
+    name?: string
 }
 
 export type ModelUpdateInput = Omit<Prisma.ModelUpdateInput, "experiences" | "images">  & {

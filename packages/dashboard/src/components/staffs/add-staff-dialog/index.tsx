@@ -11,9 +11,7 @@ import { Button } from "../../ui/button";
 import { DialogHeader } from "../../ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  StaffRole,
-} from "@jimmodel/shared";
+import { StaffRole } from "@jimmodel/shared";
 import {
   Form,
   FormControl,
@@ -36,12 +34,9 @@ import { Alert, AlertDescription } from "../../ui/alert";
 import { CreateStaffFormSchema } from "../../../schemas/staff";
 import { useCreateStaff } from "../../../hooks/staff/useCreateStaff";
 
-
 export default function AddStaffDialog() {
-  
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const { toast } = useToast();
-
 
   const form = useForm<z.infer<typeof CreateStaffFormSchema>>({
     resolver: zodResolver(CreateStaffFormSchema),
@@ -51,28 +46,26 @@ export default function AddStaffDialog() {
       email: "",
       username: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
   });
 
-  const {create, error} = useCreateStaff({
+  const { create, error } = useCreateStaff({
     onSuccess: () => {
-      form.reset()
-      setOpenDialog(false)
-      toast({title: "Successfully created staff"})
+      form.reset();
+      setOpenDialog(false);
+      toast({ title: "Successfully created staff" });
     },
-  })
-
-
+  });
 
   return (
-    <Dialog open={openDialog}  onOpenChange={setOpenDialog}>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
         <Button className="" variant={"outline"}>
           <Plus className="mr-3 h-4 w-4" /> Staff
         </Button>
       </DialogTrigger>
-      <DialogContent  className="max-h-[80vh] overflow-auto">
+      <DialogContent className="max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="">Add Staff</DialogTitle>
           <DialogDescription>
@@ -163,10 +156,26 @@ export default function AddStaffDialog() {
                       </FormControl>
                       <SelectContent>
                         {Object.values(StaffRole).map((role) => (
-                          <SelectItem key={role} value={role}>{role}</SelectItem>
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Color</FormLabel>
+                    <FormControl>
+                      <Input type="color" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

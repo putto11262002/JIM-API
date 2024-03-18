@@ -3,7 +3,7 @@ import { StaffWithoutSecrets } from "@jimmodel/shared";
 import { DataTable } from "../../shared/data-table";
 import { Button } from "../../ui/button";
 import { MoreHorizontal } from "lucide-react";
-import UpdateStaffDialog from "../UpdateStaffDialog";
+import UpdateStaffDialog from "../update-staff-dialog";
 import { AppError } from "../../../types/app-error";
 
 const columns: ColumnDef<StaffWithoutSecrets>[] = [

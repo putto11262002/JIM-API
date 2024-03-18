@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ProtectedRoute from "./components/globals/ProtectedRoute";
-import CalendarPage from "./pages/CalendarPage";
+import CalendarPage from "./pages/calendar";
 import PrimaryLayout from "./components/layouts/PrimaryLayout";
 import InitApp from "./components/globals/InitApp";
 import StaffPage from "./pages/StaffPage";
@@ -12,6 +12,10 @@ import ApplicationDetailsPage from "./pages/ApplicationDetailsPage";
 import ModelPage from "./pages/model";
 import AddModelPage from "./pages/add-model";
 import UpdateModelPage from "./pages/update-model";
+import AddJobPage from "./pages/add-job";
+import ViewJobPage from "./pages/view-job";
+import UpdateJobPage from "./pages/update-job";
+import NavbarLayout from "./components/layouts/NavBarLayout";
 
 const router = createBrowserRouter([
   {
@@ -25,12 +29,22 @@ const router = createBrowserRouter([
         element: <ProtectedRoute/>,
         children: [
           {
-            element: <PrimaryLayout/>,
+            element: <NavbarLayout/>,
             children: [
               {
-                path: "/",
+                path: "/calendar",
                 element: <CalendarPage/>
-              },
+              }
+            ]
+          },
+
+          {
+            element: <PrimaryLayout/>,
+            children: [
+              // {
+              //   path: "/",
+              //   element: <CalendarPage/>
+              // },
               {
                 path: "/staffs",
                 element: <StaffPage/>
@@ -58,6 +72,18 @@ const router = createBrowserRouter([
               {
                 path: "/models/:id/update",
                 element: <UpdateModelPage/>
+              },
+              {
+                path: "jobs/add",
+                element: <AddJobPage/>
+              },
+              {
+                path: "/jobs",
+                element: <ViewJobPage/>
+              },
+              {
+                path: "jobs/:id/update",
+                element: <UpdateJobPage/>
               }
               
             ]

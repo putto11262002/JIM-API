@@ -4,7 +4,7 @@ import { Input } from "../components/ui/input";
 import {
   StaffGetQuery,
 } from "@jimmodel/shared";
-import AddStaffDialog from "../components/staffs/AddStaffDialog";
+import AddStaffDialog from "../components/staffs/add-staff-dialog";
 import { useState } from "react";
 import StaffTable from "../components/staffs/StaffTable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
