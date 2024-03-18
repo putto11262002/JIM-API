@@ -13,14 +13,14 @@ import { Avatar, AvatarImage } from "../../ui/avatar";
 import placeholderImage from "@assets/placeholder.jpeg";
 import ModelTable from "./model-table";
 
-function AddModelDialog({
+export function AddModelDialog({
   searchedModels,
   onSeachTermChange,
   onAddModel,
 }: {
   searchedModels?: Model[];
   onSeachTermChange: (term: string) => void;
-  onAddModel: (modelId: string) => void;
+  onAddModel: (model: Model) => void;
 }) {
   return (
     <Dialog>
@@ -58,7 +58,7 @@ function AddModelDialog({
                   <p className="text-xs text-muted-foreground">{model.email}</p>
                 </div>
                 <Button
-                  onClick={() => onAddModel(model.id)}
+                  onClick={() => onAddModel(model)}
                   className="ml-auto"
                   variant={"ghost"}
                 >
@@ -81,7 +81,7 @@ function JobModelForm({
 }: {
   onSeachTermChange: (term: string) => void;
   searchedModels?: Model[];
-  onAddModel: (modelId: string) => void;
+  onAddModel: (model: Model) => void;
   models?: Model[];
   onRemoveModel: (modelId: string) => void;
 }) {

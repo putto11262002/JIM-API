@@ -1,35 +1,39 @@
 import { Calendar, CalendarEvent, EventType } from "@jimmodel/shared";
+import { cn } from "../../lib/utils";
+import { JobStatus } from "@prisma/client";
 
 export function Events({
   calendarDate,
-  events,
 }: {
   calendarDate: Calendar["dates"][0];
-  events: Calendar["events"];
+
 }) {
-  const targetEvents = calendarDate.events.map((id) => events[id]);
+  const targetEvents = calendarDate.events
 
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-0.25">
       {targetEvents.map((event) => {
         if (event.type === EventType.Booking) {
           return <BookingEvent key={event.id} event={event} />;
         }
 
-        if (event.type === EventType.Reminder) {
-          return <ReminderEvent key={event.id} event={event} />;
+        if (event.type === EventType.Block) {
+          return <BlockEvent key={event.id} event={event} />;
         }
       })}
     </div>
   );
 }
 
-function ReminderEvent({
+function BlockEvent({
   event,
 }: {
-  event: Extract<CalendarEvent, { type: EventType.Reminder }>;
+  event: Extract<CalendarEvent, { type: EventType.Block }>;
 }) {
-  return <Event text={event.details.message} />;
+  const text = event.details.models
+    .map((model) => `${model.firstName} ${model.lastName}`)
+    .join(", ");
+  return <Event bg="bg-danger" text={text} />;
 }
 
 function BookingEvent({
@@ -43,15 +47,42 @@ function BookingEvent({
           .map((model) => `${model.firstName} ${model.lastName}`)
           .join(", ")
       : event.details?.job?.title;
-    
 
-  return <Event text={text} />;
+  const bg =
+    event.details?.job?.status === JobStatus.CONFIRMED
+      ? "bg-black/80"
+      : event.details?.job?.createdBy.color;
+  const textColor =
+    event.details?.job?.status === JobStatus.CONFIRMED
+      ? "text-white"
+      : "text-black";
+
+  return <Event bg={bg} text={text} textColor={textColor} />;
 }
 
-function Event({ text }: { text: string }) {
+function Event({
+  text,
+  bg,
+  textColor,
+}: {
+  text: string;
+  bg?: string;
+  textColor?: string;
+}) {
   return (
-    <div className="border rounded-md px-1 py-0.5">
-      <p className="text-xs text-nowrap truncate ...">{text}</p>
+    <div
+      style={{ backgroundColor: bg }}
+      className={cn("border rounded-sm px-1.5 py-0.5", bg)}
+    >
+      <p
+        style={{ color: textColor }}
+        className={cn(
+          "text-xs text-nowrap truncate ... font-medium",
+          textColor
+        )}
+      >
+        {text}
+      </p>
     </div>
   );
 }

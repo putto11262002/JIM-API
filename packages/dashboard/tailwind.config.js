@@ -54,9 +54,10 @@ export default{
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-       danger: {
-        DEFAULT: colors.red['600']
-       },
+        danger: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
        success: {
         DEFAULT: colors.green['600']
        }

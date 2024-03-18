@@ -4,8 +4,8 @@ import { cn } from "../../lib/utils";
 import dayjs from "dayjs";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import { Skeleton } from "../ui/skeleton";
-import { Events } from "./events";
 import utc from "dayjs/plugin/utc";
+import CalendarCell from "./cell";
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -65,36 +65,24 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
                   <Skeleton className="h-full" />
                 </div>
               ))
-          : dates.map(({ date: d, events }, i) => {
-              const date = dayjs(d);
-              return (
-                <div
-                  key={date.toISOString()}
-                  className={cn(
-                    "h-full p-1",
-                    !isLastRow(i, dates.length) ? "border-b" : "",
-                    !isLastColumn(i) ? "border-r" : "",
-                    "calendar-date-cell"
-                  )}
-                >
-                  <p
-                    className={cn(
-                      "text-center text-sm",
-                      date.isSame(now, "month") ? "" : "text-muted-foreground",
-                      date.isSame(dayjs(), "day") ? "font-bold" : ""
-                    )}
-                  >
-                    {date.format("D")}
-                  </p>
-                  <div>
-                    <Events
-                      calendarDate={{ date: d, events: events }}
-                      events={calendar.events}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+          : dates.map((calendarDate, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "h-full p-1",
+                  !isLastRow(index, dates.length) ? "border-b" : "",
+                  !isLastColumn(index) ? "border-r" : "",
+                  "calendar-date-cell",
+                  "overflow-hidden"
+                )}
+              >
+                <CalendarCell
+                  calendarDate={calendarDate}
+                  now={now}
+                  // events={calendar.events}
+                />
+              </div>
+            ))}
       </div>
     </div>
   );

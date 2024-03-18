@@ -24,7 +24,7 @@ const menuItems: {
     handleUpdateJob,
   }: {
     handleUpdateJob: (input: JobCreateInput) => void;
-    handleAddModel: (modelId: string) => void;
+    handleAddModel: (model: Model) => void;
     handleRemoveModel: (modelId: string) => void;
     handleSearchModel: (term: string) => void;
     handleAddBooking: (bookingInput: BookingCreateInput) => void;
@@ -189,7 +189,7 @@ function UpdateJobPage() {
     } else {
       return currentForm({
         handleUpdateJob: updateJob,
-        handleAddModel: addModel,
+        handleAddModel: (model) => addModel(model.id),
         handleRemoveModel: removeModel,
         initialData: job,
         handleSearchModel: (term) => setModelSeachTerm(term),

@@ -8,10 +8,14 @@ import { store } from "../../redux/store";
 import { unauthenticate } from "../../redux/auth-reducer";
 import { getAppError } from "../../lib/error";
 import { AppError } from "../../types/app-error";
+import { Button } from "../../components/ui/button";
+import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import CreateBlockDialog from "../../components/block/create-block-dialog";
 
-function ControlPanel() {
-  return <div></div>;
-}
+// function ControlPanel() {
+//   return <div></div>;
+// }
 
 export function errorInterceptor<T, K>(fn: (arg: T) => Promise<K>, arg: T) {
   try {
@@ -47,17 +51,31 @@ function ViewJobPage() {
   }
   return (
     <>
-      <JobTable
-        onPageChange={handlePageChange}
-        isLoading={isPending}
-        error={error}
-        data={data?.data || []}
-        pagination={{
-          page: data?.page ?? 0,
-          pageSize: data?.pageSize ?? 0,
-          totalPage: data?.totalPage ?? 0,
-        }}
-      />
+      <div className="py-3 flex justify-between items-center">
+        <div></div>
+        <div className="space-x-3">
+          <Link to={"/jobs/add"}>
+            <Button variant={"outline"}>
+              <Plus className="h-4 w-4 mr-2" />
+              Job
+            </Button>
+          </Link>
+        <CreateBlockDialog/>
+        </div>
+      </div>
+      <div className="py-3">
+        <JobTable
+          onPageChange={handlePageChange}
+          isLoading={isPending}
+          error={error}
+          data={data?.data || []}
+          pagination={{
+            page: data?.page ?? 0,
+            pageSize: data?.pageSize ?? 0,
+            totalPage: data?.totalPage ?? 0,
+          }}
+        />
+      </div>
     </>
   );
 }

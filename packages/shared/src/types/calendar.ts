@@ -1,3 +1,4 @@
+import { Block } from "./block";
 import { BookingWithJob } from "./job";
 
 export enum CalendarMode {
@@ -6,28 +7,34 @@ export enum CalendarMode {
   Month = "month",
 }
 
-
 export type CalendarGetQuery = {
   mode?: CalendarMode;
   date?: Date;
 };
 export type Calendar = {
-  mode: CalendarMode
+  mode: CalendarMode;
   startDate: Date;
   endDate: Date;
-  dates: {date: Date, events: string[]}[];
-  events: Record<string, CalendarEvent>;
+  dates: { date: Date; events: CalendarEvent[] }[];
+  // events: Record<string, CalendarEvent>;
 };
 
-export enum EventType  {
+export enum EventType {
   Booking = "booking",
-  Reminder = "reminder"
-
+  Reminder = "reminder",
+  Block = "block",
 }
 
-export type CalendarEvent = {
-  id: string;
-  type: EventType.Booking;
-  details: BookingWithJob;
-} | {id: string, type: EventType.Reminder; details: {date: Date; message: string}};
+type HasStartEnd<T> = T extends { start: Date; end: Date } ? T : never;
 
+
+
+
+export type CalendarEvent =
+  | {
+      id: string;
+      type: EventType.Booking;
+      details: HasStartEnd<BookingWithJob>;
+    }
+ 
+  | { id: string; type: EventType.Block; details: HasStartEnd<Block> };
