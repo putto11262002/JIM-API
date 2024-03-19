@@ -11,7 +11,7 @@ import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { validate } from "../lib/validation";
 import { CalendarGetQuerySchema } from "@jimmodel/shared";
-
+import _ from "lodash";
 dayjs.extend(utc);
 
 const dayjsutc = dayjs.utc;
@@ -93,7 +93,7 @@ async function getBlockEvents(startDate: Dayjs, endDate: Dayjs) {
       ],
     },
     include: {
-      models: true
+      models: true,
     },
   });
 
@@ -108,11 +108,10 @@ async function getBlockEvents(startDate: Dayjs, endDate: Dayjs) {
   return calendarEvent;
 }
 
-
 async function getCalendarEvents(startDate: Dayjs, endDate: Dayjs) {
   const calendarEvents = await Promise.all([
     getBookingEvents(startDate, endDate),
-    getBlockEvents(startDate, endDate)
+    getBlockEvents(startDate, endDate),
   ]);
 
   return calendarEvents.flat();
@@ -132,22 +131,18 @@ function getDateKeyMap(event: CalendarEvent) {
       dateKeys.push(currenDate.format("YYYY-MM-DD"));
       return dateKeys;
     case EventType.Block:
-     
-        var dateKeys: string[] = [];
-        var currenDate = dayjs(event.details.start);
-        var endDate = dayjs(event.details.end);
-  
-        while (!currenDate.isSame(endDate, "date")) {
-          dateKeys.push(currenDate.format("YYYY-MM-DD"));
-          currenDate = currenDate.add(1, "day");
-        }
+      var dateKeys: string[] = [];
+      var currenDate = dayjs(event.details.start);
+      var endDate = dayjs(event.details.end);
+
+      while (!currenDate.isSame(endDate, "date")) {
         dateKeys.push(currenDate.format("YYYY-MM-DD"));
-        return dateKeys;
-     
+        currenDate = currenDate.add(1, "day");
+      }
+      dateKeys.push(currenDate.format("YYYY-MM-DD"));
+      return dateKeys;
   }
 }
-
-
 
 function getEventDateKeysMap(events: CalendarEvent[]) {
   const eventToDateKeys: Map<string, string[]> = new Map();
@@ -158,6 +153,62 @@ function getEventDateKeysMap(events: CalendarEvent[]) {
   }
 
   return eventToDateKeys;
+}
+
+function eventSortFn(a: CalendarEvent, b: CalendarEvent) {
+  if (a.type === EventType.Block && b.type === EventType.Booking) {
+    return -1;
+  }
+  if (a.type === EventType.Booking && b.type === EventType.Block) {
+    return 1;
+  }
+
+  if (a.type === EventType.Booking && b.type === EventType.Booking) {
+    if (
+      a.details.job.status === JobStatus.CONFIRMED &&
+      b.details.job.status === JobStatus.PENDING
+    ) {
+      return -1;
+    }
+    if (
+      a.details.job.status === JobStatus.PENDING &&
+      b.details.job.status === JobStatus.CONFIRMED
+    ) {
+      return 1;
+    }
+  }
+
+  return a.details.start.getTime() - b.details.start.getTime();
+}
+
+/**
+ * Sort models in place by the number of appointments they have in the day
+ */
+function sortModel(dates: Calendar['dates']){
+  dates.forEach((date) => {
+    const modelAppointmentsCount = new Map<string, number>();
+
+    date.events.forEach((event) => {
+      if (event.type === EventType.Booking) {
+        event.details.job.models.forEach((model) => {
+          modelAppointmentsCount.set(
+            model.id,
+            (modelAppointmentsCount.get(model.id) ?? 0) + 1
+          );
+        });
+      }
+    });
+
+    date.events.forEach((event) => {
+      if (event.type === EventType.Booking) {
+        event.details.job.models.sort(
+          (a, b) =>
+            (modelAppointmentsCount.get(b.id) ?? 0) -
+            (modelAppointmentsCount.get(a.id) ?? 0)
+        );
+      }
+    });
+  });
 }
 
 async function getCalendar(
@@ -181,47 +232,24 @@ async function getCalendar(
     let currentDate = startDate;
     while (currentDate.isBefore(endDate)) {
       const keyDate = currentDate.format("YYYY-MM-DD");
+
       const events = calendarEvents
         .filter((event) => eventDateKeysMap.get(event.id)?.includes(keyDate))
-        .map((event) => ({...event}))
-        .sort((a, b) => {
-          if (a.type === EventType.Block && b.type === EventType.Booking){
-            return -1
-          }
-          if (a.type === EventType.Booking && b.type === EventType.Block){
-            return 1
-          }
-
-          if (a.type === EventType.Booking && b.type === EventType.Booking){
-            if (a.details.job.status === JobStatus.CONFIRMED && b.details.job.status === JobStatus.PENDING){
-              return -1
-            }
-            if (a.details.job.status === JobStatus.PENDING && b.details.job.status === JobStatus.CONFIRMED){
-              return 1
-            }
-
-          }
-
-          return a.details.start.getTime() - b.details.start.getTime();
-        })
-      
+        .map((event) => _.cloneDeep(event))
+        .sort(eventSortFn);
 
       dates.push({ events, date: currentDate.toDate() });
 
       currentDate = currentDate.add(1, "day");
     }
 
-    // console.log(dates)
+    sortModel(dates)
 
     const calendar: Calendar = {
       mode,
       startDate: startDate.toDate(),
       endDate: endDate.toDate(),
-      dates,
-      // events: calendarEvents.reduce((acc, event) => {
-      //   acc[event.id] = event;
-      //   return acc;
-      // }, {} as Record<string, CalendarEvent>),
+      dates
     };
 
     res.json(calendar);
