@@ -6,7 +6,7 @@ import {
   StaffRefreshTokenSchema,
   StaffUpdatePasswordSchema,
   StaffUpdateSchema,
-} from "@jimmodel/shared/src/schemas/staff-scehma";
+} from "@jimmodel/shared";
 import { validate } from "../lib/validation";
 import staffService from "../services/staff-service";
 export interface IStaffController {

@@ -1,10 +1,10 @@
-import { Staff as _Staff, StaffRole as _StaffRole } from "@prisma/client"
+import * as db from "@prisma/client"
 import { StaffGetQuerySchema as StaffGetQuerySchema, StaffCreateSchema as StaffCreateSchema, StaffLoginSchema, StaffUpdatePasswordSchema, StaffUpdateSchema, StaffRefreshTokenSchema } from "@jimmodel/shared/src/schemas/staff-scehma"
 import z, { TypeOf } from "zod"
-export type Staff = _Staff
+export type Staff = db.Staff
 export type StaffWithoutSecrets = Omit<Staff, "password" | "logout">
-export type StaffRole = _StaffRole
-export const StaffRole = _StaffRole
+export type StaffRole = db.StaffRole
+export const StaffRole = db.StaffRole
 
 
 export type StaffCreateInput = z.infer<typeof StaffCreateSchema>;

@@ -1,23 +1,19 @@
-import {ModelApplicationExperience, ModelApplicationImage, Prisma, ModelApplication as _ModelApplication, ModelApplicationStatus as _ModelApplicationStatus} from "@prisma/client"
-import { z } from "zod"
-import { ModelApplicationCreateSchema, ModelApplicationExperienceCreateSchema } from "../schemas"
+import * as db from "@prisma/client"
 import { paginatedDataQuery } from "./pagingated-data-type"
-export type ModelApplication = _ModelApplication & {
-    experiences: ModelApplicationExperience[]
-    images: ModelApplicationImage[]
+export type ModelApplication = db.ModelApplication & {
+    experiences: db.ModelApplicationExperience[]
+    images: db.ModelApplicationImage[]
 }
 
-export type ModelApplicationStatus = _ModelApplicationStatus
+export type ModelApplicationStatus = db.ModelApplicationStatus
 
-export const ModelApplicationStatus = _ModelApplicationStatus
+export const ModelApplicationStatus = db.ModelApplicationStatus
 
-export type ModelApplicationExperienceCreateInput = Prisma.ModelApplicationExperienceCreateWithoutApplicationInput
+export type ModelApplicationExperienceCreateInput = db.Prisma.ModelApplicationExperienceCreateWithoutApplicationInput
 
-export type ModelApplicationCreateInput = Omit<Prisma.ModelApplicationCreateInput, "images" | "status" | "experiences"> & {
+export type ModelApplicationCreateInput = Omit<db.Prisma.ModelApplicationCreateInput, "images" | "status" | "experiences"> & {
     experiences?: ModelApplicationExperienceCreateInput[]
 }
-
-export const ModelApplicationFields = Prisma.ModelApplicationScalarFieldEnum
 
 export type ModelApplicationGetQuery = {
     q?: string,

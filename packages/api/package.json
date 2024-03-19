@@ -1,12 +1,14 @@
 {
   "name": "@jimmodel/api",
   "version": "1.0.0",
-  "main": "./src/index.ts",
+  "main": "./dist/src/index.js",
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@jimmodel/shared": "*",
-    "@prisma/client": "*",
+    "@jimmodel/shared": "workspace:*",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/uuid": "^9.0.8",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dayjs": "^1.11.10",
@@ -16,12 +18,14 @@
     "multer": "^1.4.5-lts.1",
     "sharp": "^0.33.2",
     "uuid": "^9.0.1",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@prisma/client": "*"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/cors": "^2.8.17",
     "@types/multer": "^1.4.11",
+    "prisma": "*",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
     "ts-jest": "^29.1.2",
@@ -31,7 +35,11 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "start": "node ./dist/index.js",
+    "start": "node --es-module-specifier-resolution=node ./dist/src/index.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
-  }
+  },
+  "files": [
+    "dist"
+  ]
+  
 }

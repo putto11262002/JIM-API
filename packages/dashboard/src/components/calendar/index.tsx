@@ -15,6 +15,12 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
   const calendarBoxRef = useRef<HTMLDivElement | null>(null);
   const now = dayjs();
 
+  const dates = useMemo(() => {
+    if (calendar === undefined) return [];
+    return padDates(calendar.dates);
+  }, [calendar]);
+
+
   // Calculate height of each date cell
   useLayoutEffect(() => {
     const updateCellHeight = () => {
@@ -33,13 +39,9 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
     updateCellHeight();
     window.addEventListener("resize", updateCellHeight);
     return () => window.removeEventListener("resize", updateCellHeight);
-  }, [calendar]);
+  }, [dates]);
 
-  const dates = useMemo(() => {
-    if (calendar === undefined) return [];
-    return padDates(calendar.dates);
-  }, [calendar]);
-
+  
   return (
     <div className="h-full flex flex-col">
       <div className="grid grid-cols-7">

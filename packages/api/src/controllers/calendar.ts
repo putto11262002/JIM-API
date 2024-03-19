@@ -10,7 +10,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { validate } from "../lib/validation";
-import { CalendarGetQuerySchema } from "@jimmodel/shared/src/schemas";
+import { CalendarGetQuerySchema } from "@jimmodel/shared";
 
 dayjs.extend(utc);
 

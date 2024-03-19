@@ -1,6 +1,5 @@
-import { ModelApplicationStatus } from '@prisma/client';
 import { z } from 'zod';
-import { ModelApplicationCreateInput, ModelApplicationExperienceCreateInput, ModelApplicationGetQuery } from '../types';
+import { ModelApplicationCreateInput, ModelApplicationExperienceCreateInput, ModelApplicationGetQuery, ModelApplicationStatus } from '../types';
 import { schemaForType } from '../utils/zod';
 
 export const ModelApplicationExperienceCreateSchema = schemaForType<ModelApplicationExperienceCreateInput>()(

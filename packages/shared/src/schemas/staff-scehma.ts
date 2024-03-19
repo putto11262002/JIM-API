@@ -1,6 +1,8 @@
-import { Prisma, StaffRole } from "@prisma/client";
+
 import z from "zod"
 import { PaginatedQuerySchema } from "./paginated-data";
+import { StaffRole } from "../types";
+import * as db from "@prisma/client";
 
 
 export const StaffCreateSchema = z.object({
@@ -49,7 +51,7 @@ export const StaffGetQuerySchema = z.object({
         return roles
     })).optional(),
     sortBy: z
-        .nativeEnum(Prisma.StaffScalarFieldEnum)
+        .nativeEnum(db.Prisma.StaffScalarFieldEnum)
         .optional(),
     sortOrder: z.enum(["asc", "desc"]).optional(),
     page: PaginatedQuerySchema.shape.page,

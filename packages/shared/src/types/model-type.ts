@@ -1,26 +1,26 @@
-import { ModelExperience, ModelImage as _ModelImage, Prisma, Model as _Model } from "@prisma/client";
+import * as db from "@prisma/client";
 import {  paginatedDataQuery } from "./pagingated-data-type";
 
-export type ModelImage = _ModelImage
+export type ModelImage = db.ModelImage
 
-export type Model = _Model & {
+export type Model = db.Model & {
     images?: ModelImage[]
-    experiences?: ModelExperience[]
+    experiences?: db.ModelExperience[]
 };
 
 
-export type ModelCreateInput = Omit<Prisma.ModelCreateInput, "experiences" | "images" | "talents" | "name">  & {
+export type ModelCreateInput = Omit<db.Prisma.ModelCreateInput, "experiences" | "images" | "talents" | "name">  & {
     talents?: string[]
     name?: string
 }
 
-export type ModelUpdateInput = Omit<Prisma.ModelUpdateInput, "experiences" | "images">  & {
+export type ModelUpdateInput = Omit<db.Prisma.ModelUpdateInput, "experiences" | "images">  & {
     talents?: string[]
 }
 
-export type ModelImageCreateInput = Prisma.ModelImageCreateWithoutModelInput
+export type ModelImageCreateInput = db.Prisma.ModelImageCreateWithoutModelInput
 
-export type ModelExperienceCreateInput = Prisma.ModelExperienceCreateWithoutModelInput
+export type ModelExperienceCreateInput = db.Prisma.ModelExperienceCreateWithoutModelInput
 
 export type EncodedModelGetQuery = {
     q?: string

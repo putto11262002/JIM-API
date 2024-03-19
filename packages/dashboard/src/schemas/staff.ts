@@ -1,4 +1,5 @@
-import { StaffRole } from "@prisma/client";
+
+import { StaffRole } from "@jimmodel/shared";
 import z from "zod"
 export const CreateStaffFormSchema = z.object({
     firstName: z.string().min(2, "must contain at least 2 characters").max(255),

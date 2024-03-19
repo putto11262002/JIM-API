@@ -6,12 +6,13 @@
   "workspaces": [
     "packages/*"
   ],
-  "scripts": {},
   "author": "Put Suthisrisinlpa",
   "license": "MIT",
   "devDependencies": {
-    "@prisma/client": "^5.7.1",
-    "lerna": "^8.0.1",
-    "prisma": "^5.7.1"
+    "@jimmodel/api": "workspace:^",
+    "prisma": "^5.11.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.11.0"
   }
 }

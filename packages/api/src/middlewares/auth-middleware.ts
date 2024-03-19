@@ -1,9 +1,6 @@
-import { StaffRole } from "@prisma/client";
 import express from "express";
 import { getTokenFromRequest } from "../lib/request";
 import AuthenticationError from "../lib/errors/authentication-error";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import config from "../config";
 import AuthorizationError from "../lib/errors/authorization-error";
 import { BaseAuthResource, JWTPayload } from "@jimmodel/shared";
 import NotFoundError from "../lib/errors/not-found-error";

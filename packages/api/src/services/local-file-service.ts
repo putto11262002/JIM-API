@@ -1,6 +1,6 @@
-import { FileMetaData, Prisma } from "@prisma/client";
-
+import { FileMetaData } from "@jimmodel/shared";
 import config from "../config";
+import {  Prisma } from "@prisma/client";
 import { prisma } from "../prisma";
 import fs from "fs/promises";
 import path from "path";

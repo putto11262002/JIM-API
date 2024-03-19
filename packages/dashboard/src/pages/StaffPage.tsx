@@ -2,13 +2,12 @@ import { Input } from "../components/ui/input";
 // import { Button } from "../components/ui/button";
 
 import {
-  StaffGetQuery,
+  StaffGetQuery, StaffRole,
 } from "@jimmodel/shared";
 import AddStaffDialog from "../components/staffs/add-staff-dialog";
 import { useState } from "react";
 import StaffTable from "../components/staffs/StaffTable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { StaffRole } from "@prisma/client";
 import { useGetStaffs } from "../hooks/staff/useGetStaffs";
 const pageSize = 10;
 
@@ -24,6 +23,8 @@ export default function StaffPage() {
     if (page < 1 || page > (data?.totalPage ?? 0)) return;
     setPage(_page);
   }
+
+  console.log(StaffRole)
 
   return (
     <>

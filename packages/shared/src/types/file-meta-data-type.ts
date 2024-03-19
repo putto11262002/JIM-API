@@ -1,3 +1,3 @@
-import { FileMetaData as _FileMetaData } from "@prisma/client";
+import * as db from "@prisma/client";
 
-export type FileMetaData = _FileMetaData
+export type FileMetaData = db.FileMetaData

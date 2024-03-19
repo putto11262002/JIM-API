@@ -6,12 +6,14 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   resolve: {
+    // preserveSymlinks: true,
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@components": path.resolve(__dirname, "./src/components"),
       "@assets": path.resolve(__dirname, "./src/assets"),
-      ".prisma/client/index-browser": "../../node_modules/.prisma/client/index-browser.js"
+
     
     }
   },
+
 })

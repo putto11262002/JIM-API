@@ -1,5 +1,4 @@
-import { Prisma } from "@prisma/client";
-import { prisma } from "../prisma";
+
 import {
   compare,
   hash,
@@ -25,6 +24,8 @@ import ConstraintViolationError from "../lib/errors/constraint-violation-error";
 import AuthenticationError from "../lib/errors/authentication-error";
 import { buildPaginatedData } from "../lib/paginated-data";
 import NotFoundError from "../lib/errors/not-found-error";
+import { Prisma } from "@prisma/client";
+import { prisma } from "../prisma";
 
 export interface IStaffService {
   create(staff: StaffCreateInput): Promise<StaffWithoutSecrets>;

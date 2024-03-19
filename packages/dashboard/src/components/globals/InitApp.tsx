@@ -7,7 +7,7 @@ export default function InitApp({ children }: { children?: React.ReactNode }) {
 
   useEffect(() => {
     refreshToken();
-  }, []);
+  }, [refreshToken]);
   return (
     <>
       <div className="hidden md:block">{children ?? <Outlet />}</div>

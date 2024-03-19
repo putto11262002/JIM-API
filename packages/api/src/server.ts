@@ -4,8 +4,8 @@ import http from "http";
 import router from "./routes"
 import { errorHandler } from "./middlewares/error-handler";
 import staffService from "./services/staff-service";
-import { StaffCreateInput } from "@jimmodel/shared";
-import { StaffRole } from "@jimmodel/shared/src/types/staff-type";
+import { StaffCreateInput, StaffRole } from "@jimmodel/shared";
+
 import ConstraintViolationError from "./lib/errors/constraint-violation-error";
 import cors from "cors"
 

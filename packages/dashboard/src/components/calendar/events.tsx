@@ -1,6 +1,6 @@
-import { Calendar, CalendarEvent, EventType } from "@jimmodel/shared";
+import { Calendar, CalendarEvent, EventType, JobStatus } from "@jimmodel/shared";
 import { cn } from "../../lib/utils";
-import { JobStatus } from "@prisma/client";
+
 
 export function Events({
   calendarDate,

@@ -8,8 +8,9 @@ import {
   JobStatus,
   JobUpdateSchema,
 } from "@jimmodel/shared";
+
+import { Prisma } from "@prisma/client"
 import { prisma } from "../prisma";
-import { Prisma } from "@prisma/client";
 import { buildPaginatedData } from "../lib/paginated-data";
 import NotFoundError from "../lib/errors/not-found-error";
 import modelService from "../services/model-service";

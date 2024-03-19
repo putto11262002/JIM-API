@@ -6,8 +6,8 @@ import {
   ModelExperienceCreateInput,
   ModelUpdateInput,
 } from "@jimmodel/shared";
-import { prisma } from "../prisma";
 import { Prisma } from "@prisma/client";
+import { prisma } from "../prisma";
 import localFileService from "./local-file-service";
 export interface IModelService {
   getById(id: string): Promise<Model>;

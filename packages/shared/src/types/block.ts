@@ -1,11 +1,12 @@
-import {Prisma, Block as _Block} from "@jimmodel/database"
+import * as db from "@prisma/client"
 import { Model } from "./model-type"
 
 
-export type Block = _Block & {
+
+export type Block = db.Block & {
     models: Model[]
 }
 
-export type BlockCreateInput = Omit<Prisma.BlockCreateInput, "models"> & {
+export type BlockCreateInput = Omit<db.Prisma.BlockCreateInput, "models"> & {
     modelIds: string[]
 }
