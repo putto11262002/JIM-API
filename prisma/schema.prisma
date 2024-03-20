@@ -195,9 +195,9 @@ model Model {
   experiences                  ModelExperience[]
   createdAt                    DateTime          @default(now())
   updatedAt                    DateTime          @updatedAt
-  Job                          Job[]            
-  Booking                      Booking[]        
-  Block                        Block[]        
+  Job                          Job[]
+  Booking                      Booking[]
+  Block                        Block[]
 }
 
 model Option {
@@ -270,7 +270,8 @@ model Block {
   start     DateTime
   end       DateTime
   models    Model[]
-  reason    String
+  reason    String?
+  type      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

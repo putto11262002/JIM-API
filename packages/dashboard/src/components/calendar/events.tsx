@@ -11,7 +11,7 @@ export function Events({
   const targetEvents = calendarDate.events
 
   return (
-    <div className="space-y-0.25">
+    <div className="space-y-0.5">
       {targetEvents.map((event) => {
         if (event.type === EventType.Booking) {
           return <BookingEvent key={event.id} event={event} />;
@@ -44,8 +44,8 @@ function BookingEvent({
   const text =
     event.details?.job?.models && event.details.job?.models.length > 0
       ? event.details?.job?.models
-          .map((model) => `${model.firstName} ${model.lastName}`)
-          .join(", ")
+        .map((model) => `${model.firstName} ${model.lastName}`)
+        .join(", ")
       : event.details?.job?.title;
 
   const bg =
@@ -71,14 +71,16 @@ function Event({
 }) {
   return (
     <div
-      style={{ backgroundColor: bg }}
-      className={cn("border rounded-sm px-1.5 py-0.5", bg)}
+      // style={{ backgroundColor: bg }}
+      className={cn("bg-muted rounded-sm px-1.5 py-0.5 flex items-center space-x-1")}
     >
+      <div className={cn("h-2 w-2 rounded-full  ", bg)} style={{ backgroundColor: bg }}></div>
       <p
         style={{ color: textColor }}
         className={cn(
-          "text-xs text-nowrap truncate ... font-medium",
-          textColor
+          "text-xs text-nowrap truncate ... font-medium  flex-1 ",
+
+
         )}
       >
         {text}

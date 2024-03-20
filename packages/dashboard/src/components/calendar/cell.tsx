@@ -2,6 +2,7 @@ import { Calendar } from "@jimmodel/shared";
 import { Events } from "./events";
 import dayjs from "dayjs";
 import { cn } from "../../lib/utils";
+import { useCellDialog } from "./cell-dialog";
 
 
 export default function CalendarCell({
@@ -13,10 +14,10 @@ export default function CalendarCell({
   now: dayjs.Dayjs;
   calendarDate: Calendar["dates"][0];
 }) {
+  const { setOpen } = useCellDialog()
   const date = dayjs(calendarDate.date);
-  console.log(calendarDate)
   return (
-    <>
+    <div className="h-full" onClick={() => setOpen(calendarDate)}>
       <p
         className={cn(
           "text-center text-sm",
@@ -29,6 +30,6 @@ export default function CalendarCell({
       <div>
         <Events calendarDate={calendarDate} />
       </div>
-    </>
+    </div>
   );
 }

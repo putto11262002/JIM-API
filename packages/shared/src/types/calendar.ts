@@ -21,13 +21,10 @@ export type Calendar = {
 
 export enum EventType {
   Booking = "booking",
-  Reminder = "reminder",
   Block = "block",
 }
 
 type HasStartEnd<T> = T extends { start: Date; end: Date } ? T : never;
-
-
 
 
 export type CalendarEvent =

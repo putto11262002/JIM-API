@@ -51,7 +51,8 @@ const BlockCreateFormSchema = z
     startTime: z.string(),
     endDate: z.date(),
     endTime: z.string(),
-    reason: z.string(),
+    reason: z.string().optional(),
+    type: z.string().min(1, "Required"),
     models: z
       .array(
         z.object({
@@ -86,7 +87,8 @@ const FormBlockToBlockCreateInput = z
     startTime: z.string(),
     endDate: z.date(),
     endTime: z.string(),
-    reason: z.string(),
+    reason: z.string().optional(),
+    type: z.string(),
     models: z
       .array(
         z.object({
@@ -112,9 +114,20 @@ const FormBlockToBlockCreateInput = z
         .toISOString(),
       reason: data.reason,
       modelIds: data.models.map((model) => model.id),
+      type: data.type
     };
   });
 
+const typeOptions: { label: string, value: string }[] = [
+  {
+    label: "Extend Visa",
+    value: "extend-visa"
+  },
+  {
+    label: "Unavailable",
+    value: "unavailable"
+  }
+]
 export default function CreateBlockDialog() {
   const [modelSearchTerm, setModelSearchTerm] = useState("");
   const queryClient = useQueryClient();
@@ -215,6 +228,7 @@ export default function CreateBlockDialog() {
               form={form}
               options={timeOptions}
             />
+            <FromSelectField form={form} name="type" options={typeOptions} />
             <FormInputField form={form} name="reason" />
             <div className="space-y-2 w-full">
               <FormLabel>Models</FormLabel>

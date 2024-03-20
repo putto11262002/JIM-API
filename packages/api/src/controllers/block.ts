@@ -28,6 +28,7 @@ async function create(
         start: blockPayload.start,
         end: blockPayload.end,
         reason: blockPayload.reason,
+        type: blockPayload.type,
         models: { connect: blockPayload.modelIds.map((id) => ({ id })) },
       },
       include: { models: true },
@@ -61,8 +62,8 @@ async function deleteById(
 
 
 const blockController = {
-    create,
-    deleteById
+  create,
+  deleteById
 }
 
 

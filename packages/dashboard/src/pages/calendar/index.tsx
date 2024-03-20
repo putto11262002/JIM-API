@@ -27,7 +27,6 @@ dayjs.extend(utc);
 
 function CalendarPage() {
   const [mode, setMode] = useState(CalendarMode.Month);
-
   const [now, setNow] = useState(dayjs.utc().startOf(mode));
 
 

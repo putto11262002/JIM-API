@@ -1,11 +1,11 @@
-import { Calendar } from "@jimmodel/shared";
-import { isLastColumn, isLastRow, padDates } from "../../pages/calendar/utils";
+import { Calendar } from "@jimmodel/shared"; import { isLastColumn, isLastRow, padDates } from "../../pages/calendar/utils";
 import { cn } from "../../lib/utils";
 import dayjs from "dayjs";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import { Skeleton } from "../ui/skeleton";
 import utc from "dayjs/plugin/utc";
 import CalendarCell from "./cell";
+import { CellDialogProvider } from "./cell-dialog";
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -43,6 +43,7 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
 
   
   return (
+    <CellDialogProvider>
     <div className="h-full flex flex-col">
       <div className="grid grid-cols-7">
         {weekDays.map((day, i) => (
@@ -87,5 +88,6 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
             ))}
       </div>
     </div>
+    </CellDialogProvider>
   );
 }
