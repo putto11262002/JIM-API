@@ -1,11 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import calendarService from "../../services/calendar";
 import {
   CalendarMode,
 } from "@jimmodel/shared";
-
 import dayjs from "dayjs";
-
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
@@ -18,7 +14,7 @@ import {
 import _ from "lodash";
 import utc from "dayjs/plugin/utc";
 import CalendarComp from "../../components/calendar";
-import { useState } from "react";
+import { useCalendar } from "../../components/calendar/context";
 
 
 
@@ -26,18 +22,7 @@ dayjs.extend(utc);
 
 
 function CalendarPage() {
-  const [mode, setMode] = useState(CalendarMode.Month);
-  const [now, setNow] = useState(dayjs.utc().startOf(mode));
-
-
-  const { data } = useQuery({
-    queryKey: ["calendar", { date: now.toISOString(), mode }],
-    queryFn: () =>
-      calendarService.getCalendar({
-        query: { mode: mode, date: now.toDate() },
-      }),
-  });
-
+  const {next, previous, mode, now, today} = useCalendar()
 
   function getCurrent() {
     if (mode === CalendarMode.Month) {
@@ -61,19 +46,19 @@ function CalendarPage() {
 
           <Button
             className=""
-            onClick={() => setNow((now) => now.add(1, mode))}
+            onClick={() => next()}
             variant={"outline"}
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <Button
-            onClick={() => setNow((now) => now.subtract(1, mode))}
+            onClick={() => previous()}
             variant={"outline"}
           >
             <ArrowRight className="h-4 w-4" />
           </Button>
 
-          <Button variant={"outline"} onClick={() => setNow(dayjs())}>
+          <Button variant={"outline"} onClick={() => today()}>
             Today
           </Button>
         </div>
@@ -94,7 +79,7 @@ function CalendarPage() {
         </div>
       </div>
 
-      <div className="grow"><CalendarComp calendar={data}/></div>
+      <div className="grow"><CalendarComp/></div>
     </div>
   );
 }

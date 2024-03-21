@@ -1,14 +1,17 @@
-import { Calendar, CalendarEvent, EventType, JobStatus } from "@jimmodel/shared";
+import {  CalendarEvent, EventType, JobStatus } from "@jimmodel/shared";
 import { cn } from "../../lib/utils";
+import dayjs, { Dayjs } from "dayjs";
+import { useCalendar } from "./context";
 
 
 export function Events({
-  calendarDate,
+  date,
 }: {
-  calendarDate: Calendar["dates"][0];
+  date: Dayjs;
 
 }) {
-  const targetEvents = calendarDate.events
+  const {dates} = useCalendar()
+  const targetEvents = dates.find((d) => dayjs(d.date).isSame(date, "day"))?.events || [];
 
   return (
     <div className="space-y-0.5">

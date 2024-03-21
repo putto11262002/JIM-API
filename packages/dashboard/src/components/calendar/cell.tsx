@@ -1,23 +1,25 @@
-import { Calendar } from "@jimmodel/shared";
 import { Events } from "./events";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { cn } from "../../lib/utils";
 import { useCellDialog } from "./cell-dialog";
+// import { useCalendar } from "./context";
 
 
 export default function CalendarCell({
   // events,
-  calendarDate,
+  date:  _date,
   now,
 }: {
   // events: Calendar["events"];
   now: dayjs.Dayjs;
-  calendarDate: Calendar["dates"][0];
+  date: string | Date | Dayjs;
 }) {
   const { setOpen } = useCellDialog()
-  const date = dayjs(calendarDate.date);
+  // const {dates} = useCalendar()
+  const date = dayjs(_date);
+
   return (
-    <div className="h-full" onClick={() => setOpen(calendarDate)}>
+    <div className="h-full" onClick={() => setOpen(date)}>
       <p
         className={cn(
           "text-center text-sm",
@@ -28,7 +30,7 @@ export default function CalendarCell({
         {date.format("D")}
       </p>
       <div>
-        <Events calendarDate={calendarDate} />
+        <Events date={date} />
       </div>
     </div>
   );

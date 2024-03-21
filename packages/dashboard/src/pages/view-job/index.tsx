@@ -35,8 +35,20 @@ export function errorInterceptor<T, K>(fn: (arg: T) => Promise<K>, arg: T) {
   }
 }
 
+const jobStatusOptions: { label: string, value: string }[] = [
+  {
+    label: "Jobs",
+    value: JobStatus.CONFIRMED
+  },
+  {
+    label: "Options",
+    value: JobStatus.PENDING
+  },
+  { label: "Archived", value: JobStatus.ARCHIVED },
+]
+
 function ViewJobPage() {
-  const [query, setQuery] = useState<JobGetQuery>({ page: 1, pageSize: 10 });
+  const [query, setQuery] = useState<JobGetQuery>({ page: 1, pageSize: 10, status: JobStatus.CONFIRMED });
   const { data, isPending, error } = useQuery<
     unknown,
     AppError,
@@ -51,22 +63,24 @@ function ViewJobPage() {
     if (page < 1 || page > (data?.totalPage ?? 0)) return;
     setQuery((prevQuery) => ({ ...prevQuery, page }));
   }
+
   return (
     <>
+      {/* Control Section */}
       <div className="py-3 flex justify-between items-center">
         <div className="flex grow space-x-2">
           <div>
-            <Input placeholder="Search by title, models, clients..." value={query.q} onChange={e => setQuery(prevQuery => ({...prevQuery, q: e.target.value}))}/>
+            <Input placeholder="Search by title, models, clients..." value={query.q} onChange={e => setQuery(prevQuery => ({ ...prevQuery, q: e.target.value }))} />
           </div>
           <div>
-            <Select defaultValue={query.status} onValueChange={val => setQuery(prevQuery => ({...prevQuery, status: val}))}>
+            <Select defaultValue={query.status} onValueChange={val => setQuery(prevQuery => ({ ...prevQuery, status: val }))}>
               <SelectTrigger>
-                <SelectValue placeholder="Filter by status"/>
+                <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                {Object.values(JobStatus).map(status => (
-                  <SelectItem value={status} key={status}>{status}</SelectItem>
-                )) }
+                {jobStatusOptions.map(status => (
+                  <SelectItem value={status.value} key={status.value}>{status.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -78,9 +92,11 @@ function ViewJobPage() {
               Job
             </Button>
           </Link>
-        <CreateBlockDialog/>
+          <CreateBlockDialog />
         </div>
       </div>
+
+      {/* Job table */}
       <div className="py-3">
         <JobTable
           onPageChange={handlePageChange}

@@ -1,25 +1,22 @@
-import { Calendar } from "@jimmodel/shared"; import { isLastColumn, isLastRow, padDates } from "../../pages/calendar/utils";
+import { isLastColumn, isLastRow } from "../../pages/calendar/utils";
 import { cn } from "../../lib/utils";
 import dayjs from "dayjs";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Skeleton } from "../ui/skeleton";
 import utc from "dayjs/plugin/utc";
 import CalendarCell from "./cell";
 import { CellDialogProvider } from "./cell-dialog";
+import { useCalendar } from "./context";
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 dayjs.extend(utc);
 
-export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
+export default function CalendarComp() {
   const calendarBoxRef = useRef<HTMLDivElement | null>(null);
   const now = dayjs();
 
-  const dates = useMemo(() => {
-    if (calendar === undefined) return [];
-    return padDates(calendar.dates);
-  }, [calendar]);
-
+ const {dates} = useCalendar()
 
   // Calculate height of each date cell
   useLayoutEffect(() => {
@@ -60,7 +57,7 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
       </div>
 
       <div ref={calendarBoxRef} className={cn("grid grid-cols-7 grow")}>
-        {calendar === undefined
+        {(dates === undefined || dates.length < 1) 
           ? Array(35)
               .fill(0)
               .map((_, i) => (
@@ -80,7 +77,7 @@ export default function CalendarComp({ calendar }: { calendar?: Calendar }) {
                 )}
               >
                 <CalendarCell
-                  calendarDate={calendarDate}
+                  date={calendarDate.date}
                   now={now}
                   // events={calendar.events}
                 />

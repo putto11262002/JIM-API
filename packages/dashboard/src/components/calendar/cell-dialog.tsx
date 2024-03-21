@@ -1,23 +1,25 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import {
-  Calendar,
-  EventType,
-} from "@jimmodel/shared";
-import dayjs from "dayjs";
-import { createContext, useContext, useState } from "react";
-import  { upperFirst } from "lodash";
+import { EventType } from "@jimmodel/shared";
+import dayjs, { Dayjs } from "dayjs";
+import { ReactNode, createContext, useContext, useState } from "react";
+import { upperFirst } from "lodash";
 import { getEventColor } from "@/pages/calendar/utils";
+import { JobDropdownMenu } from "../job/job-dropdown-menu";
+import { Button } from "../ui/button";
+import { MoreHorizontal } from "lucide-react";
+import BlockDropdownMenu from "../block/block-dorpdown-menu";
+import { useCalendar } from "./context";
 
 type DialogContext = {
-  setOpen: (calendarDate: Calendar["dates"][0]) => void;
+  setOpen: (date: Dayjs) => void;
   setClose: () => void;
-  calendarDate: Calendar["dates"][0] | null;
+  date: Dayjs | null;
   isOpen: boolean;
 };
 const cellDialogContext = createContext<DialogContext>({
-  setOpen: () => { },
-  setClose: () => { },
-  calendarDate: null,
+  setOpen: () => {},
+  setClose: () => {},
+  date: null,
   isOpen: false,
 });
 
@@ -30,23 +32,23 @@ export const CellDialogProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [calendarDate, setCalendarDate] = useState<Calendar["dates"][0] | null>(
+  const [date, setDate] = useState<Dayjs | null>(
     null
   );
 
-  function setOpen(calendarDate: Calendar["dates"][0]) {
-    setCalendarDate(calendarDate);
+  function setOpen(date: Dayjs) {
+    setDate(date);
   }
 
   function setClose() {
-    setCalendarDate(null);
+    setDate(null);
   }
 
   const context = {
     setOpen,
     setClose,
-    calendarDate,
-    isOpen: calendarDate !== null,
+    date,
+    isOpen: date !== null,
   };
 
   return (
@@ -59,64 +61,119 @@ export const CellDialogProvider = ({
 };
 
 export default function CellDialog() {
-  const { calendarDate, isOpen, setClose } = useCellDialog();
-  const date = dayjs(calendarDate?.date);
+  const { date, isOpen, setClose } = useCellDialog();
+  
+
+  const  {dates} = useCalendar()
+
+  const events = dates.find((d) => dayjs(d.date).isSame(date, "day"))?.events
 
   function renderEvents() {
+    return (
+      <div className="space-y-2">
+        {events === undefined ||
+        events.length < 1 ? (
+          <p>No Events</p>
+        ) : (
+          events.map((event) => {
+            if (event.type === EventType.Booking) {
+              const dataText = `${
+                event.details.job.title
+              } - ${event.details.job.models
+                .map((model) => `${model.name}`)
+                .join(", ")}`;
+              const metaDataText = `${event.details.job.createdBy.firstName} ${event.details.job.createdBy.lastName}`;
+              const color = getEventColor(event);
+              return (
+                <Event
+                  key={event.id}
+                  optionBtn={
+                    <JobDropdownMenu job={event.details.job}>
+                      <Button variant="ghost" className="ml-auto" size={"sm"}>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </JobDropdownMenu>
+                  }
+                  metaDataText={metaDataText}
+                  color={color}
+                  dataText={dataText}
+                />
+              );
+            }
 
-    return <div className="space-y-2">
-      {
-        (calendarDate?.events === undefined || calendarDate.events.length < 1) ?
-          <p>No Events</p> :
-          (
-            calendarDate.events.map(event => {
-              if (event.type === EventType.Booking) {
-                const dataText = `${event.details.job.title} - ${event.details.job.models.map(model => `${model.name}`).join(", ")}`
-                const metaDataText = `${event.details.job.createdBy.firstName} ${event.details.job.createdBy.lastName}`
-                const color = getEventColor(event)
-                return <Event metaDataText={metaDataText} color={color} dataText={dataText} />
-              }
-
-              if (event.type === EventType.Block) {
-                const dataText = `${upperFirst(event.details.type.replace("-", " "))} - ${event.details.models.map(model => model.name).join(", ")}`
-                const metaDataText = `meta data`
-                const color = getEventColor(event)
-                return <Event color={color} metaDataText={metaDataText} dataText={dataText} />
-              }
-            })
-          )
-      }
-    </div>
+            if (event.type === EventType.Block) {
+              const dataText = `${upperFirst(
+                event.details.type.replace("-", " ")
+              )} - ${event.details.models
+                .map((model) => model.name)
+                .join(", ")}`;
+              const metaDataText = `meta data`;
+              const color = getEventColor(event);
+              return (
+                <Event
+                  key={event.id}
+                  optionBtn={
+                    <BlockDropdownMenu block={event.details}>
+                      <Button variant="ghost" className="ml-auto" size={"sm"}>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </BlockDropdownMenu>
+                  }
+                  color={color}
+                  metaDataText={metaDataText}
+                  dataText={dataText}
+                />
+              );
+            }
+          })
+        )}
+      </div>
+    );
   }
-
 
   return (
     <Dialog open={isOpen} onOpenChange={setClose}>
       <DialogContent className="max-h-[500px] overflow-scroll">
         <DialogHeader>
           <DialogTitle>
-            Events on {date.format("dddd, MMMM D, YYYY")}
+            Events on {date && date.format("dddd, MMMM D, YYYY")}
           </DialogTitle>
         </DialogHeader>
-        {calendarDate === null ? <div>No Event</div> : renderEvents()}
+       {renderEvents()}
       </DialogContent>
     </Dialog>
   );
 }
 
-
-
-
-
-function Event({  dataText, color }: { metaDataText: string, dataText: string, color: string }) {
-  return <div className="py-3 px-4 rounded-md border">
-    <div className="flex items-center">
-      <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></div>
-      <p className="text-xs text-slate-600 ">{dayjs(new Date).format("H:mm A")} to {dayjs(new Date()).format("H:mm A")}</p>
+function Event({
+  dataText,
+  color,
+  optionBtn,
+}: {
+  metaDataText: string;
+  dataText: string;
+  color: string;
+  optionBtn: ReactNode;
+}) {
+  return (
+    <div className="py-3 px-4 rounded-md border flex items-center">
+      <div className="grow">
+        <div className="flex items-center">
+          <div
+            className="w-3 h-3 rounded-full mr-2"
+            style={{ backgroundColor: color }}
+          ></div>
+          <p className="text-xs text-slate-600 ">
+            {dayjs(new Date()).format("H:mm A")} to{" "}
+            {dayjs(new Date()).format("H:mm A")}
+          </p>
+        </div>
+        {/* <div className="flex items-center"> */}
+        {/*   <p className="text-sm font-medium">{metaDataText}</p> */}
+        {/* </div> */}
+        <p className="font-semibold mt-1">{dataText}</p>
+      </div>
+      <div className="">{optionBtn}</div>
     </div>
-    {/* <div className="flex items-center"> */}
-    {/*   <p className="text-sm font-medium">{metaDataText}</p> */}
-    {/* </div> */}
-    <p className="font-semibold mt-1">{dataText}</p>
-  </div>
+  );
 }

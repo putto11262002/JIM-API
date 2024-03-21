@@ -13,9 +13,8 @@ import LoaderBlock from "../../components/shared/loader-block";
 import ErrorBlock from "../../components/shared/error-block";
 import JobModelForm from "../../components/job/job-model-form";
 import modelService from "../../services/model";
-import { useToast } from "../../components/ui/use-toast";
-import { CheckCircle } from "lucide-react";
 import JobBookingForm from "../../components/job/job-booking-form";
+import useNotification from "../../hooks/use-notification";
 
 const menuItems: {
   label: string;
@@ -65,7 +64,7 @@ function UpdateJobPage() {
   const [formIndex, setFormIndex] = useState(0);
   const [modelSearchTerm, setModelSeachTerm] = useState("");
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const {success} = useNotification()
 
   // Get job
   const {
@@ -113,14 +112,7 @@ function UpdateJobPage() {
       : undefined,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-      toast({
-        description: (
-          <div className="flex items-center">
-            <CheckCircle className="text-success mr-4" />{" "}
-            <p className="font-medium">Model added to job</p>
-          </div>
-        ),
-      });
+      success("Model added to job")
     },
   });
 
@@ -128,14 +120,7 @@ function UpdateJobPage() {
     mutationFn: id ? (modelId: string) => jobService.removeModel({ id, modelId }) : undefined,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-      toast({
-        description: (
-          <div className="flex items-center">
-            <CheckCircle className="text-success mr-4" />{" "}
-            <p className="font-medium">Model removed from job</p>
-          </div>
-        ),
-      });
+      success("Model removed from job")
     }
   })
 
@@ -144,14 +129,7 @@ function UpdateJobPage() {
     mutationFn: id ? (bookingInput: BookingCreateInput) => jobService.addBooking({id, bookingInput}) : undefined,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-      toast({
-        description: (
-          <div className="flex items-center">
-            <CheckCircle className="text-success mr-4" />{" "}
-            <p className="font-medium">Booking added to job</p>
-          </div>
-        ),
-      });
+     success("Booking added to job")
     }
   })
 
@@ -159,14 +137,7 @@ function UpdateJobPage() {
     mutationFn: id ? (bookingId: string) => jobService.removeBooking({bookingId}) : undefined,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-      toast({
-        description: (
-          <div className="flex items-center">
-            <CheckCircle className="text-success mr-4" />{" "}
-            <p className="font-medium">Booking removed from job</p>
-          </div>
-        ),
-      });
+     success("Booking removed from job")
     }
   })
 

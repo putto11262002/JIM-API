@@ -16,6 +16,7 @@ import AddJobPage from "./pages/add-job";
 import ViewJobPage from "./pages/view-job";
 import UpdateJobPage from "./pages/update-job";
 import NavbarLayout from "./components/layouts/NavBarLayout";
+import { CalendarContextProvider } from "./components/calendar/context";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,9 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "/calendar",
-                element: <CalendarPage/>
+                element: <CalendarContextProvider>
+                  <CalendarPage/>
+                </CalendarContextProvider>
               }
             ]
           },

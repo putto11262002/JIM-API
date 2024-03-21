@@ -4,6 +4,8 @@ import dayjs from "dayjs"
 
 export function padDates(dates: Calendar['dates']) {
 
+  if (dates.length < 1) return dates 
+
   const paddedDates = [...dates];
 
   const startDate = dayjs(dates[0].date);
