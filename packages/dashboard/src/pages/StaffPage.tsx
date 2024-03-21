@@ -24,7 +24,6 @@ export default function StaffPage() {
     setPage(_page);
   }
 
-  console.log(StaffRole)
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import JobTable from "../../components/job/job-table";
 import { useState } from "react";
-import { Job, JobGetQuery, PaginatedData } from "@jimmodel/shared";
+import { Job, JobGetQuery, JobStatus, PaginatedData } from "@jimmodel/shared";
 import jobService from "../../services/job";
 import staffService from "../../services/auth";
 import { store } from "../../redux/store";
@@ -12,6 +12,8 @@ import { Button } from "../../components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import CreateBlockDialog from "../../components/block/create-block-dialog";
+import { Input } from "../../components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 
 // function ControlPanel() {
 //   return <div></div>;
@@ -52,7 +54,23 @@ function ViewJobPage() {
   return (
     <>
       <div className="py-3 flex justify-between items-center">
-        <div></div>
+        <div className="flex grow space-x-2">
+          <div>
+            <Input placeholder="Search by title, models, clients..." value={query.q} onChange={e => setQuery(prevQuery => ({...prevQuery, q: e.target.value}))}/>
+          </div>
+          <div>
+            <Select defaultValue={query.status} onValueChange={val => setQuery(prevQuery => ({...prevQuery, status: val}))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by status"/>
+              </SelectTrigger>
+              <SelectContent>
+                {Object.values(JobStatus).map(status => (
+                  <SelectItem value={status} key={status}>{status}</SelectItem>
+                )) }
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <div className="space-x-3">
           <Link to={"/jobs/add"}>
             <Button variant={"outline"}>

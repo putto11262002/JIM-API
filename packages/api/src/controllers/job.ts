@@ -50,15 +50,15 @@ async function getAll(
   next: express.NextFunction
 ) {
   try {
-    const query = validate(req.body, JobGetQuerySchma);
+    const query = validate(req.query, JobGetQuerySchma);
 
     const where: Prisma.JobWhereInput = {};
 
     if (query.q) {
       where.OR = [];
-      where.OR.push({ title: { contains: query.q } });
-      where.OR.push({ client: { contains: query.q } });
-      where.OR.push({ models: { some: { firstName: { contains: query.q } } } });
+      where.OR.push({ title: { contains: query.q, mode: "insensitive" } });
+      where.OR.push({ client: { contains: query.q , mode: "insensitive"} });
+      where.OR.push({ models: { some: { firstName: { contains: query.q, mode: "insensitive" } } } });
     }
 
     if (query.status) {
@@ -67,10 +67,10 @@ async function getAll(
 
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 10;
-
+console.log(where, query)
     const [jobs, total] = await Promise.all([
       prisma.job.findMany({
-        // where,
+        where,
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: jobInclude,
@@ -224,28 +224,27 @@ async function addBooking(
       throw new NotFoundError("Job not found");
     }
 
-    // Check if the modelIds in the bookingPayload are in the job.models
 
-    if (!bookingPayload.modelIds || bookingPayload.modelIds.length === 0) {
-      bookingPayload.modelIds = job.models.map((model) => model.id);
-    } else {
-      if (
-        bookingPayload.modelIds.every((id) =>
-          job.models.some((model) => model.id === id)
-        )
-      ) {
-        throw new NotFoundError("Model not found in the job");
-      }
-    }
+    // if (!bookingPayload.modelIds || bookingPayload.modelIds.length === 0) {
+    //   bookingPayload.modelIds = job.models.map((model) => model.id);
+    // } else {
+    //   if (
+    //     bookingPayload.modelIds.every((id) =>
+    //       job.models.some((model) => model.id === id)
+    //     )
+    //   ) {
+    //     throw new NotFoundError("Model not found in the job");
+    //   }
+    // }
 
     await prisma.booking.create({
       data: {
         start: bookingPayload.start,
         end: bookingPayload.end,
         type: bookingPayload.type,
-        models: {
-          connect: bookingPayload.modelIds.map((id) => ({ id })),
-        },
+        // models: {
+        //   connect: bookingPayload.modelIds.map((id) => ({ id })),
+        // },
         job: { connect: { id: jobId } },
       },
     });

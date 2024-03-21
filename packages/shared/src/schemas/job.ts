@@ -75,6 +75,6 @@ export const BookingCreateInputSchema = schemaForType<BookingCreateInput>()(
     start: z.string().datetime({offset: false}),
     end: z.string().datetime({offset: false}),
     type: z.string(),
-    modelIds: z.array(z.string()).optional(),
+    // modelIds: z.array(z.string()).optional(),
   })
 );
