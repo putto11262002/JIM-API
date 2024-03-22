@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { FieldValues, UseFormReturn,   Path, FieldPath, FieldArrayPath } from "react-hook-form";
+import { FieldValues, UseFormReturn,  FieldPath } from "react-hook-form";
 import {
   FormField,
   FormItem,

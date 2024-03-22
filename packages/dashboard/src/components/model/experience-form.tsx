@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
-import { useFieldArray, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form";
 import { FormInputField } from "../shared/form/FormInputField";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   ModelExperienceCreateInput,

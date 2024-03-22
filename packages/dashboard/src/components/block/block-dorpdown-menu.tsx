@@ -14,6 +14,8 @@ export default function BlockDropdownMenu({
   children: ReactNode;
   block: Block;
 }) {
+
+  console.log(block)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>

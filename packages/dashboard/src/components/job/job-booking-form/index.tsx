@@ -16,8 +16,6 @@ import dayjs from "dayjs";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import utc from "dayjs/plugin/utc";
-import { ColumnDef } from "@tanstack/react-table";
-import DataTable from "../data-table";
 import BookingDataTable from "./booking-table";
 dayjs.extend(utc);
 const timeOptions = [

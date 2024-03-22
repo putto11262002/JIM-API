@@ -23,7 +23,7 @@ export function useCalendar(){
 export function CalendarContextProvider({children}: {children: ReactNode}){
 
 
-    const [mode, setMode] = useState(CalendarMode.Month);
+    const [mode] = useState(CalendarMode.Month);
     const [now, setNow] = useState(dayjs.utc().startOf(mode));
 
     const { data } = useQuery({
