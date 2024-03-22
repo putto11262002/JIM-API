@@ -1,5 +1,5 @@
 import express from "express";
-import { Prisma } from "@prisma/client";
+import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
 import NotFoundError from "../lib/errors/not-found-error";
 import { extractSingleFilesFromRequest } from "../lib/request";
@@ -174,7 +174,7 @@ async function getModels(
   try {
     const query = validate(req.query, DecodeGetModelQuerySchema);
 
-    const where: Prisma.ModelWhereInput = {};
+    const where: pgk.Prisma.ModelWhereInput = {};
 
     if (query !== undefined) {
       if (query.q !== undefined) {

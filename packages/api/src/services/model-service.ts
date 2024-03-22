@@ -6,7 +6,7 @@ import {
   ModelExperienceCreateInput,
   ModelUpdateInput,
 } from "@jimmodel/shared";
-import { Prisma } from "@prisma/client";
+import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
 import localFileService from "./local-file-service";
 export interface IModelService {
@@ -32,7 +32,7 @@ async function getById(id: string): Promise<Model> {
   return model;
 }
 
-const modelInclude = Prisma.validator<Prisma.ModelInclude>()({
+const modelInclude = pgk.Prisma.validator<pgk.Prisma.ModelInclude>()({
   images: true,
   experiences: true,
 });

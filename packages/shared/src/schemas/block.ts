@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { BlockCreateInput } from "../types";
-import { schemaForType } from "../utils";
+import { BlockCreateInput } from "../types/index.js";
+import { schemaForType } from "../utils/index.js";
 
 export const BlockCreateSchema = schemaForType<BlockCreateInput>()(
   z.object({

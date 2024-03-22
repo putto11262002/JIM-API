@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { schemaForType } from "../utils";
+import { schemaForType } from "../utils/index.js";
 import {
   BookingCreateInput,
   JobAddModelInput,
@@ -7,8 +7,8 @@ import {
   JobGetQuery,
   JobStatus,
   JobUpdateInput,
-} from "../types";
-import { PaginatedQuerySchema } from "./paginated-data";
+} from "../types/index.js";
+import { PaginatedQuerySchema } from "./paginated-data.js";
 export const JobCreateSchema = schemaForType<JobCreateInput>()(
   z.object({
     // id: z.string().optional(),

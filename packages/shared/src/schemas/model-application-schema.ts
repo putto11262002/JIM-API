@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { ModelApplicationCreateInput, ModelApplicationExperienceCreateInput, ModelApplicationGetQuery, ModelApplicationStatus } from '../types';
-import { schemaForType } from '../utils/zod';
+import { ModelApplicationCreateInput, ModelApplicationExperienceCreateInput, ModelApplicationGetQuery, ModelApplicationStatus } from '../types/index.js';
+import { schemaForType } from '../utils/zod.js';
 
 export const ModelApplicationExperienceCreateSchema = schemaForType<ModelApplicationExperienceCreateInput>()(
     z.object({

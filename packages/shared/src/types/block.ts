@@ -1,5 +1,5 @@
 import * as db from "@prisma/client"
-import { Model } from "./model-type"
+import { Model } from "./model-type.js"
 
 
 

@@ -1,6 +1,6 @@
 
 
-import { hash, compare } from "./auth"
+import { hash, compare } from "./auth.js"
 import {describe, it, expect} from "@jest/globals"
 
 

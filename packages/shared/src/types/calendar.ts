@@ -1,5 +1,5 @@
-import { Block } from "./block";
-import { BookingWithJob } from "./job";
+import { Block } from "./block.js";
+import { BookingWithJob } from "./job.js";
 
 export enum CalendarMode {
   Day = "day",

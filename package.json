@@ -6,15 +6,14 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {},
   "author": "Put Suthisrisinlpa",
   "license": "MIT",
   "devDependencies": {
-    "@jimmodel/api": "workspace:^",
-    "@types/lodash": "^4.17.0",
+    "@jimmodel/shared": "workspace:^",
     "prisma": "^5.11.0"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
-    "lodash": "^4.17.21"
+    "@prisma/client": "^5.11.0"
   }
 }

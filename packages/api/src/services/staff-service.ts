@@ -16,7 +16,6 @@ import {
   StaffUpdateInput,
   StaffUpdatePasswordInput,
   StaffGetQuery,
-  JWTPayload,
   PaginatedData
   
 } from "@jimmodel/shared";
@@ -24,8 +23,9 @@ import ConstraintViolationError from "../lib/errors/constraint-violation-error";
 import AuthenticationError from "../lib/errors/authentication-error";
 import { buildPaginatedData } from "../lib/paginated-data";
 import NotFoundError from "../lib/errors/not-found-error";
-import { Prisma } from "@prisma/client";
+import pgk from "@prisma/client";
 import { prisma } from "../prisma";
+import { JWTPayload } from "../types/jwt";
 
 export interface IStaffService {
   create(staff: StaffCreateInput): Promise<StaffWithoutSecrets>;
@@ -41,7 +41,7 @@ export interface IStaffService {
   getAll(query: StaffGetQuery): Promise<PaginatedData<StaffWithoutSecrets>>;
 }
 
-const selectWithoutSecrets = Prisma.validator<Prisma.StaffSelect>()({
+const selectWithoutSecrets = pgk.Prisma.validator<pgk.Prisma.StaffSelect>()({
   id: true,
   firstName: true,
   lastName: true,
@@ -58,7 +58,7 @@ const selectWithoutSecrets = Prisma.validator<Prisma.StaffSelect>()({
 function whereEmailOrUsername(
   email: string,
   username: string
-): Prisma.StaffWhereInput {
+): pgk.Prisma.StaffWhereInput {
   return {
     OR: [
       {
@@ -249,7 +249,7 @@ async function getById(id: string): Promise<StaffWithoutSecrets> {
 async function getAll(
   query: StaffGetQuery
 ): Promise<PaginatedData<StaffWithoutSecrets>> {
-  const where: Prisma.StaffWhereInput = {};
+  const where: pgk.Prisma.StaffWhereInput = {};
 
   if (query.q !== undefined) {
     where.OR = [
@@ -295,7 +295,7 @@ async function getAll(
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: {
-        [query.sortBy ?? Prisma.StaffScalarFieldEnum.updatedAt]:
+        [query.sortBy ?? pgk.Prisma.StaffScalarFieldEnum.updatedAt]:
           query.sortOrder ?? "desc",
       },
       select: selectWithoutSecrets,

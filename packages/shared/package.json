@@ -1,20 +1,29 @@
 {
   "name": "@jimmodel/shared",
   "version": "1.0.0",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/types/index.d.ts",
+  "module": "./dist/esm/index.js",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc"
+    "clean": "rimraf ./dist",
+    "build": "pnpm clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && tsc -p tsconfig.types.json"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "prisma": "*"
+    "prisma": "*",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
-    "zod": "^3.22.4",
-    "@prisma/client": "*"
+    "@prisma/client": "*",
+    "zod": "^3.22.4"
   },
   "author": "Put",
   "description": "Suthisrisinlpa"

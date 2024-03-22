@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { CalendarGetQuery, CalendarMode } from "../types";
-import { schemaForType } from "../utils";
+import { CalendarGetQuery, CalendarMode } from "../types/index.js";
+import { schemaForType } from "../utils/index.js";
 
 export const CalendarGetQuerySchema = schemaForType<CalendarGetQuery>()(
     z.object({

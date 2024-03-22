@@ -3,11 +3,9 @@ import {
   ModelApplicationCreateSchema,
   ModelApplicationQuerySchema,
 } from "@jimmodel/shared";
-import {
-  extractFileFromRequest,
-} from "../lib/request";
 import { validate } from "../lib/validation";
 import modelApplicationService from "../services/model-application-service";
+import { extractFileFromRequest } from "../lib/request";
 
 export async function createModelApplicationController(
   req: express.Request,

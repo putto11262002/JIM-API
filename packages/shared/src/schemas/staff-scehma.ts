@@ -1,7 +1,7 @@
 
 import z from "zod"
-import { PaginatedQuerySchema } from "./paginated-data";
-import { StaffRole } from "../types";
+import { PaginatedQuerySchema } from "./paginated-data.js";
+import { StaffRole } from "../types/index.js";
 import * as db from "@prisma/client";
 
 

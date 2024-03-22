@@ -1,3 +1,3 @@
-export * from "./api-response"
-export * from "./error-response"
-export * from "./staff"
+export * from "./api-response.js"
+export * from "./error-response.js"
+export * from "./staff.js"

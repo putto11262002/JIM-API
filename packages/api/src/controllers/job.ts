@@ -5,17 +5,16 @@ import {
   JobAddModelSchema,
   JobCreateSchema,
   JobGetQuerySchma,
-  JobStatus,
   JobUpdateSchema,
 } from "@jimmodel/shared";
 
-import { Prisma } from "@prisma/client"
+import  * as pgk from "@prisma/client"
 import { prisma } from "../prisma";
 import { buildPaginatedData } from "../lib/paginated-data";
 import NotFoundError from "../lib/errors/not-found-error";
 import modelService from "../services/model-service";
 
-const jobInclude = Prisma.validator<Prisma.JobInclude>()({
+const jobInclude = pgk.Prisma.validator<pgk.Prisma.JobInclude>()({
   models: {
     include: {
       images: true,
@@ -52,7 +51,7 @@ async function getAll(
   try {
     const query = validate(req.query, JobGetQuerySchma);
 
-    const where: Prisma.JobWhereInput = {};
+    const where: pgk.Prisma.JobWhereInput = {};
 
     if (query.q) {
       where.OR = [];

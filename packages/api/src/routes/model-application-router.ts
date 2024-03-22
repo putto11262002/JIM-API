@@ -8,7 +8,7 @@ import {
   getModelApplicationsController,
 } from "../controllers/model-application-controller";
 import upload, { uploadMiddleware } from "../middlewares/upload";
-import router from ".";
+import router from "./index";
 import { staffAuthMiddleware } from "../middlewares/staff-auth-middleware";
 const modelApplicationRouter = express.Router();
 

@@ -1,13 +1,13 @@
 import z from "zod";
-import { PaginatedQuerySchema } from "./paginated-data";
-import { schemaForType } from "../utils/zod";
+import { PaginatedQuerySchema } from "./paginated-data.js";
+import { schemaForType } from "../utils/zod.js";
 import {
   EncodedModelGetQuery,
   ModelCreateInput,
   ModelExperienceCreateInput,
   ModelGetQuery,
   ModelUpdateInput,
-} from "../types";
+} from "../types/index.js";
 
 export const ModelCreateSchema = schemaForType<ModelCreateInput>()(
   z.object({

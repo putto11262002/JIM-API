@@ -1,5 +1,5 @@
 import { ModelApplication, ModelApplicationCreateInput, PaginatedData, ModelApplicationStatus, ModelCreateInput, Model, ModelApplicationGetQuery } from "@jimmodel/shared";
-import { Prisma } from "@prisma/client";
+import * as pkg from "@prisma/client";
 import { prisma } from "../prisma";
 import NotFoundError from "../lib/errors/not-found-error";
 import ConstraintViolationError from "../lib/errors/constraint-violation-error";
@@ -205,7 +205,7 @@ async function archive(modelApplicationId: string): Promise<void> {
 
 
  async function getAll(query: ModelApplicationGetQuery): Promise<PaginatedData<ModelApplication>> {
-    const where: Prisma.ModelApplicationWhereInput = {};
+    const where: pkg.Prisma.ModelApplicationWhereInput = {};
     if (query.q !== undefined) {
       where.OR = [
         {

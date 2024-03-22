@@ -1,5 +1,5 @@
 import * as db from "@prisma/client"
-import { paginatedDataQuery } from "./pagingated-data-type"
+import { paginatedDataQuery } from "./pagingated-data-type.js"
 export type ModelApplication = db.ModelApplication & {
     experiences: db.ModelApplicationExperience[]
     images: db.ModelApplicationImage[]

@@ -1,6 +1,6 @@
 import { FileMetaData } from "@jimmodel/shared";
 import config from "../config";
-import {  Prisma } from "@prisma/client";
+import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
 import fs from "fs/promises";
 import path from "path";
@@ -25,7 +25,7 @@ async function saveFile(file: Express.Multer.File): Promise<FileMetaData> {
 
   url.pathname = path.join(config.SERVE_STATIC_PATH, fileName)
 
-  const fileMetaDataInput: Prisma.FileMetaDataCreateInput = {
+  const fileMetaDataInput: pgk.Prisma.FileMetaDataCreateInput = {
     mimeType: file.mimetype,
     size: file.size,
     path: newPath,
