@@ -34,7 +34,7 @@ jobs:
       run: docker push ${{env.DASHBOARD_IMAGE_NAME}}:lastest
 
   deploy_db: 
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     environment: Production
 
     strategy:
