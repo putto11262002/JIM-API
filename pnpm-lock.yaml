@@ -263,9 +263,6 @@ importers:
 
   packages/shared:
     dependencies:
-      '@jimmodel/shared':
-        specifier: ^1.0.0
-        version: 'link:'
       '@prisma/client':
         specifier: '*'
         version: 5.11.0(prisma@5.11.0)
