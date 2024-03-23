@@ -11,6 +11,7 @@ jobs:
   build_docker_images:
 
     runs-on: ubuntu-latest
+    environment: Production
 
     env: 
       API_IMAGE_NAME: putto2002/api
