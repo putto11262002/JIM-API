@@ -4,28 +4,36 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 
-FROM base AS build-base
+FROM base AS base-build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
+# Use node_modules
+RUN pnpm config set node-linker=hoisted
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm prisma generate
-RUN pnpm --filter=shared build
+RUN pnpm --filter shared build
 
 
-FROM build-base as build-api
 
-# Build and bundle the api
+FROM base-build AS api-build
+RUN pnpm config set node-linker=hoisted
 RUN pnpm --filter api build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm deploy --filter=api /prod/api
 
-FROM base AS api
 
+FROM base AS api-deps
+WORKDIR /usr/src/app
+COPY . . 
+RUN pnpm config set node-linker=hoisted
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter api install --frozen-lockfile --prod 
+COPY --from=api-build /usr/src/app/node_modules/.prisma/client ./node_modules/.prisma/client
+COPY --from=api-build /usr/src/app/packages/shared/ ./node_modules/@jimmodel/shared
+
+
+FROM base AS api 
+WORKDIR /usr/src/app
+COPY --from=api-deps /usr/src/app/node_modules ./node_modules
+COPY --from=api-build /usr/src/app/packages/api/dist ./dist                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 ENV NODE_ENV=production
-
-WORKDIR /prod/api
-COPY --from=build-api --chown=node /prod/api ./
-COPY --from=build-api --chown=node /usr/src/app/prisma ./prisma
-RUN pnpm prisma generate
 
 ENV PORT=8000
 
@@ -33,23 +41,23 @@ USER node
 
 EXPOSE 8000
 
-CMD [ "pnpm", "start" ]
+CMD [ "node", "./dist/src/index.js" ]
 
 
-FROM build-base as build-dashboard
-
+FROM base-build AS dashboard-build
 ARG API_BASE_URL
-ENV VITE_API_BASE_URL=$API_BASE_URL
-
+ENV VITE_API_BASE_URL=${API_BASE_URL}
+WORKDIR /usr/src/app
+RUN pnpm config set node-linker=hoisted
+RUN cp ./node_modules/.prisma/client/*.js ./node_modules/@prisma/client
 RUN pnpm --filter dashboard build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm deploy --filter=dashboard /prod/dashboard
 
 
 
 FROM nginx:alpine as dashboard
 
 # COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build-dashboard /prod/dashboard/dist /usr/share/nginx/html
+COPY --from=dashboard-build /usr/src/app/packages/dashboard/dist /usr/share/nginx/html
 
 EXPOSE 8000
 

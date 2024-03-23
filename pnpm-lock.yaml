@@ -12,9 +12,6 @@ importers:
         specifier: ^5.11.0
         version: 5.11.0(prisma@5.11.0)
     devDependencies:
-      '@jimmodel/shared':
-        specifier: workspace:^
-        version: link:packages/shared
       prisma:
         specifier: ^5.11.0
         version: 5.11.0
@@ -266,6 +263,9 @@ importers:
 
   packages/shared:
     dependencies:
+      '@jimmodel/shared':
+        specifier: ^1.0.0
+        version: 'link:'
       '@prisma/client':
         specifier: '*'
         version: 5.11.0(prisma@5.11.0)

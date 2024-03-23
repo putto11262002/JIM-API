@@ -10,7 +10,6 @@
   "author": "Put Suthisrisinlpa",
   "license": "MIT",
   "devDependencies": {
-    "@jimmodel/shared": "workspace:^",
     "prisma": "^5.11.0"
   },
   "dependencies": {
