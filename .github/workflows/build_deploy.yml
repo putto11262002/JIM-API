@@ -54,7 +54,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
     - name: Install Prisma CLI
-      run: pnpm install prisma -g
+      run:  | 
+            pnpm install prisma -g
+            ls
+      
     - name: Deploy Migrations
       run: pnpm prisma migrate deploy
       env:
