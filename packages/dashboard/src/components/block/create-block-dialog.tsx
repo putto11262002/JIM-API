@@ -28,22 +28,7 @@ import blockService from "../../services/block";
 import { useToast } from "../ui/use-toast";
 import { AppError } from "../../types/app-error";
 import { Alert, AlertDescription } from "../ui/alert";
-const timeOptions = [
-  { label: "10:00", value: "10:00" },
-  { label: "11:00", value: "11:00" },
-  { label: "12:00", value: "12:00" },
-  { label: "13:00", value: "13:00" },
-  { label: "14:00", value: "14:00" },
-  { label: "15:00", value: "15:00" },
-  { label: "16:00", value: "16:00" },
-  { label: "17:00", value: "17:00" },
-  { label: "18:00", value: "18:00" },
-  { label: "19:00", value: "19:00" },
-  { label: "20:00", value: "20:00" },
-  { label: "21:00", value: "21:00" },
-  { label: "22:00", value: "22:00" },
-  { label: "23:00", value: "23:00" },
-];
+import { timeOptions } from "../../lib/constants";
 
 const BlockCreateFormSchema = z
   .object({
@@ -66,10 +51,11 @@ const BlockCreateFormSchema = z
     dates: z.any(),
   })
   .superRefine((data, ctx) => {
-    const start = dayjs(data.startDate)
+
+    const start = dayjs(data.startDate).startOf("day")
       .set("hour", parseInt(data.startTime.split(":")[0]))
       .set("minute", parseInt(data.startTime.split(":")[1]));
-    const end = dayjs(data.endDate)
+    const end = dayjs(data.endDate).startOf("day")
       .set("hour", parseInt(data.endTime.split(":")[0]))
       .set("minute", parseInt(data.endTime.split(":")[1]));
     if (end.isBefore(start)) {
@@ -102,14 +88,14 @@ const FormBlockToBlockCreateInput = z
   })
   .transform((data) => {
     return {
-      start: dayjs(data.startDate)
-        .add(parseInt(data.startTime.split(":")[0]), "hour")
-        .add(parseInt(data.startTime.split(":")[1]), "minute")
+      start: dayjs(data.startDate).startOf("day")
+        .add(parseInt(data.startTime.split(":")[0]), "hours")
+        .add( parseInt(data.startTime.split(":")[1]), "minutes")
         .toDate()
         .toISOString(),
-      end: dayjs(data.endDate)
-        .add(parseInt(data.endTime.split(":")[0]), "hour")
-        .add(parseInt(data.endTime.split(":")[1]), "minute")
+      end: dayjs(data.endDate).startOf("day")
+        .add(parseInt(data.endTime.split(":")[0]), "hours")
+        .add(parseInt(data.endTime.split(":")[1]), "minutes")
         .toDate()
         .toISOString(),
       reason: data.reason,

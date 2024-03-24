@@ -86,6 +86,8 @@ export default function CellDialog() {
               const color = getEventColor(event);
               return (
                 <Event
+                start={event.details.start}
+                end={event.details.end}
                   key={event.id}
                   optionBtn={
                     <JobDropdownMenu job={event.details.job}>
@@ -111,6 +113,8 @@ export default function CellDialog() {
               const color = getEventColor(event);
               return (
                 <Event
+                start={event.details.start}
+                end={event.details.end}
                   key={event.id}
                   optionBtn={
                     <BlockDropdownMenu block={event.details}>
@@ -149,11 +153,15 @@ function Event({
   dataText,
   color,
   optionBtn,
+  start,
+  end
 }: {
   metaDataText: string;
   dataText: string;
   color: string;
   optionBtn: ReactNode;
+  start: Date
+  end: Date
 }) {
   return (
     <div className="py-3 px-4 rounded-md border flex items-center">
@@ -164,8 +172,8 @@ function Event({
             style={{ backgroundColor: color }}
           ></div>
           <p className="text-xs text-slate-600 ">
-            {dayjs(new Date()).format("H:mm A")} to{" "}
-            {dayjs(new Date()).format("H:mm A")}
+            {dayjs(start).format("H:mm A")} to{" "}
+            {dayjs(end).format("H:mm A")}
           </p>
         </div>
         {/* <div className="flex items-center"> */}

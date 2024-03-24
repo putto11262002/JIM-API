@@ -20,14 +20,6 @@ import JobDetailsForm from "../../components/job/job-details-form";
 
 
 
-
-// function JobModelForm({models, onAdd, onRemove}: {models: Model[], onAdd: (modelId: string) => void, onRemove: (modelId: string) => void}){
-
-//     return <div>
-
-//     </div>
-
-// }
 function CreateJobSuccessDialog({
   createdJob,
   onSkip,
