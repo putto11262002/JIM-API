@@ -52,6 +52,9 @@ async function getBookingEvents(startDate: Dayjs, endDate: Dayjs) {
           },
         },
       ],
+      job: {
+        status: {not: JobStatus.ARCHIVED}
+      }
     },
     include: {
       job: {
