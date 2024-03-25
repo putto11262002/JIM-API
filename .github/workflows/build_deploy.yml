@@ -33,7 +33,9 @@ jobs:
     - name: Push Dashboard Docker Image
       run: docker push ${{env.DASHBOARD_IMAGE_NAME}}:lastest
 
+  # Only deploy the database when the main branch is pushed
   deploy_db: 
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: Production
 
@@ -57,11 +59,25 @@ jobs:
       run:  | 
             pnpm install prisma -g
             ls
-      
     - name: Deploy Migrations
       run: pnpm prisma migrate deploy
       env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  invoke_deployment:
+    if : github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [build, deploy_db]
+    environment: Production
+    steps: 
+
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v3
+        with:
+            webhook_url: ${{ secrets.WEBHOOK_URL }}
+
+    
+
       
     
   
