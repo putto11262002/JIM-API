@@ -36,6 +36,7 @@ jobs:
   # Only deploy the database when the main branch is pushed
   deploy_db: 
     if: github.ref == 'refs/heads/main'
+    needs: build
     runs-on: ubuntu-latest
     environment: Production
 
