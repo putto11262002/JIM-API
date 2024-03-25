@@ -37,14 +37,14 @@ function CreateJobSuccessDialog({
           <div className="flex flex-col space-y-2">
             <Link
               className="w-full"
-              to={`/jobs/${createdJob?.id}/update#model`}
+              to={`/jobs/${createdJob?.id}/update?form=model`}
             >
               {" "}
               <Button className="w-full" variant={"outline"} size={"sm"}>
                 Add models
               </Button>
             </Link>
-            <Link className="" to={`/jobs/${createdJob?.id}/update#booking`}>
+            <Link className="" to={`/jobs/${createdJob?.id}/update?form=booking`}>
               <Button className="w-full" variant={"outline"} size={"sm"}>
                 Add bookings
               </Button>

@@ -2,7 +2,7 @@ import { ReactNode, useMemo, useState } from "react";
 import { SideBar } from "../../components/shared/form-side-menu";
 import PageTitle from "../../components/shared/page-title";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { errorInterceptorV2 } from "../../lib/error";
 import jobService from "../../services/job";
 
@@ -41,7 +41,7 @@ const menuItems: {
   },
   {
     label: "Models",
-    value: "models",
+    value: "model",
     form: ({ handleSearchModel, searchedModels, handleAddModel, initialData, handleRemoveModel }) => (
       <JobModelForm
       onRemoveModel={handleRemoveModel}
@@ -61,7 +61,9 @@ const menuItems: {
 
 function UpdateJobPage() {
   const { id } = useParams<{ id: string }>();
-  const [formIndex, setFormIndex] = useState(0);
+  const [searchParam, setSearchParam] = useSearchParams()
+  const initialFormIndex = menuItems.findIndex(({value}) => value === searchParam.get("form") )
+  const [formIndex, setFormIndex] = useState(initialFormIndex === -1 ? 0 : initialFormIndex);
   const [modelSearchTerm, setModelSeachTerm] = useState("");
   const queryClient = useQueryClient();
   const {success} = useNotification()
@@ -77,6 +79,8 @@ function UpdateJobPage() {
       ? ({ signal }) => errorInterceptorV2(jobService.getById, { id, signal })
       : undefined,
   });
+
+
 
   // Update job details
   const {
@@ -183,7 +187,10 @@ function UpdateJobPage() {
           <SideBar
             menuItems={menuItems}
             selected={menuItems[formIndex].value}
-            onChange={({ index }) => setFormIndex(index)}
+            onChange={({ index }) => {
+              setFormIndex(index);
+              setSearchParam(prev => ({...prev, form: menuItems[index].value,}), {replace: true})
+            }}
           />
         </div>
         <div className="grow">{renderForm()}</div>
