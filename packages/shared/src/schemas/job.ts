@@ -4,6 +4,7 @@ import {
   BookingCreateInput,
   JobAddModelInput,
   JobCreateInput,
+  JobCreateJobStatus,
   JobGetQuery,
   JobStatus,
   JobUpdateInput,
@@ -26,7 +27,7 @@ export const JobCreateSchema = schemaForType<JobCreateInput>()(
     termsOfPayment: z.string().nullable().optional(),
     cancellationFee: z.string().nullable().optional(),
     contractDetails: z.string().nullable().optional(),
-    status: z.nativeEnum(JobStatus),
+    status: z.nativeEnum(JobCreateJobStatus),
   })
 );
 

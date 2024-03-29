@@ -86,14 +86,23 @@ function ViewJobPage() {
           </div>
         </div>
         <div className="space-x-3">
-          <Link to={"/jobs/add"}>
+          <Link to={"/jobs/add?status=confirmed"}>
             <Button variant={"outline"}>
               <Plus className="h-4 w-4 mr-2" />
               Job
             </Button>
           </Link>
+
+          <Link to={"/jobs/add?status=pending"}>
+            <Button variant={"outline"}>
+              <Plus className="h-4 w-4 mr-2" />
+              Option
+            </Button>
+          </Link>
+
           <CreateBlockDialog />
         </div>
+        
       </div>
 
       {/* Job table */}

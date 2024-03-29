@@ -66,7 +66,7 @@ async function getAll(
 
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 10;
-console.log(where, query)
+
     const [jobs, total] = await Promise.all([
       prisma.job.findMany({
         where,
