@@ -1,4 +1,4 @@
-import { Job, JobCreateInput, JobCreateJobStatus, schemaForType } from "@jimmodel/shared";
+import { Job, JobCreateInput, JobStatus, schemaForType } from "@jimmodel/shared";
 import { Form } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
@@ -25,8 +25,7 @@ const JobCreateFormSchema = schemaForType<JobCreateInput>()(
       termsOfPayment: z.string().nullable().optional(),
       cancellationFee: z.string().nullable().optional(),
       contractDetails: z.string().nullable().optional(),
-      status: z.nativeEnum(JobCreateJobStatus)
-    })
+      status: z.nativeEnum(JobStatus) })
   );
   
 
