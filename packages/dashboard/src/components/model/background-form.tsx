@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
+import { ModelCreateFormSchema } from "./schema";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form";
@@ -23,39 +23,56 @@ export const ModelBackgroundFormSchema = ModelCreateFormSchema.pick({
   })
 );
 
+const CleanedModelBackgroundFormSchema = ModelBackgroundFormSchema.transform(
+  (data) => {
+    return {
+      ...data,
+      talents: data?.talents?.map(({ talent }) => talent),
+    };
+  }
+);
+
 export type ModelBackgroundForm = z.infer<typeof ModelBackgroundFormSchema>;
 
-export function ModelBackgroundForm({
-  onSubmit,
-  initialData,
-}: {
+type ModelBackgroundFormProps = {
   onSubmit: (
     data: Omit<ModelBackgroundForm, "talents"> & { talents?: string[] }
   ) => void;
   initialData?: Omit<ModelBackgroundForm, "talents"> & { talents?: string[] };
-}) {
+}
+
+export function ModelBackgroundForm({
+  onSubmit,
+  initialData,
+}: ModelBackgroundFormProps) {
+
   const form = useForm<ModelBackgroundForm>({
     ...(initialData
       ? {
           defaultValues: {
             ...initialData,
-            talents: initialData?.talents?.map((t) => ({ talent: t })),
+            talents: initialData?.talents?.map((talent) => ({ talent })),
           },
         }
       : {}),
     resolver: zodResolver(ModelBackgroundFormSchema),
   });
+
   const talentFields = useFieldArray({
     control: form.control,
     name: "talents",
   });
+
+  function handleSubmit(data: ModelBackgroundForm){
+    const clearnedData = CleanedModelBackgroundFormSchema.parse(data);
+    onSubmit(clearnedData);
+  }
+
   return (
     <Form {...form}>
       <form
         className="space-y-4"
-        onSubmit={form.handleSubmit((data) =>
-          onSubmit({ ...data, talents: data.talents?.map((t) => t.talent) })
-        )}
+        onSubmit={form.handleSubmit((data) => handleSubmit(data))}
       >
         <FormInputField form={form} name="occupation" />
         <FormInputField
@@ -63,10 +80,8 @@ export function ModelBackgroundForm({
           name="highestLevelOfEducation"
           label="Highest Level of Education"
         />
-
         <FormInputField form={form} name="aboutMe" />
         <FormInputField form={form} name="medicalBackground" />
-
         <div className="space-y-2">
           <p className="text-sm font-medium ">Talents</p>
           {talentFields.fields.map((field, index) => (

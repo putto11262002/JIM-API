@@ -1,12 +1,12 @@
 import { XCircle } from "lucide-react";
 import { AppError } from "../../types/app-error";
 
-function ErrorBlock({ error }: { error?: AppError }) {
+function ErrorBlock({ error }: { error?: AppError | string }) {
   return (
     <div className="flex justify-center flex-col items-center space-y-2">
       <XCircle className="text-danger" />
       <p>
-        {error ? error.message : "Something went wrong. Please try again later"}
+        {error ? (typeof error === "string" ? error :  error.message) : "Something went wrong. Please try again later"}
       </p>
     </div>
   );

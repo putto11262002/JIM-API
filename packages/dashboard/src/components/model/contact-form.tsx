@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
+import { ModelCreateFormSchema } from "./schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form";
@@ -19,13 +19,15 @@ export const ModelContactFormSchema = ModelCreateFormSchema.pick({
 
 export type ModelContactForm = z.infer<typeof ModelContactFormSchema>;
 
+type ModelContactFormProps = {
+  onSubmit: (data: ModelContactForm) => void;
+  initialData?: Model;
+}
+
 export function ModelContactForm({
   onSubmit,
   initialData
-}: {
-  onSubmit: (data: ModelContactForm) => void;
-  initialData?: Model;
-}) {
+}: ModelContactFormProps) {
   const form = useForm<ModelContactForm>({
     ...(initialData ? { defaultValues: initialData } : {}),
     resolver: zodResolver(ModelContactFormSchema),

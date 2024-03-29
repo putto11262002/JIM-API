@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
+import { ModelCreateFormSchema } from "./schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form";
@@ -35,13 +35,15 @@ export const ModelMeasurementFormSchema = ModelCreateFormSchema.pick({
 
 export type ModelMeasurementForm = z.infer<typeof ModelMeasurementFormSchema>;
 
+type ModelMeasurementFormProps = {
+  onSubmit: (data: ModelMeasurementForm) => void;
+  initialData?: ModelMeasurementForm ;
+}
 export function ModelMeausrementForm({
   onSubmit,
   initialData,
-}: {
-  onSubmit: (data: ModelMeasurementForm) => void;
-  initialData?: ModelMeasurementForm ;
-}) {
+}:ModelMeasurementFormProps ) {
+
   const form = useForm<ModelMeasurementForm>({
     ...(initialData ? { defaultValues: initialData } : {}),
     resolver: zodResolver(ModelMeasurementFormSchema),
@@ -77,7 +79,6 @@ export function ModelMeausrementForm({
         <FormInputField form={form} name="suitDressSize" />
         <FormInputField form={form} name="hairColor" />
         <FormInputField form={form} name="eyeColor" />
-
         {/* <FormInputField form={form} name="tattoos" />
               <FormInputField form={form} name="scars" /> */}
         <Button className="mt-6" type="submit">

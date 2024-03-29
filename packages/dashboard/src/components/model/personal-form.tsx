@@ -2,13 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import z from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
+import { ModelCreateFormSchema } from "./schema";
 import { FormDatePickerField } from "../shared/form/FormDatePickerField";
 import { FormInputField } from "../shared/form/FormInputField";
 import { FromSelectField } from "../shared/form/FormSelectField";
 import { Form } from "../ui/form";
 import { Button } from "../ui/button";
 import { Model } from "@jimmodel/shared";
+import { ModelGenderOptions } from "../../data/model-attributes";
 
 export const ModelPersonalFormSchema = ModelCreateFormSchema.pick({
   firstName: true,
@@ -19,7 +20,6 @@ export const ModelPersonalFormSchema = ModelCreateFormSchema.pick({
   nationality: true,
   ethnicity: true,
   countryOfResidence: true,
-  // spokenLanguages: true,
   passportNumber: true,
   idCardNumber: true,
   taxId: true,
@@ -29,25 +29,35 @@ export const ModelPersonalFormSchema = ModelCreateFormSchema.pick({
   })
 );
 
+const CleanFormDataSchema = ModelPersonalFormSchema.transform((data) => {
+  return {
+    ...data,
+    spokenLanguages: data?.spokenLanguages?.map(({ language }) => language),
+  };
+});
+
 export type ModelPersonalForm = z.infer<typeof ModelPersonalFormSchema>;
-export function PersonalForm({
-  onSubmit,
-  initialData,
-}: {
+
+type ModelPersonalInfoFormProps = {
   onSubmit: (
     data: Omit<ModelPersonalForm, "spokenLanguages"> & {
       spokenLanguages?: string[];
     }
   ) => void;
   initialData?: Model;
-}) {
+};
+
+export function PersonalForm({
+  onSubmit,
+  initialData,
+}: ModelPersonalInfoFormProps) {
   const form = useForm<ModelPersonalForm>({
     ...(initialData
       ? {
           defaultValues: {
             ...initialData,
-            spokenLanguages: initialData?.spokenLanguages.map((l) => ({
-              language: l,
+            spokenLanguages: initialData?.spokenLanguages.map((language) => ({
+              language,
             })),
           },
         }
@@ -60,36 +70,29 @@ export function PersonalForm({
     name: "spokenLanguages",
   });
 
+  function handleSubmit(data: ModelPersonalForm) {
+    const cleanedData = CleanFormDataSchema.parse(data);
+    onSubmit(cleanedData);
+  }
+
   return (
     <Form {...form}>
       <form
         className="space-y-4"
-        onSubmit={form.handleSubmit((data) =>
-          onSubmit({
-            ...data,
-            spokenLanguages: data?.spokenLanguages?.map(
-              ({ language }) => language
-            ),
-          })
-        )}
+        onSubmit={form.handleSubmit((data) => handleSubmit(data))}
       >
         <FormInputField form={form} name="firstName" />
         <FormInputField form={form} name="lastName" />
         <FormInputField form={form} name="nickname" />
-
         <FormDatePickerField form={form} name="dateOfBirth" />
         <FromSelectField
           form={form}
           name="gender"
-          options={[
-            { label: "Male", value: "male" },
-            { label: "Female", value: "female" },
-          ]}
+          options={ModelGenderOptions}
         />
         <FormInputField form={form} name="nationality" />
         <FormInputField form={form} name="ethnicity" />
         <FormInputField form={form} name="countryOfResidence" />
-
         <div className="space-y-2">
           <p className="text-sm font-medium">Spoken Languages</p>
           {languageFields.fields.map((field, index) => (
@@ -110,7 +113,6 @@ export function PersonalForm({
             Add Language
           </Button>
         </div>
-
         <FormInputField form={form} name="passportNumber" />
         <FormInputField form={form} name="idCardNumber" />
         <FormInputField form={form} name="taxId" />
