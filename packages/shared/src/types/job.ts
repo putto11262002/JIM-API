@@ -2,7 +2,9 @@ import * as db from "@prisma/client"
 import { Model } from "./model-type.js"
 import {  paginatedDataQuery } from "./pagingated-data-type.js"
 import { Staff } from "./staff-type.js"
-export type JobCreateInput = Omit<db.Prisma.JobCreateInput, "createdBy" | "models" | "bookings">
+import _ from "lodash"
+
+export type JobCreateInput = Omit<db.Prisma.JobCreateInput, "createdBy" | "models" | "bookings"> 
 
 export type JobUpdateInput = Omit<db.Prisma.JobUpdateInput, "createdBy" | "models" | "bookings">
 

@@ -7,7 +7,7 @@ import { errorInterceptorV2 } from "../../lib/error";
 import jobService from "../../services/job";
 
 import { AppError } from "../../types/app-error";
-import { JobCreateInput, Job, JobUpdateInput, Model, BookingCreateInput } from "@jimmodel/shared";
+import { JobCreateInput, Job, JobUpdateInput, Model, BookingCreateInput, JobStatus } from "@jimmodel/shared";
 import JobDetailsForm from "../../components/job/job-details-form";
 import LoaderBlock from "../../components/shared/loader-block";
 import ErrorBlock from "../../components/shared/error-block";
@@ -15,6 +15,7 @@ import JobModelForm from "../../components/job/job-model-form";
 import modelService from "../../services/model";
 import JobBookingForm from "../../components/job/job-booking-form";
 import useNotification from "../../hooks/use-notification";
+import JobActionForm from "../../components/job/job-action-form";
 
 const menuItems: {
   label: string;
@@ -30,10 +31,12 @@ const menuItems: {
     handleRemoveBooking: (bookingId: string) => void;
     searchedModels?: Model[];
     initialData: Job;
+    handleConfirm: (jobId: string) => void,
+    handleArchive: (jobId: string) => void
   }) => ReactNode;
 }[] = [
   {
-    label: "Job Details",
+    label: "Details",
     value: "job-details",
     form: ({ handleUpdateJob, initialData }) => (
       <JobDetailsForm initialData={initialData} onSubmit={handleUpdateJob} />
@@ -57,6 +60,11 @@ const menuItems: {
     value: "booking",
     form: ({handleAddBooking, initialData ,handleRemoveBooking}) => <JobBookingForm onRemoveBooking={handleRemoveBooking} bookings={initialData.bookings} onAddBooking={handleAddBooking} />
   },
+  {
+    label: "Actions",
+    value: "actions",
+    form: ({handleConfirm, handleArchive, initialData}) => <JobActionForm onConfirm={handleConfirm} onArchive={handleArchive} data={initialData}/> 
+  }
 ];
 
 function UpdateJobPage() {
@@ -145,6 +153,22 @@ function UpdateJobPage() {
     }
   })
 
+  const { mutate: archive } = useMutation({
+    mutationFn: (jobId: string) => jobService.archive({ id: jobId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      success("Job archived");
+    },
+    onError: (err) => console.error(err)
+  });
+
+  const {mutate: confirm} = useMutation({
+    mutationFn: (jobId: string) => jobService.confirm({id: jobId}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      success("Job confirmed")
+    }
+  })
   const unaddedModels = useMemo(() => {
     if (searchedModels?.data && job?.models) {
       return searchedModels.data.filter(
@@ -170,7 +194,9 @@ function UpdateJobPage() {
         handleSearchModel: (term) => setModelSeachTerm(term),
         searchedModels: unaddedModels,
         handleAddBooking: addBooking,
-        handleRemoveBooking: removeBooking
+        handleRemoveBooking: removeBooking,
+        handleArchive: archive,
+        handleConfirm: confirm,
         
       });
     }
@@ -179,8 +205,8 @@ function UpdateJobPage() {
   return (
     <>
       <PageTitle
-        title="Update Job Details"
-        subtitle="Job date the recrod in the database"
+        title={`Edit ${job?.status === JobStatus.PENDING ? "Option" : "Job"}`}
+        subtitle={`Edit ${job?.status === JobStatus.PENDING ? "Option": "Job"} recrod in the database`}
       />
       <div className="flex gap-8">
         <div className="">

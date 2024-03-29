@@ -17,12 +17,14 @@
     "build": "pnpm clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && tsc -p tsconfig.types.json"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.0",
     "prisma": "*",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "@prisma/client": "*",
+    "lodash": "^4.17.21",
     "zod": "^3.22.4"
   },
   "author": "Put",

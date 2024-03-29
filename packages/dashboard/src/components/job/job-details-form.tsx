@@ -5,13 +5,12 @@ import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import { FormTextareaField } from "../shared/form/ForTextareaField";
 import { FormInputField } from "../shared/form/FormInputField";
-import { FromSelectField } from "../shared/form/FormSelectField";
+// import { FromSelectField } from "../shared/form/FormSelectField";
 import z  from "zod";
 
 
 const JobCreateFormSchema = schemaForType<JobCreateInput>()(
     z.object({
-      // id: z.string().optional(),
       title: z.string().min(1, "Required"),
       client: z.string().min(1, "Required"),
       clientAddress: z.string().nullable().optional(),
@@ -26,16 +25,16 @@ const JobCreateFormSchema = schemaForType<JobCreateInput>()(
       termsOfPayment: z.string().nullable().optional(),
       cancellationFee: z.string().nullable().optional(),
       contractDetails: z.string().nullable().optional(),
-      status: z.nativeEnum(JobStatus),
-    })
+      status: z.nativeEnum(JobStatus) })
   );
-
   
-function JobDetailsForm({ onSubmit, initialData }: { onSubmit: (data: JobCreateInput) => void, initialData?: Job }) {
+
+function JobDetailsForm({ onSubmit, initialData }: { onSubmit: (data: JobCreateInput) => void, initialData?: Partial<Job> }) {
     const form = useForm<JobCreateInput>({
       resolver: zodResolver(JobCreateFormSchema),
       defaultValues: initialData,
     });
+
     return (
       <Form {...form}>
         <form
@@ -45,7 +44,6 @@ function JobDetailsForm({ onSubmit, initialData }: { onSubmit: (data: JobCreateI
             onSubmit(data);
           })}
         >
-          {/* <h3>Job Information</h3> */}
           <FormInputField form={form} name="title" />
           <FormInputField form={form} name="client" />
           <FormInputField form={form} name="clientAddress" />
@@ -60,14 +58,6 @@ function JobDetailsForm({ onSubmit, initialData }: { onSubmit: (data: JobCreateI
           <FormInputField form={form} name="termsOfPayment" />
           <FormInputField form={form} name="cancellationFee" />
           <FormTextareaField form={form} name="contractDetails" />
-          <FromSelectField
-            form={form}
-            name="status"
-            options={Object.values(JobStatus).map((v) => ({
-              label: v,
-              value: v,
-            }))}
-          />
           <Button type="submit" className="mt-2">
             Save
           </Button>

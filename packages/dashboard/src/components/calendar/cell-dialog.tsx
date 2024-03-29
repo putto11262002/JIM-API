@@ -32,9 +32,7 @@ export const CellDialogProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [date, setDate] = useState<Dayjs | null>(
-    null
-  );
+  const [date, setDate] = useState<Dayjs | null>(null);
 
   function setOpen(date: Dayjs) {
     setDate(date);
@@ -62,32 +60,28 @@ export const CellDialogProvider = ({
 
 export default function CellDialog() {
   const { date, isOpen, setClose } = useCellDialog();
-  
-
-  const  {dates} = useCalendar()
-
-  const events = dates.find((d) => dayjs(d.date).isSame(date, "day"))?.events
+  const { dates } = useCalendar();
+  const events = dates.find((d) => dayjs(d.date).isSame(date, "day"))?.events;
 
   function renderEvents() {
     return (
       <div className="space-y-2">
-        {events === undefined ||
-        events.length < 1 ? (
+        {events === undefined || events.length < 1 ? (
           <p>No Events</p>
         ) : (
           events.map((event) => {
             if (event.type === EventType.Booking) {
+
+            const models = event.details.job.models
+                .map((model) => `${model.name}`)
+                .join(", ")
               const dataText = `${
                 event.details.job.title
-              } - ${event.details.job.models
-                .map((model) => `${model.name}`)
-                .join(", ")}`;
-              const metaDataText = `${event.details.job.createdBy.firstName} ${event.details.job.createdBy.lastName}`;
+              } ${models.length > 0 ? "-" : ""} ${models}`;
+              const metaDataText = `Booked By ${event.details.job.createdBy.firstName} ${event.details.job.createdBy.lastName}`;
               const color = getEventColor(event);
               return (
                 <Event
-                start={event.details.start}
-                end={event.details.end}
                   key={event.id}
                   optionBtn={
                     <JobDropdownMenu job={event.details.job}>
@@ -104,17 +98,17 @@ export default function CellDialog() {
             }
 
             if (event.type === EventType.Block) {
+              const models = event.details.models
+                .map((model) => model.name)
+                .join(", ")
               const dataText = `${upperFirst(
                 event.details.type.replace("-", " ")
-              )} - ${event.details.models
-                .map((model) => model.name)
-                .join(", ")}`;
-              const metaDataText = `meta data`;
+              )} ${models.length > 0 ? "-" : ""} ${models}`;
+              const metaDataText = `Booked at ${dayjs(event.details.createdAt).format("h:mm A")}`;
               const color = getEventColor(event);
               return (
                 <Event
-                start={event.details.start}
-                end={event.details.end}
+                  
                   key={event.id}
                   optionBtn={
                     <BlockDropdownMenu block={event.details}>
@@ -143,7 +137,7 @@ export default function CellDialog() {
             Events on {date && date.format("dddd, MMMM D, YYYY")}
           </DialogTitle>
         </DialogHeader>
-       {renderEvents()}
+        {renderEvents()}
       </DialogContent>
     </Dialog>
   );
@@ -153,15 +147,12 @@ function Event({
   dataText,
   color,
   optionBtn,
-  start,
-  end
+  metaDataText,
 }: {
   metaDataText: string;
   dataText: string;
   color: string;
   optionBtn: ReactNode;
-  start: Date
-  end: Date
 }) {
   return (
     <div className="py-3 px-4 rounded-md border flex items-center">
@@ -171,10 +162,7 @@ function Event({
             className="w-3 h-3 rounded-full mr-2"
             style={{ backgroundColor: color }}
           ></div>
-          <p className="text-xs text-slate-600 ">
-            {dayjs(start).format("H:mm A")} to{" "}
-            {dayjs(end).format("H:mm A")}
-          </p>
+          <p className="text-xs text-slate-600 ">{metaDataText}</p>
         </div>
         {/* <div className="flex items-center"> */}
         {/*   <p className="text-sm font-medium">{metaDataText}</p> */}
