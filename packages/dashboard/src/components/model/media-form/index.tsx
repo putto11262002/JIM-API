@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../ui/input";
 import { Trash, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
-import {  ModelImage } from "@jimmodel/shared";
+import { ModelImage } from "@jimmodel/shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 
 const allowedMimetype = ["image/jpg", "image/png", "image/jpeg"];
@@ -71,8 +71,8 @@ function ImageUploadDialog({
           <form
             className="space-y-3"
             onSubmit={form.handleSubmit((data) => {
-                setOpenDialog(false)
-                onSubmit(data.image)
+              setOpenDialog(false);
+              onSubmit(data.image);
             })}
           >
             <FormField
@@ -101,10 +101,7 @@ function ImageUploadDialog({
   );
 }
 
-
 const ImageGallery = ({ images }: { images: ModelImage[] }) => {
-  
-
   const grid = useMemo(() => {
     const grid: ModelImage[][] = [];
     const numCol = 3;
@@ -120,33 +117,27 @@ const ImageGallery = ({ images }: { images: ModelImage[] }) => {
       curInx++;
     }
 
-    return grid
+    return grid;
   }, [images]);
   return (
     <div className="grid grid-cols-3 gap-3">
-        {
-            grid.map((col) => (
-                <div className="flex flex-col gap-3">
-                    {
-                        col.map((image) => (
-                           <div className="group relative">
-                            <div className="absolute  bg-slate-700 bg-opacity-50 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-300">
-                                <div className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full">
-                                    <Trash className="w-4 h-4 text-black"/>
-                                </div>
-                            </div>
-                             <img className="w-full h-auto" src={image.url}/>
-                           </div>
-                        ))
-                    }
+      {grid.map((col) => (
+        <div className="flex flex-col gap-3">
+          {col.map((image) => (
+            <div className="group relative">
+              <div className="absolute  bg-slate-700 bg-opacity-50 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-300">
+                <div className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full">
+                  <Trash className="w-4 h-4 text-black" />
                 </div>
-            ))
-        }
+              </div>
+              <img className="w-full h-auto" src={image.url} />
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
-
-
 
 function MediaForm({
   onAddImage,
@@ -155,32 +146,40 @@ function MediaForm({
   onAddImage: ({ image, type }: { image: File; type: string }) => void;
   images: ModelImage[];
 }) {
-
-
-    function renderTabContent(type: string){
-        return   <TabsContent value={type}>
+  function renderTabContent(type: string) {
+    return (
+      <TabsContent value={type}>
         <div className="mt-6">
-            <ImageUploadDialog type={type} onSubmit={(image) => onAddImage({image, type})}/>
+          <ImageUploadDialog
+            type={type}
+            onSubmit={(image) => onAddImage({ image, type })}
+          />
         </div>
         <div className="mt-4">
-            <ImageGallery images={images.filter((image) => image.type == type)}/>
+          <ImageGallery images={images.filter((image) => image.type == type)} />
         </div>
-
-    </TabsContent>
-    }
+      </TabsContent>
+    );
+  }
   return (
     <>
       <div>
-       <Tabs defaultValue="book" defaultChecked>
-        <TabsList className="w-full justify-around">
-        <TabsTrigger className="grow" value="book">Book</TabsTrigger>
-        <TabsTrigger className="grow" value="polaroid">Polaroid</TabsTrigger>
-        <TabsTrigger className="grow" value="composite">Composite</TabsTrigger>
-        </TabsList>
-       {renderTabContent("book")}
-       {renderTabContent("polaroid")}
-       {renderTabContent("composite")}
-       </Tabs>
+        <Tabs defaultValue="book" defaultChecked>
+          <TabsList className="w-full justify-around">
+            <TabsTrigger className="grow" value="book">
+              Book
+            </TabsTrigger>
+            <TabsTrigger className="grow" value="polaroid">
+              Polaroid
+            </TabsTrigger>
+            <TabsTrigger className="grow" value="composite">
+              Composite
+            </TabsTrigger>
+          </TabsList>
+          {renderTabContent("book")}
+          {renderTabContent("polaroid")}
+          {renderTabContent("composite")}
+        </Tabs>
       </div>
     </>
   );

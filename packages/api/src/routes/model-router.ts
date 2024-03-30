@@ -1,6 +1,6 @@
 import express from "express";
 import modelController from "../controllers/model-controller";
-import upload from "../middlewares/upload";
+import {uploadMiddleware} from "../middlewares/upload";
 import { staffAuthMiddleware } from "../middlewares/staff-auth-middleware";
 
 const modelRouter = express.Router();
@@ -20,12 +20,12 @@ modelRouter.delete(
   modelController.removeModelExperience
 );
 
-modelRouter.post(
-  "/:id/images",
-  upload.single("image"),
-  modelController.addModelImage
-);
-
 modelRouter.delete("/images/:imageId", modelController.removeModelImage);
+
+modelRouter.post(
+	"/:id/images",
+	uploadMiddleware([{name: "image", maxCount: 1}], {allowedMimetype: ["image/png", "image/jpg", "image/jpeg"]}),
+	modelController.addModelImage
+);
 
 export default modelRouter;

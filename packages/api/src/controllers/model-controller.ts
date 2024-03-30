@@ -115,6 +115,7 @@ async function addModelImage(
   next: express.NextFunction
 ) {
   try {
+    console.log("addModelImage");
     const modelId = req.params.id;
 
     const modelImage = extractSingleFilesFromRequest(req, "image");

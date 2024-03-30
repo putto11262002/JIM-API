@@ -6,9 +6,10 @@ import {
   JobCreateSchema,
   JobGetQuerySchma,
   JobUpdateSchema,
+  PaginatedQuerySchema,
 } from "@jimmodel/shared";
 
-import  * as pgk from "@prisma/client"
+import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
 import { buildPaginatedData } from "../lib/paginated-data";
 import NotFoundError from "../lib/errors/not-found-error";
@@ -56,8 +57,12 @@ async function getAll(
     if (query.q) {
       where.OR = [];
       where.OR.push({ title: { contains: query.q, mode: "insensitive" } });
-      where.OR.push({ client: { contains: query.q , mode: "insensitive"} });
-      where.OR.push({ models: { some: { firstName: { contains: query.q, mode: "insensitive" } } } });
+      where.OR.push({ client: { contains: query.q, mode: "insensitive" } });
+      where.OR.push({
+        models: {
+          some: { firstName: { contains: query.q, mode: "insensitive" } },
+        },
+      });
     }
 
     if (query.status) {
@@ -195,8 +200,6 @@ async function removeModel(
       },
     });
 
-    
-
     return res.sendStatus(204);
   } catch (err) {
     next(err);
@@ -222,7 +225,6 @@ async function addBooking(
     if (job === null) {
       throw new NotFoundError("Job not found");
     }
-
 
     // if (!bookingPayload.modelIds || bookingPayload.modelIds.length === 0) {
     //   bookingPayload.modelIds = job.models.map((model) => model.id);
@@ -280,6 +282,35 @@ async function removeBooking(
   }
 }
 
+async function getModelJobs(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  try {
+    const modelId = req.params.modelId;
+    const query = validate(req.query, PaginatedQuerySchema);
+    const page = query.page ?? 1;
+    const pageSize = query.pageSize ?? 10;
+    const [jobs, total] = await Promise.all([
+      prisma.job.findMany({
+        where: {
+          models: {
+            some: {
+              id: modelId,
+            },
+          },
+        },
+      }),
+      prisma.job.count({ where: { models: { some: { id: modelId } } } }),
+    ]);
+    const paginatedJob = buildPaginatedData(jobs, page, pageSize, total);
+    res.json(paginatedJob);
+  } catch (err) {
+    next(err);
+  }
+}
+
 const jobController = {
   create,
   getAll,
@@ -289,6 +320,7 @@ const jobController = {
   removeModel,
   addBooking,
   removeBooking,
+  getModelJobs
 };
 
 export default jobController;

@@ -18,9 +18,7 @@ import { ModelMeausrementForm } from "../../components/model/measurement-form";
 import { Loader2 } from "lucide-react";
 import MediaForm from "../../components/model/media-form";
 import { SideBar } from "../../components/shared/form-side-menu";
-
-
-
+import PageTitle from "@/components/shared/page-title";
 
 const menuItems: {
   label: string;
@@ -28,12 +26,12 @@ const menuItems: {
   form?: ({
     handleUpdateModel,
     initialData,
-    handleAddImage
+    handleAddImage,
   }: {
     handleUpdateModel: (data: ModelUpdateInput) => void;
     handleAddExperience: (data: ModelExperienceCreateInput) => void;
     handleRemoveExperience: (experienceId: string) => void;
-    handleAddImage: (addImageInput: {image: File, type: string}) => void,
+    handleAddImage: (addImageInput: { image: File; type: string }) => void;
     initialData?: Model;
   }) => ReactNode;
 }[] = [
@@ -97,10 +95,13 @@ const menuItems: {
   {
     label: "Media",
     value: "media",
-    form: ({handleAddImage, initialData}) => (
-      <MediaForm onAddImage={handleAddImage} images={initialData?.images || []}/>
-    )
-  }
+    form: ({ handleAddImage, initialData }) => (
+      <MediaForm
+        onAddImage={handleAddImage}
+        images={initialData?.images || []}
+      />
+    ),
+  },
   // { label: "Media", value: "media", form: () => <button>Submit</button> },
 ];
 function UpdateModelPage() {
@@ -115,31 +116,31 @@ function UpdateModelPage() {
     enabled: !!id,
   });
 
-
-  const {mutate: addImage} = useMutation({
-    mutationFn: (addImageInput : {image: File, type: string}) => {
-      if (!id){
-        throw new Error("Model ID is required")
+  const { mutate: addImage } = useMutation({
+    mutationFn: (addImageInput: { image: File; type: string }) => {
+      console.log(addImageInput);
+      if (!id) {
+        throw new Error("Model ID is required");
       }
-      return modelService.addImage(id, addImageInput)
+      return modelService.addImage(id, addImageInput);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["models", id]})
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: ["models", id] });
+    },
+  });
 
-  const {mutate: addExperience} = useMutation({
+  const { mutate: addExperience } = useMutation({
     mutationFn: (experience: ModelExperienceCreateInput) => {
-      if (!id){
-        throw new Error("Model ID is required")
+      if (!id) {
+        throw new Error("Model ID is required");
       }
 
-      return modelService.addExperience(id, experience)
+      return modelService.addExperience(id, experience);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["models", id]})
-    }
-  })
+      queryClient.invalidateQueries({ queryKey: ["models", id] });
+    },
+  });
 
   const { mutate: update } = useMutation({
     mutationFn: async (data: ModelUpdateInput) => {
@@ -163,18 +164,12 @@ function UpdateModelPage() {
 
   const currentForm = menuItems[formIndex]?.form;
 
-
   return (
     <>
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold">Update Model</h2>
-        <p className="text-muted-foreground">
-          Update a model record to the database
-        </p>
-      </div>
-      <Separator className="my-6" />
-
-
+      <PageTitle
+        title="Update Model"
+        subtitle="Update a model record in the database"
+      />
       <div className="flex">
         <div className="">
           <SideBar

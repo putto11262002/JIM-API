@@ -9,7 +9,7 @@ import StaffPage from "./pages/StaffPage";
 import ApplicationSubmissionPage from "./pages/model-application-submission";
 import AppilcationPage from "./pages/AppilcationPage";
 import ApplicationDetailsPage from "./pages/ApplicationDetailsPage";
-import ModelPage from "./pages/model";
+import ModelPage from "./pages/view-model";
 import AddModelPage from "./pages/add-model";
 import UpdateModelPage from "./pages/update-model";
 import AddJobPage from "./pages/add-job";
@@ -17,6 +17,7 @@ import ViewJobPage from "./pages/view-job";
 import UpdateJobPage from "./pages/update-job";
 import NavbarLayout from "./components/layouts/NavBarLayout";
 import { CalendarContextProvider } from "./components/calendar/context";
+import ModelProfilePage from "./pages/model-profile";
 
 const router = createBrowserRouter([
   {
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
               {
                 path: "/models/:id/update",
                 element: <UpdateModelPage/>
+              },
+              {
+                path: "/models/:id",
+                element: <ModelProfilePage/>
               },
               {
                 path: "jobs/add",

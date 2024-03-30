@@ -86,12 +86,14 @@ function ModelCard({ model }: { model: Model }) {
       </div>
 
       <div className="px-4 py-2 pb-4 space-x-3">
-        <Button size="sm" variant="outline">
+        {/* <Button size="sm" variant="outline">
           Book
-        </Button>
-        <Button size="sm" variant="outline">
-          View
-        </Button>
+        </Button> */}
+        <Link to={`/models/${model.id}`}>
+          <Button size="sm" variant="outline">
+            View
+          </Button>
+        </Link>
         <Link to={`/models/${model.id}/update`}>
           <Button size="sm" variant="outline">
             Edit
