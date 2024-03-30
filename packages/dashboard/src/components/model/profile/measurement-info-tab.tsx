@@ -1,7 +1,16 @@
-import { Model } from "@jimmodel/shared";
 import { InfoBlock } from "./shared";
+import LoaderBlock from "@/components/shared/loader-block";
+import useGetModel from "../hooks/use-get-model";
 
-export default function ModelMeasurementInfoTab({ model }: { model: Model }) {
+export default function ModelMeasurementInfoTab({
+  modelId
+}: {
+  modelId: string
+}) {
+  const { model, isPending } = useGetModel({ id: modelId });
+  if (isPending || !model) {
+    return <LoaderBlock message="Loading model data" />;
+  }
   return (
     <div className="space-y-4">
       <InfoBlock label="Height" value={model.height} />

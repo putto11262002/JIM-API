@@ -102,8 +102,8 @@ const menuItems: {
       />
     ),
   },
-  // { label: "Media", value: "media", form: () => <button>Submit</button> },
 ];
+
 function UpdateModelPage() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
@@ -112,13 +112,12 @@ function UpdateModelPage() {
 
   const { isLoading: isLoadingModel, data } = useQuery({
     queryKey: ["models", id],
-    queryFn: id ? () => modelService.getById(id) : undefined,
+    queryFn: id ? () => modelService.getById({ id }) : undefined,
     enabled: !!id,
   });
 
   const { mutate: addImage } = useMutation({
     mutationFn: (addImageInput: { image: File; type: string }) => {
-      console.log(addImageInput);
       if (!id) {
         throw new Error("Model ID is required");
       }

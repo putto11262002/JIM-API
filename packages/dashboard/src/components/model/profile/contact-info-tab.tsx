@@ -1,16 +1,22 @@
-import { Model } from "@jimmodel/shared";
 import { InfoBlock } from "./shared";
+import LoaderBlock from "@/components/shared/loader-block";
+import useGetModel from "../hooks/use-get-model";
 
-export default function ModelContactInfoTab({model}: {model: Model}) {
-    return (
-        <div className="space-y-4">
-            <InfoBlock label="Email" value={model.email}/>
-            <InfoBlock label="Phone Number" value={model.phoneNumber}/>
-            <InfoBlock label="Line ID" value={model.lineId}/>
-            <InfoBlock label="WhatsApp" value={model.whatsapp}/>
-            <InfoBlock label="WeChat" value={model.wechat}/>
-            <InfoBlock label="Instagram" value={model.instagram}/>
-            <InfoBlock label="Facebook" value={model.facebook}/>
-        </div>
-    )
+export default function ModelContactInfoTab({ modelId }: { modelId: string }) {
+  const { model, isPending } = useGetModel({ id: modelId });
+  if (isPending || !model) {
+    return <LoaderBlock message="Loading model data" />;
+  }
+  return (
+    <div className="space-y-4">
+      <InfoBlock label="Email" value={model.email} />
+      <InfoBlock label="Phone Number" value={model.phoneNumber} />
+      <InfoBlock label="Line ID" value={model.lineId} />
+      <InfoBlock label="WhatsApp" value={model.whatsapp} />
+      <InfoBlock label="WeChat" value={model.wechat} />
+      <InfoBlock label="Instagram" value={model.instagram} />
+      <InfoBlock label="Facebook" value={model.facebook} />
+    </div>
+  );
 }
+

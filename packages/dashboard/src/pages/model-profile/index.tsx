@@ -1,8 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Job, Model } from "@jimmodel/shared";
 import { ReactNode, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import modelService from "../../services/model";
 import { useSearchParams } from "react-router-dom";
 import { SideBar } from "../../components/shared/form-side-menu";
 import PageTitle from "../../components/shared/page-title";
@@ -12,49 +9,48 @@ import ModelContactInfoTab from "../../components/model/profile/contact-info-tab
 import ModelAddressInfoTab from "../../components/model/profile/address-info-tab";
 import ModelBackgroundInfoTab from "../../components/model/profile/background-info-tab";
 import ModelMeasurementInfoTab from "../../components/model/profile/measurement-info-tab";
-import jobService from "../../services/job";
 import ModelJobsInfoTab from "../../components/model/profile/jobs-info-tab";
 import ModelMediaTab from "../../components/model/profile/media-tab";
 
 const menuItems: {
   label: string;
   value: string;
-  tab: ({ model, modelJobs }: { model: Model; modelJobs: Job[] }) => ReactNode;
+  tab: ({ modelId }: { modelId: string }) => ReactNode;
 }[] = [
   {
     label: "Personal",
     value: "personal",
-    tab: ({ model }) => <ModelPersonalInfoTab model={model} />,
+    tab: ({ modelId }) => <ModelPersonalInfoTab modelId={modelId} />,
   },
   {
     label: "Contact",
     value: "contact",
-    tab: ({ model }) => <ModelContactInfoTab model={model} />,
+    tab: ({ modelId }) => <ModelContactInfoTab modelId={modelId} />,
   },
   {
     label: "Address",
     value: "address",
-    tab: ({ model }) => <ModelAddressInfoTab model={model} />,
+    tab: ({ modelId }) => <ModelAddressInfoTab modelId={modelId} />,
   },
   {
     label: "Background",
     value: "background",
-    tab: ({ model }) => <ModelBackgroundInfoTab model={model} />,
+    tab: ({ modelId }) => <ModelBackgroundInfoTab modelId={modelId} />,
   },
   {
     label: "Measurements",
     value: "measurements",
-    tab: ({ model }) => <ModelMeasurementInfoTab model={model} />,
+    tab: ({ modelId }) => <ModelMeasurementInfoTab modelId={modelId} />,
   },
   {
     label: "Jobs",
     value: "jobs",
-    tab: ({ modelJobs }) => <ModelJobsInfoTab modelJobs={modelJobs} />,
+    tab: ({ modelId }) => <ModelJobsInfoTab modelId={modelId} />,
   },
   {
     label: "Media",
     value: "media",
-    tab: ({ model }) => <ModelMediaTab model={model} />,
+    tab: ({ modelId }) => <ModelMediaTab modelId={modelId} />,
   },
 ];
 
@@ -71,25 +67,6 @@ function ModelProfilePage() {
   );
 
   const currentTab = menuItems[tabIndex]?.tab;
-
-  const { isLoading: isLoadingModel, data } = useQuery({
-    queryKey: ["models", id],
-    queryFn: id ? () => modelService.getById(id) : undefined,
-    enabled: !!id,
-  });
-
-  const { isLoading: isLoadingModelJob, data: paginatedModelJob } = useQuery({
-    queryKey: ["models", id, "jobs", { page: 1, pageSize: 10 }],
-    queryFn: id
-      ? ({ signal }) =>
-          jobService.getModelJobs({
-            modelId: id,
-            query: { page: 1, pageSize: 10 },
-            signal,
-          })
-      : undefined,
-    enabled: "jobs" === menuItems[tabIndex]?.value,
-  });
 
   return (
     <>
@@ -108,12 +85,11 @@ function ModelProfilePage() {
           />
         </div>
         <div className="grow px-8 ">
-          {isLoadingModel || currentTab === undefined || data === undefined ? (
+          {!id || currentTab === undefined ? (
             <LoaderBlock message="Loading model data" />
           ) : (
             currentTab({
-              model: data,
-              modelJobs: paginatedModelJob?.data || [],
+              modelId: id,
             })
           )}
         </div>

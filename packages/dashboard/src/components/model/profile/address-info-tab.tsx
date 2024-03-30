@@ -1,7 +1,12 @@
-import { Model } from "@jimmodel/shared";
 import { InfoBlock } from "./shared";
+import useGetModel from "../hooks/use-get-model";
+import LoaderBlock from "@/components/shared/loader-block";
 
-export default function ModelAddressInfoTab({ model }: { model: Model }) {
+export default function ModelAddressInfoTab({ modelId }: { modelId: string }) {
+  const { model, isPending } = useGetModel({ id: modelId });
+  if (isPending || !model) {
+    return <LoaderBlock message="Loading model data" />;
+  }
   return (
     <div className="space-y-4">
       <InfoBlock label="Address" value={model.address} />
