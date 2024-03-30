@@ -1,4 +1,4 @@
-import { Button } from "../../ui/button";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
+} from "../ui/dialog";
 import _ from "lodash";
 import {
   Form,
@@ -14,15 +14,15 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "../../ui/form";
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../ui/input";
+import { Input } from "../ui/input";
 import { Trash, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ModelImage } from "@jimmodel/shared";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const allowedMimetype = ["image/jpg", "image/png", "image/jpeg"];
 

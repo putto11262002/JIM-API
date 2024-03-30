@@ -9,7 +9,7 @@ export function InfoBlock({
   return (
     <div>
       <p className="font-medium text-sm">{label}</p>
-      <p className="text-sm">{value ? value : "Unavailable"}</p>
+      <p className="text-sm mt-0.5 text-muted-foreground">{value ? value : "-"}</p>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import jobService from "../../../services/job";
+import jobService from "../../services/job";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useGetModelJobs({ id }: { id: string }) {

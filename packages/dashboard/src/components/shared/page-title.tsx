@@ -1,6 +1,5 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
 import { useNavigate } from "react-router-dom";
 
 function PageTitle({ title, subtitle }: { title: string; subtitle?: string }) {
@@ -16,8 +15,6 @@ function PageTitle({ title, subtitle }: { title: string; subtitle?: string }) {
           <p className="text-muted-foreground text-sm">{subtitle}</p>
         </div>
       </div>
-
-      <Separator className="my-6 mt-2" />
     </>
   );
 }

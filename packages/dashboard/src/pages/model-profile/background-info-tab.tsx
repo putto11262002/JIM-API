@@ -1,7 +1,7 @@
-import { InfoBlock } from "./shared";
-import ExperienceTable from "../experience-table";
+import { InfoBlock } from "./info-block";
+import ExperienceTable from "../../components/model/experience-table";
 import LoaderBlock from "@/components/shared/loader-block";
-import useGetModel from "../hooks/use-get-model";
+import useGetModel from "../../hooks/model/use-get-model";
 
 export default function ModelBackgroundInfoTab({
   modelId,

@@ -1,6 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
-import ImageGallery from "../../shared/image-gallery";
-import useGetModel from "../hooks/use-get-model";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import ImageGallery from "../../components/shared/image-gallery";
+import useGetModel from "../../hooks/model/use-get-model";
 import LoaderBlock from "@/components/shared/loader-block";
 
 export default function ModelMediaTab({ modelId }: { modelId: string }) {

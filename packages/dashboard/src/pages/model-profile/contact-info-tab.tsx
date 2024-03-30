@@ -1,6 +1,6 @@
-import { InfoBlock } from "./shared";
+import { InfoBlock } from "./info-block";
 import LoaderBlock from "@/components/shared/loader-block";
-import useGetModel from "../hooks/use-get-model";
+import useGetModel from "../../hooks/model/use-get-model";
 
 export default function ModelContactInfoTab({ modelId }: { modelId: string }) {
   const { model, isPending } = useGetModel({ id: modelId });

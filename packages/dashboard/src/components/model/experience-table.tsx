@@ -1,5 +1,5 @@
 import { Model } from "@jimmodel/shared";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "../../ui/table";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "../ui/table";
 function ExperienceTable({
     experiences,
   }: {

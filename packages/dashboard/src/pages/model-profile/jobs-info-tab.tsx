@@ -1,11 +1,11 @@
 import { Job } from "@jimmodel/shared";
-import DataTable from "../../job/data-table";
+import DataTable from "../../components/job/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { JobDropdownMenu } from "../../job/job-dropdown-menu";
-import { Button } from "../../ui/button";
+import { JobDropdownMenu } from "../../components/job/job-dropdown-menu";
+import { Button } from "../../components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import _ from "lodash";
-import useGetModelJobs from "../hooks/use-get-model-jobs";
+import useGetModelJobs from "../../hooks/model/use-get-model-jobs";
 import LoaderBlock from "@/components/shared/loader-block";
 const columns: ColumnDef<Job>[] = [
   {

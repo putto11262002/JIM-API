@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { InfoBlock } from "./shared";
-import useGetModel from "../hooks/use-get-model";
+import { InfoBlock } from "./info-block";
+import useGetModel from "../../hooks/model/use-get-model";
 import LoaderBlock from "@/components/shared/loader-block";
 
 export default function ModelPersonalInfoTab({ modelId }: { modelId: string }) {

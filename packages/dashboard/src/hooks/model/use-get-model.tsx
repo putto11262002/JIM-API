@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import modelService from "../../../services/model";
-export default function useGetModel({ id }: { id: string }) {
+import modelService from "../../services/model";
+export default function useGetModel({ id }: { id?: string }) {
   const { data, isPending, error } = useQuery({
     queryKey: ["models", id],
     queryFn: id

@@ -4,13 +4,15 @@ import { useSearchParams } from "react-router-dom";
 import { SideBar } from "../../components/shared/form-side-menu";
 import PageTitle from "../../components/shared/page-title";
 import LoaderBlock from "../../components/shared/loader-block";
-import ModelPersonalInfoTab from "../../components/model/profile/personal-info-tab";
-import ModelContactInfoTab from "../../components/model/profile/contact-info-tab";
-import ModelAddressInfoTab from "../../components/model/profile/address-info-tab";
-import ModelBackgroundInfoTab from "../../components/model/profile/background-info-tab";
-import ModelMeasurementInfoTab from "../../components/model/profile/measurement-info-tab";
-import ModelJobsInfoTab from "../../components/model/profile/jobs-info-tab";
-import ModelMediaTab from "../../components/model/profile/media-tab";
+import ModelPersonalInfoTab from "./personal-info-tab";
+import ModelContactInfoTab from "./contact-info-tab";
+import ModelAddressInfoTab from "./address-info-tab";
+import ModelBackgroundInfoTab from "./background-info-tab";
+import ModelMeasurementInfoTab from "./measurement-info-tab";
+import ModelJobsInfoTab from "./jobs-info-tab";
+import ModelMediaTab from "./media-tab";
+import ModelProfileOverview from "./overview";
+import { Separator } from "../../components/ui/separator";
 
 const menuItems: {
   label: string;
@@ -66,33 +68,40 @@ function ModelProfilePage() {
     initialIndex === -1 ? 0 : initialIndex
   );
 
-  const currentTab = menuItems[tabIndex]?.tab;
+  function handleTabChange({ index, value }: { index: number; value: string }) {
+    setSearchParams((prev) => ({ ...prev, tab: value }), {
+      replace: true,
+    });
+    setTabInex(index);
+  }
+
+  function renderCurrentTab() {
+    const currentTab = menuItems[tabIndex]?.tab;
+    if (!id || currentTab === undefined) {
+      return <LoaderBlock message="Loading model data" />;
+    } else {
+      return currentTab({
+        modelId: id,
+      });
+    }
+  }
 
   return (
     <>
       <PageTitle title="Model Profile" />
+      <Separator className="my-6 mt-2" />
+      <ModelProfileOverview modelId={id}/>
+      <Separator className="my-6"/>
       <div className="flex">
         <div className="">
           <SideBar
-            onChange={({ index, value }) => {
-              setSearchParams((prev) => ({ ...prev, tab: value }), {
-                replace: true,
-              });
-              setTabInex(index);
-            }}
+            onChange={handleTabChange}
             selected={menuItems[tabIndex]?.value}
             menuItems={menuItems}
           />
         </div>
-        <div className="grow px-8 ">
-          {!id || currentTab === undefined ? (
-            <LoaderBlock message="Loading model data" />
-          ) : (
-            currentTab({
-              modelId: id,
-            })
-          )}
-        </div>
+   
+        <div className="grow px-8 ">{renderCurrentTab()}</div>
       </div>
     </>
   );
