@@ -3,6 +3,7 @@ import {
   Model,
   ModelCreateInput,
   ModelExperienceCreateInput,
+  ModelImage,
   ModelUpdateInput,
   PaginatedData,
 } from "@jimmodel/shared";
@@ -48,11 +49,27 @@ async function addImage(
   });
 }
 
+
+async function removeImage({imageId, signal}: {imageId: string, signal?: GenericAbortSignal}) {
+  await axiosClient.delete(`/models/images/${imageId}`, { signal });
+}
+
 async function addExperience(
   modelId: string,
   experience: ModelExperienceCreateInput | ModelExperienceCreateInput[]
 ) {
   await axiosClient.post(`/models/${modelId}/experiences`, experience);
+}
+
+async function setProfileImage(
+  {imageId}: {imageId: string}
+){
+  await axiosClient.put(`/models/images/${imageId}/profile`);
+}
+
+async function getImages({id, signal}: {id: string, signal?: GenericAbortSignal}){
+  const res = await axiosClient.get(`/models/${id}/images`, {signal});
+  return res.data as ModelImage[];
 }
 
 const modelService = {
@@ -62,6 +79,9 @@ const modelService = {
   addImage,
   addExperience,
   updateById,
+  removeImage,
+  setProfileImage,
+  getImages
 };
 
 export default modelService;

@@ -19,9 +19,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
-import { Trash, Upload } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Trash, Upload, User } from "lucide-react";
+import { useState } from "react";
 import { ModelImage } from "@jimmodel/shared";
+import ImageGallery from "../shared/image-gallery";
 
 const allowedMimetype = ["image/jpg", "image/png", "image/jpeg"];
 
@@ -100,52 +101,18 @@ function ImageUploadDialog({
   );
 }
 
-const ImageGallery = ({ images }: { images: ModelImage[] }) => {
-  const grid = useMemo(() => {
-    const grid: ModelImage[][] = [];
-    const numCol = 3;
-
-    for (let i = 0; i < numCol; i++) {
-      grid.push([]);
-    }
-
-    let curInx = 0;
-    while (curInx < images.length) {
-      const c = curInx % 3;
-      grid[c].push(images[curInx]);
-      curInx++;
-    }
-
-    return grid;
-  }, [images]);
-  return (
-    <div className="grid grid-cols-3 gap-3">
-      {grid.map((col) => (
-        <div className="flex flex-col gap-3">
-          {col.map((image) => (
-            <div className="group relative">
-              <div className="absolute  bg-slate-700 bg-opacity-50 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-300">
-                <div className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full">
-                  <Trash className="w-4 h-4 text-black" />
-                </div>
-              </div>
-              <img className="w-full h-auto" src={image.url} />
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 function MediaForm({
   onAddImage,
   images,
   type,
+  onRemoveImage,
+  onSetProfileImage
 }: {
   onAddImage: ({ image, type }: { image: File; type: string }) => void;
   images: ModelImage[];
   type: string;
+  onRemoveImage: (args: { imageId: string; modelId: string }) => void;
+  onSetProfileImage: (args: { imageId: string; modelId: string }) => void;
 }) {
   return (
     <div>
@@ -156,7 +123,32 @@ function MediaForm({
         />
       </div>
       <div className="mt-4">
-        <ImageGallery images={images.filter((image) => image.type == type)} />
+        <ImageGallery
+          overlayContent={(image) => {
+            return (
+              <div className="flex space-x-2">
+                <div
+                  onClick={() =>
+                    onRemoveImage({ imageId: image.id, modelId: image.modelId })
+                  }
+                  className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full"
+                >
+                  <Trash className="w-4 h-4 text-black" />
+                </div>
+
+                <div
+                  onClick={() =>
+                    onSetProfileImage({ imageId: image.id, modelId: image.modelId })
+                  }
+                  className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full"
+                >
+                  <User className="w-4 h-4 text-black" />
+                </div>
+              </div>
+            );
+          }}
+          images={images.filter((image) => image.type == type)}
+        />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ function ImageGallery<T extends { url: string }>({
   overlayContent,
 }: {
   images: T[];
-  overlayContent?: ReactNode;
+  overlayContent?: (image: T) =>  ReactNode;
 }) {
   const grid = useMemo(() => {
     const grid: T[][] = [];
@@ -32,7 +32,7 @@ function ImageGallery<T extends { url: string }>({
             <div key={j} className="group relative">
               {overlayContent && (
                 <div className="absolute  bg-slate-700 bg-opacity-50 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-300">
-                  {overlayContent}
+                  {overlayContent(image)}
                 </div>
               )}
               <img className="w-full h-auto" src={image.url} />
