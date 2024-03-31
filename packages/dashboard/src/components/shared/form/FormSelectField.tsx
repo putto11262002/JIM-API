@@ -3,10 +3,14 @@ import { FieldValues } from "react-hook-form";
 import { FormControl } from "../../ui/form";
 import { FormGenericField, FormGenericFieldProps } from "./FormGenericField";
 
+export type SelectOption = {
+    label: string;
+    value: string;
+}
 export function FromSelectField<T extends FieldValues>({
     ...props
   }: Omit<FormGenericFieldProps<T>, "render"> & {
-    options: { label: string; value: string }[];
+    options: SelectOption[];
   }) {
     return (
       <FormGenericField

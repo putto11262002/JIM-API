@@ -20,4 +20,6 @@ jobRouter.post("/jobs/:id/bookings", staffAuthMiddleware(), jobController.addBoo
 
 jobRouter.delete("/jobs/bookings/:bookingId", staffAuthMiddleware(), jobController.removeBooking)
 
+jobRouter.get("/models/:modelId/jobs", staffAuthMiddleware(), jobController.getModelJobs)
+
 export default jobRouter

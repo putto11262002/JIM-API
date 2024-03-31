@@ -1,157 +1,99 @@
 import { useParams } from "react-router-dom";
-import {
-  Model,
-  ModelExperienceCreateInput,
-  ModelUpdateInput,
-} from "@jimmodel/shared";
 import { ReactNode, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import modelService from "../../services/model";
 import { useSearchParams } from "react-router-dom";
 import { Separator } from "../../components/ui/separator";
-import { PersonalForm } from "../../components/model/personal-form";
-import { ModelContactForm } from "../../components/model/contact-form";
-import { ModelAddressForm } from "../../components/model/address-form";
-import { ModelBackgroundForm } from "../../components/model/background-form";
-import { ModelExperienceForm } from "../../components/model/experience-form";
-import { ModelMeausrementForm } from "../../components/model/measurement-form";
-import { Loader2 } from "lucide-react";
-import MediaForm from "../../components/model/media-form";
 import { SideBar } from "../../components/shared/form-side-menu";
-
-
-
+import PageTitle from "@/components/shared/page-title";
+import LoaderBlock from "../../components/shared/loader-block";
+import ModelPersonalInfoUpdateForm from "./personal-info-update-form";
+import ModelContactInfoUpdateForm from "./contact-info-update-form";
+import ModelAddressInfoUpdateForm from "./address-info-update-form";
+import ExperienceUpdateForm from "./experiences-update-form";
+import ModelMeasurementInfoUpdateForm from "./meaaurement-info-update-form";
+import ModelBackgroundInfoUpdateForm from "./background-info-update-form";
+import ModelMediaUpdateForm from "./model-media-update-form";
 
 const menuItems: {
   label: string;
   value: string;
   form?: ({
-    handleUpdateModel,
-    initialData,
-    handleAddImage
+    modelId
   }: {
-    handleUpdateModel: (data: ModelUpdateInput) => void;
-    handleAddExperience: (data: ModelExperienceCreateInput) => void;
-    handleRemoveExperience: (experienceId: string) => void;
-    handleAddImage: (addImageInput: {image: File, type: string}) => void,
-    initialData?: Model;
+
+    modelId: string
   }) => ReactNode;
 }[] = [
   {
     label: "Personal",
     value: "personal",
-    form: ({ initialData, handleUpdateModel }) => (
-      <PersonalForm onSubmit={handleUpdateModel} initialData={initialData} />
+    form: ({ modelId }) => (
+      <ModelPersonalInfoUpdateForm id={modelId}/>
     ),
   },
   {
     label: "Contact",
     value: "contact",
-    form: ({ handleUpdateModel, initialData }) => (
-      <ModelContactForm
-        onSubmit={handleUpdateModel}
-        initialData={initialData}
-      />
+    form: ({ modelId }) => (
+      <ModelContactInfoUpdateForm id={modelId}/>
     ),
   },
   {
     label: "Address",
     value: "address",
-    form: ({ initialData, handleUpdateModel }) => (
-      <ModelAddressForm
-        onSubmit={handleUpdateModel}
-        initialData={initialData}
-      />
+    form: ({ modelId }) => (
+      <ModelAddressInfoUpdateForm id={modelId}/>
     ),
   },
   {
     label: "Background",
     value: "background",
-    form: ({ handleUpdateModel, initialData }) => (
-      <ModelBackgroundForm
-        onSubmit={handleUpdateModel}
-        initialData={initialData}
+    form: ({ modelId }) => (
+      <ModelBackgroundInfoUpdateForm
+        id={modelId}
       />
     ),
   },
   {
     label: "Measurements",
     value: "measurements",
-    form: ({ handleUpdateModel, initialData }) => (
-      <ModelMeausrementForm
-        onSubmit={handleUpdateModel}
-        initialData={initialData}
-      />
+    form: ({ modelId }) => (
+      <ModelMeasurementInfoUpdateForm id={modelId}/>
     ),
   },
   {
     label: "Experiences",
     value: "experiences",
-    form: ({ handleAddExperience, initialData }) => (
-      <ModelExperienceForm
-        onAddExperience={handleAddExperience}
-        initialData={initialData?.experiences}
-      />
+    form: ({ modelId}) => (
+      <ExperienceUpdateForm id={modelId}/>
     ),
   },
   {
-    label: "Media",
-    value: "media",
-    form: ({handleAddImage, initialData}) => (
-      <MediaForm onAddImage={handleAddImage} images={initialData?.images || []}/>
-    )
+    label: "Books",
+    value: "book",
+    form: ({ modelId }) => (
+      <ModelMediaUpdateForm modelId={modelId} type="book"/>
+    ),
+  },
+  {
+    label: "Polaroids",
+    value: "polaroid",
+    form: ({ modelId }) => (
+      <ModelMediaUpdateForm modelId={modelId} type="polaroid"/>
+    ),
+  },
+  {
+    label: "Composites",
+    value: "composite",
+    form: ({ modelId }) => (
+      <ModelMediaUpdateForm modelId={modelId} type="composite"/>
+    ),
   }
-  // { label: "Media", value: "media", form: () => <button>Submit</button> },
 ];
+
 function UpdateModelPage() {
   const { id } = useParams<{ id: string }>();
-  const queryClient = useQueryClient();
-
-  const [searchParams] = useSearchParams();
-
-  const { isLoading: isLoadingModel, data } = useQuery({
-    queryKey: ["models", id],
-    queryFn: id ? () => modelService.getById(id) : undefined,
-    enabled: !!id,
-  });
-
-
-  const {mutate: addImage} = useMutation({
-    mutationFn: (addImageInput : {image: File, type: string}) => {
-      if (!id){
-        throw new Error("Model ID is required")
-      }
-      return modelService.addImage(id, addImageInput)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["models", id]})
-    }
-  })
-
-  const {mutate: addExperience} = useMutation({
-    mutationFn: (experience: ModelExperienceCreateInput) => {
-      if (!id){
-        throw new Error("Model ID is required")
-      }
-
-      return modelService.addExperience(id, experience)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["models", id]})
-    }
-  })
-
-  const { mutate: update } = useMutation({
-    mutationFn: async (data: ModelUpdateInput) => {
-      if (!id) {
-        throw new Error("Model ID is required");
-      }
-      return modelService.updateById(id, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["models"] });
-    },
-  });
+ 
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const initialIndex = menuItems.findIndex(
     (item) => item.value === searchParams.get("form")
@@ -163,42 +105,39 @@ function UpdateModelPage() {
 
   const currentForm = menuItems[formIndex]?.form;
 
+  function handleTabChange({ index, value }: { index: number; value: string }) {
+    setSearchParams((prev) => ({ ...prev, form: value }), {
+      replace: true,
+    });
+    setFormIndex(index);
+  }
+
+  function renderCurrrentForm() {
+    if (currentForm === undefined || !id) {
+      return <LoaderBlock message="Loading model data" />;
+    } else {
+      return currentForm({
+        modelId: id
+      });
+    }
+  }
 
   return (
     <>
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold">Update Model</h2>
-        <p className="text-muted-foreground">
-          Update a model record to the database
-        </p>
-      </div>
-      <Separator className="my-6" />
-
-
+      <PageTitle
+        title="Update Model"
+        subtitle="Update a model record in the database"
+      />
+      <Separator className="my-6 mt-3"/>
       <div className="flex">
         <div className="">
           <SideBar
-            onChange={({ index }) => setFormIndex(index)}
+            onChange={handleTabChange}
             selected={menuItems[formIndex]?.value}
             menuItems={menuItems}
           />
         </div>
-        <div className="grow px-8 ">
-          {isLoadingModel || currentForm === undefined ? (
-            <div className="flex justify-center flex-col items-center space-y-2">
-              <Loader2 className="animate-spin" />
-              <p>Loading model data</p>
-            </div>
-          ) : (
-            currentForm({
-              handleAddImage: addImage,
-              handleAddExperience: (data) => addExperience(data),
-              handleRemoveExperience: (id) => console.log("removing", id),
-              handleUpdateModel: (data) => update(data),
-              initialData: data,
-            })
-          )}
-        </div>
+        <div className="grow px-8 ">{renderCurrrentForm()}</div>
       </div>
     </>
   );

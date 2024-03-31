@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
+import { ModelCreateFormSchema } from "./schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form";
@@ -8,24 +8,26 @@ import { Button } from "../ui/button";
 import { Model } from "@jimmodel/shared";
 
 export const ModelContactFormSchema = ModelCreateFormSchema.pick({
-    phoneNumber: true,
-    email: true,
-    lineId: true,
-    whatsapp: true,
-    wechat: true,
-    instagram: true,
-    facebook: true,
+  phoneNumber: true,
+  email: true,
+  lineId: true,
+  whatsapp: true,
+  wechat: true,
+  instagram: true,
+  facebook: true,
 });
 
 export type ModelContactForm = z.infer<typeof ModelContactFormSchema>;
 
-export function ModelContactForm({
-  onSubmit,
-  initialData
-}: {
+type ModelContactFormProps = {
   onSubmit: (data: ModelContactForm) => void;
   initialData?: Model;
-}) {
+};
+
+export function ModelContactForm({
+  onSubmit,
+  initialData,
+}: ModelContactFormProps) {
   const form = useForm<ModelContactForm>({
     ...(initialData ? { defaultValues: initialData } : {}),
     resolver: zodResolver(ModelContactFormSchema),
@@ -44,7 +46,9 @@ export function ModelContactForm({
         <FormInputField form={form} name="wechat" />
         <FormInputField form={form} name="instagram" />
         <FormInputField form={form} name="facebook" />
-        <Button className="mt-6" type="submit">Save</Button>
+        <Button className="mt-6" type="submit">
+          Save
+        </Button>
       </form>
     </Form>
   );

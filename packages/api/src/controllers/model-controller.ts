@@ -4,7 +4,7 @@ import { prisma } from "../prisma";
 import NotFoundError from "../lib/errors/not-found-error";
 import { extractSingleFilesFromRequest } from "../lib/request";
 import localFileService from "../services/local-file-service";
-import { Model } from "@jimmodel/shared";
+
 import {
   DecodeGetModelQuerySchema,
   ModelUpdateSchema,
@@ -12,9 +12,12 @@ import {
   ModelExperienceCreateSchema,
   CreateModelImageSchema,
   ModelCreateSchema,
+  Model,
+  ModelSetProfileImageSchema,
 } from "@jimmodel/shared";
 import modelService from "../services/model-service";
 import { validate } from "../lib/validation";
+
 interface IModelController {
   createModel: express.Handler;
   updateModel: express.Handler;
@@ -24,6 +27,8 @@ interface IModelController {
   removeModelImage: express.Handler;
   getModels: express.Handler;
   getModel: express.Handler;
+  setModelProfileImage: express.Handler;
+  getModelImages: express.Handler;
 }
 
 async function createModel(
@@ -115,6 +120,7 @@ async function addModelImage(
   next: express.NextFunction
 ) {
   try {
+    console.log("addModelImage");
     const modelId = req.params.id;
 
     const modelImage = extractSingleFilesFromRequest(req, "image");
@@ -203,7 +209,12 @@ async function getModels(
         skip: (page - 1) * pageSize,
         include: {
           experiences: true,
-          images: true,
+          images: {
+            orderBy: {
+              profile: "desc",
+            },
+            take: 1
+          },
         },
         orderBy: query.order,
       }),
@@ -240,7 +251,12 @@ async function getModel(
       },
       include: {
         experiences: true,
-        images: true,
+        images: {
+          orderBy: {
+            profile: "desc",
+          },
+          take: 1
+        },
       },
     });
 
@@ -254,6 +270,63 @@ async function getModel(
   }
 }
 
+async function setModelProfileImage(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  try {
+    const imageId = req.params.imageId;
+
+    const updatedImage = await prisma.modelImage.update({
+      where: {
+        id: imageId
+      },
+      data: {
+        profile: true
+      }
+    })
+
+    await prisma.modelImage.updateMany({
+      where: {
+        modelId: updatedImage.modelId,
+        id: {
+          not: imageId
+        }
+      },
+      data: {
+        profile: false
+      }
+    })
+
+    return res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+async function getModelImages(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+){
+  try{
+    const modelId = req.params.id;
+
+    const images = await prisma.modelImage.findMany({
+      where: {
+        modelId
+      }
+    })
+
+    return res.json(images)
+  }catch(err){
+    next(err)
+  }
+}
+
+
 const modelController: IModelController = {
   getModels,
   createModel,
@@ -263,6 +336,8 @@ const modelController: IModelController = {
   addModelImage,
   removeModelImage,
   getModel,
+  setModelProfileImage,
+  getModelImages
 };
 
 export default modelController;

@@ -107,6 +107,7 @@ model ModelApplication {
 model ModelImage {
   id        String   @id @default(uuid())
   caption   String?
+  profile Boolean  @default(false)
   type      String
   url       String
   fileId    String

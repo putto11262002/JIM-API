@@ -197,3 +197,8 @@ export const DecodeGetModelQuerySchema = schemaForType<ModelGetQuery>()(
       .optional(),
   })
 );
+
+
+export const ModelSetProfileImageSchema = z.object({
+  imageId: z.string(),
+});

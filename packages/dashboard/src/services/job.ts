@@ -6,6 +6,7 @@ import {
   JobStatus,
   JobUpdateInput,
   PaginatedData,
+  paginatedDataQuery,
 } from "@jimmodel/shared";
 import { GenericAbortSignal } from "axios";
 import axiosClient from "../lib/axios";
@@ -122,6 +123,15 @@ async function archive({
     { signal }
   );
 }
+
+async function getModelJobs({
+  modelId, 
+  query, 
+  signal,
+} : {modelId: string, query: paginatedDataQuery, signal?: GenericAbortSignal}){
+  const res = await axiosClient.get(`/models/${modelId}/jobs`, {params: query, signal})
+  return res.data as PaginatedData<Job>
+}
 const jobService = {
   create,
   getAll,
@@ -133,6 +143,7 @@ const jobService = {
   removeBooking,
   confirm,
   archive,
+  getModelJobs
 };
 
 export default jobService;
