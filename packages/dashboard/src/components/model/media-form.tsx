@@ -22,7 +22,6 @@ import { Input } from "../ui/input";
 import { Trash, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ModelImage } from "@jimmodel/shared";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const allowedMimetype = ["image/jpg", "image/png", "image/jpeg"];
 
@@ -142,46 +141,24 @@ const ImageGallery = ({ images }: { images: ModelImage[] }) => {
 function MediaForm({
   onAddImage,
   images,
+  type,
 }: {
   onAddImage: ({ image, type }: { image: File; type: string }) => void;
   images: ModelImage[];
+  type: string;
 }) {
-  function renderTabContent(type: string) {
-    return (
-      <TabsContent value={type}>
-        <div className="mt-6">
-          <ImageUploadDialog
-            type={type}
-            onSubmit={(image) => onAddImage({ image, type })}
-          />
-        </div>
-        <div className="mt-4">
-          <ImageGallery images={images.filter((image) => image.type == type)} />
-        </div>
-      </TabsContent>
-    );
-  }
   return (
-    <>
-      <div>
-        <Tabs defaultValue="book" defaultChecked>
-          <TabsList className="w-full justify-around">
-            <TabsTrigger className="grow" value="book">
-              Book
-            </TabsTrigger>
-            <TabsTrigger className="grow" value="polaroid">
-              Polaroid
-            </TabsTrigger>
-            <TabsTrigger className="grow" value="composite">
-              Composite
-            </TabsTrigger>
-          </TabsList>
-          {renderTabContent("book")}
-          {renderTabContent("polaroid")}
-          {renderTabContent("composite")}
-        </Tabs>
+    <div>
+      <div className="mt-6">
+        <ImageUploadDialog
+          type={type}
+          onSubmit={(image) => onAddImage({ image, type })}
+        />
       </div>
-    </>
+      <div className="mt-4">
+        <ImageGallery images={images.filter((image) => image.type == type)} />
+      </div>
+    </div>
   );
 }
 
