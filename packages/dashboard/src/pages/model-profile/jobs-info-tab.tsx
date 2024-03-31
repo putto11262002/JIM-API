@@ -7,6 +7,7 @@ import { MoreHorizontal } from "lucide-react";
 import _ from "lodash";
 import useGetModelJobs from "../../hooks/model/use-get-model-jobs";
 import LoaderBlock from "@/components/shared/loader-block";
+import Pagination from "../../components/shared/pagination";
 const columns: ColumnDef<Job>[] = [
   {
     accessorKey: "title",
@@ -44,7 +45,8 @@ function ModelJobDataTable({ data }: { data: Job[] }) {
   return <DataTable data={data} columns={columns} />;
 }
 export default function ModelJobsInfoTab({ modelId }: { modelId: string }) {
-  const { jobs, isLoading } = useGetModelJobs({ id: modelId });
+  const { jobs, isLoading, nextPage, prevPage, totalPage, page } =
+    useGetModelJobs({ id: modelId });
   if (isLoading) {
     return <LoaderBlock message="Loading model jobs" />;
   }
@@ -52,6 +54,14 @@ export default function ModelJobsInfoTab({ modelId }: { modelId: string }) {
     <div>
       <div>
         <ModelJobDataTable data={jobs} />
+      {totalPage > 1 &&   <div className="flex justify-end mt-3">
+          <Pagination
+            page={page}
+            totalPage={totalPage}
+            nextPage={nextPage}
+            prevPage={prevPage}
+          />
+        </div>}
       </div>
     </div>
   );

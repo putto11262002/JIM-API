@@ -50,9 +50,19 @@ const menuItems: {
     tab: ({ modelId }) => <ModelJobsInfoTab modelId={modelId} />,
   },
   {
-    label: "Media",
-    value: "media",
-    tab: ({ modelId }) => <ModelMediaTab modelId={modelId} />,
+    label: "Books",
+    value: "book",
+    tab: ({ modelId }) => <ModelMediaTab type="book" modelId={modelId} />,
+  },
+  {
+    label: "Polaroids",
+    value: "polaroid",
+    tab: ({ modelId }) => <ModelMediaTab type="polaroid" modelId={modelId} />,
+  },
+  {
+    label: "Composites",
+    value: "composite",
+    tab: ({ modelId }) => <ModelMediaTab type="composite" modelId={modelId} />,
   },
 ];
 

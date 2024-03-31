@@ -301,6 +301,8 @@ async function getModelJobs(
             },
           },
         },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       }),
       prisma.job.count({ where: { models: { some: { id: modelId } } } }),
     ]);
