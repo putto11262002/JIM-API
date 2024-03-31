@@ -13,12 +13,18 @@ export default function ModelProfileOverview({
   }
   return (
     <div className="flex">
-      <div className="h-[6em] w-[6em] rounded-full overflow-hidden">
-        <img
-          src={model?.images?.[0]?.url}
-          alt={model.name}
-          className="object-cover w-full h-full"
-        />
+      <div className="h-[6em] w-[6em] rounded-full overflow-hidden bg-slate-300 relative">
+        {model?.images?.[0] ? (
+          <img
+            src={model?.images?.[0]?.url}
+            alt={model.name}
+            className="object-cover w-full h-full"
+          />
+        ) : (
+          <div className="bg-slate-300 absolute inset-0 z-10 text-white flex items-center justify-center text-5xl font-bold">
+            {model.firstName.charAt(0).toUpperCase()}
+          </div>
+        )}
       </div>
       <div className="flex items-center ml-8 grow">
         <div>
