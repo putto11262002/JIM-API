@@ -6,7 +6,7 @@ import { getAppError } from "../../lib/error";
 import placeholderImage from "@/assets/placeholder.jpeg";
 import { Button } from "@components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Loader2, Plus, XCircle } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -15,6 +15,9 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import { Link } from "react-router-dom";
+import LoaderBlock from "../../components/shared/loader-block";
+import ErrorBlock from "../../components/shared/error-block";
+import Pagination from "../../components/shared/pagination";
 
 function useGetModel() {
   const [query, setQuery] = useState<
@@ -71,24 +74,17 @@ function ModelCard({ model }: { model: Model }) {
         src={model?.images?.[0]?.url || placeholderImage}
         alt={model.nickname || "Model"}
       />
-      {/* <CardContent className="">
 
-    </CardContent> */}
-
-      <div className="px-4 py-2 text-sm">
-        <p className="font-medium">Name</p>
-        <p className="text-nowrap truncate ...">
+      <div className="px-4 py-2 ">
+        <p className="font-medium text-nowrap truncate ...">
           {model.firstName} {model.lastName}
         </p>
-
-        <p className="font-medium">Email</p>
-        <p className="text-nowrap truncate ...">{model.email}</p>
+        <p className="text-sm text-muted-foreground text-nowrap truncate ...">
+          {model.email}
+        </p>
       </div>
 
       <div className="px-4 py-2 pb-4 space-x-3">
-        {/* <Button size="sm" variant="outline">
-          Book
-        </Button> */}
         <Link to={`/models/${model.id}`}>
           <Button size="sm" variant="outline">
             View
@@ -105,10 +101,6 @@ function ModelCard({ model }: { model: Model }) {
 }
 
 function ModelGrid({ models }: { models: Model[] }) {
-  // if (isPending) return <div>Loading...</div>;
-
-  // if (error) return <div>{error.message}</div>;
-
   return (
     <>
       <div className="grid grid-cols-3 gap-3 ">
@@ -147,8 +139,6 @@ function ModelPage() {
               <SelectItem value="name">Name</SelectItem>
             </SelectContent>
           </Select>
-
-          {/* <Button variant={"outline"}>More Filter</Button> */}
         </div>
         <div>
           <Link to={"/models/add"}>
@@ -160,37 +150,22 @@ function ModelPage() {
       </div>
       <div className="py-4">
         {isLoading ? (
-          <div className="flex justify-center mt-5">
-            {" "}
-            <Loader2 className="animate-spin" />
-          </div>
+          <LoaderBlock />
         ) : error ? (
-          <div className="mt-5 flex flex-col items-center space-y-2">
-            <XCircle className="text-danger" />
-            <p>{error.message}</p>
-          </div>
+          <ErrorBlock error={error} />
         ) : data && data.totalPage > 0 ? (
           <>
             <ModelGrid models={data?.data || []} />
-            <div className="flex items-center justify-center mt-6 gap-3">
-              <Button
-                variant={"outline"}
-                disabled={!data || data.page <= 1}
-                onClick={prevPage}
-              >
-                Previous
-              </Button>
-              <p className="font-medium">
-                {data?.page} of {data?.totalPage ?? 0}
-              </p>
-              <Button
-                disabled={!data || data.page >= data.totalPage}
-                variant={"outline"}
-                onClick={nextPage}
-              >
-                Next
-              </Button>
-            </div>
+            {data.totalPage > 1 && (
+              <div className="mt-6 flex justify-end">
+                <Pagination
+                  page={data.page}
+                  totalPage={data.totalPage}
+                  nextPage={nextPage}
+                  prevPage={prevPage}
+                />
+              </div>
+            )}
           </>
         ) : (
           <div className="text-center font-medium">No Result</div>
