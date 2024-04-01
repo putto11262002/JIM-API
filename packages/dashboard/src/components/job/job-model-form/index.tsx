@@ -48,6 +48,7 @@ export function AddModelDialog({
               >
                 <Avatar>
                   <AvatarImage
+                  className="object-cover"
                     src={model.images?.[0]?.url || placeholderImage}
                   />
                 </Avatar>
