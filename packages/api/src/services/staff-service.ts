@@ -295,8 +295,8 @@ async function getAll(
       skip: (page - 1) * pageSize,
       take: pageSize,
       orderBy: {
-        [query.sortBy ?? pgk.Prisma.StaffScalarFieldEnum.updatedAt]:
-          query.sortOrder ?? "desc",
+        [query.orderBy ?? pgk.Prisma.StaffScalarFieldEnum.updatedAt]:
+          query.orderDir ?? "desc",
       },
       select: selectWithoutSecrets,
     }),

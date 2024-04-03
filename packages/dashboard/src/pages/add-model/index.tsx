@@ -1,9 +1,7 @@
-import { Model, ModelCreateInput } from "@jimmodel/shared";
+import { Model } from "@jimmodel/shared";
 import { z } from "zod";
 import { ModelCreateFormSchema } from "../../schemas/model";
 import { ReactNode, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import modelService from "../../services/model";
 import { Link } from "react-router-dom";
 import { PersonalForm } from "../../components/model/personal-form";
 import { ModelContactForm } from "../../components/model/contact-form";
@@ -16,12 +14,10 @@ import {
 } from "../../components/ui/alert-dialog";
 import { CheckCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import { AppError } from "../../types/app-error";
-import { errorInterceptor } from "../../lib/error";
 import { SideBar } from "../../components/shared/form-side-menu";
 import PageTitle from "../../components/shared/page-title";
-import LoaderBlock from "../../components/shared/loader-block";
-import ErrorBlock from "../../components/shared/error-block";
+import { useCreateModel } from "../../hooks/model/use-create-model";
+import { Separator } from "../../components/ui/separator";
 
 type ModelCreateForm = z.infer<typeof ModelCreateFormSchema>;
 
@@ -67,39 +63,6 @@ const menuItems: {
   },
   // { label: "Media", value: "media", form: () => <button>Submit</button> },
 ];
-
-function useCreateModel({
-  onSuccess,
-  onError,
-}: {
-  onSuccess?: (createdModel: Model) => void;
-  onError?: (error: AppError) => void;
-} = {}) {
-  const queryClient = useQueryClient();
-  const [error, setError] = useState<AppError | null>(null);
-  const { isPending, mutate } = useMutation({
-    mutationFn: async (data: Partial<ModelCreateForm>) => {
-      const model = await modelService.create(data as ModelCreateInput);
-      return model;
-    },
-    onSuccess: (createdModel) => {
-      queryClient.invalidateQueries({ queryKey: ["models"] });
-      setError(null);
-      if (onSuccess) {
-        onSuccess(createdModel);
-      }
-    },
-    onError: (err) =>
-      errorInterceptor(err, (err) => {
-        setError(err);
-        if (onError) {
-          onError(err);
-        }
-      }),
-  });
-
-  return { isPending, error, create: mutate };
-}
 
 function AddModelSuccessDialog({
   createdModel,
@@ -154,13 +117,7 @@ function AddModelPage() {
   const [formIndex, setFormIndex] = useState(0);
   const [formData, setFormData] = useState<Partial<ModelCreateForm>>({});
 
-  const { create, isPending, error } = useCreateModel({
-    onSuccess: (model) => {
-      setCreatedModel(model);
-      setFormData({});
-      setFormIndex(0);
-    },
-  });
+  const { mutate } = useCreateModel({onSuccess: (data) => setCreatedModel(data)});
 
   const handleSubmit = (data: Partial<ModelCreateForm>) => {
     if (formIndex < menuItems.length - 1) {
@@ -169,7 +126,7 @@ function AddModelPage() {
     } else {
       const newFormData = { ...formData, ...data };
       setFormData(newFormData);
-      create(newFormData);
+      mutate(ModelCreateFormSchema.parse(newFormData));
     }
   };
 
@@ -185,6 +142,7 @@ function AddModelPage() {
         title="Add Model"
         subtitle="Add a model record to the database"
       />
+      <Separator className="my-6 mt-2"/>
       <div className="flex">
         <div className="">
           <SideBar
@@ -193,13 +151,7 @@ function AddModelPage() {
           />
         </div>
         <div className="grow px-8 ">
-          {isPending || currentForm === undefined ? (
-          <LoaderBlock message="Saving model"/>
-          ) : error ? (
-          <ErrorBlock error={error}/>
-            ) : (
-            currentForm(handleSubmit)
-          )}
+          {currentForm && currentForm(handleSubmit)}
         </div>
       </div>
     </>

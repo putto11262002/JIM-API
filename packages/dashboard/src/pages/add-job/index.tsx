@@ -1,11 +1,4 @@
-import {
-  Job,
-  JobCreateInput,
-  JobStatus,
-} from "@jimmodel/shared";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import jobService from "../../services/job";
+import { Job, JobStatus } from "@jimmodel/shared";
 import { Button } from "../../components/ui/button";
 
 import {
@@ -17,8 +10,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import PageTitle from "../../components/shared/page-title";
 import JobDetailsForm from "../../components/job/job-details-form";
-
-
+import { Separator } from "../../components/ui/separator";
+import { useAddJob } from "../../hooks/job/use-add-job";
 
 function CreateJobSuccessDialog({
   createdJob,
@@ -27,15 +20,18 @@ function CreateJobSuccessDialog({
   createdJob: Job | null;
   onSkip: () => void;
 }) {
-  if (!createdJob){
-    return null
+  if (!createdJob) {
+    return null;
   }
   return (
     <AlertDialog open={true}>
       <AlertDialogContent>
         <div className="flex flex-col items-center space-y-3">
           <CheckCircle className="text-success" />
-          <p className="font-medium">{createdJob.status === JobStatus.PENDING ? "Option" : "Job"} added to database</p>
+          <p className="font-medium">
+            {createdJob.status === JobStatus.PENDING ? "Option" : "Job"} added
+            to database
+          </p>
           <p className="text-sm">Continue to:</p>
           <div className="flex flex-col space-y-2">
             <Link
@@ -47,7 +43,10 @@ function CreateJobSuccessDialog({
                 Add models
               </Button>
             </Link>
-            <Link className="" to={`/jobs/${createdJob.id}/update?form=booking`}>
+            <Link
+              className=""
+              to={`/jobs/${createdJob.id}/update?form=booking`}
+            >
               <Button className="w-full" variant={"outline"} size={"sm"}>
                 Add bookings
               </Button>
@@ -66,39 +65,18 @@ function CreateJobSuccessDialog({
   );
 }
 
-// function useAppMutation<T, R>({fn}: {fn: (arg: T) => Promise<R>}) {
-//   return useMutation({
-//     mutationFn: async (arg: T) =>{
-//       try{
-//         const res = await fn(arg);
-//         return res;
-//       }catch(err){
-//         // TODO: error handling logic
-//         throw new 
-//       }
-//     },
-//     onSuccess: (data) => {
-      
-//     }
-//   })
-// }
-
 function AddJobPage() {
   const [submittedJob, setSubmittedJob] = useState<Job | null>(null);
-  const [searchParams] = useSearchParams()
-  const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
 
-  const jobStatus = searchParams.get("status")?.toUpperCase() === JobStatus.PENDING ? JobStatus.PENDING : JobStatus.CONFIRMED; 
+  const jobStatus =
+    searchParams.get("status")?.toUpperCase() === JobStatus.PENDING
+      ? JobStatus.PENDING
+      : JobStatus.CONFIRMED;
 
-  const { mutate: createJob } = useMutation({
-    mutationFn: (data: JobCreateInput) => jobService.create({...data, status: jobStatus}),
+  const { addJob } = useAddJob({
     onSuccess: (job) => {
       setSubmittedJob(job);
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-    },
-    onError: (err) => {
-      setSubmittedJob(null);
-      console.log(err);
     },
   });
 
@@ -108,8 +86,14 @@ function AddJobPage() {
         onSkip={() => setSubmittedJob(null)}
         createdJob={submittedJob}
       />
-      <PageTitle title={`Add ${jobStatus === JobStatus.PENDING ? "Option" : "Job"}`} subtitle={`Add ${jobStatus === JobStatus.PENDING ? "option" : "job"} record to the database`} />
-      <JobDetailsForm initialData={{status: jobStatus}} onSubmit={createJob} />
+      <PageTitle
+        title={`Add ${jobStatus === JobStatus.PENDING ? "Option" : "Job"}`}
+        subtitle={`Add ${
+          jobStatus === JobStatus.PENDING ? "option" : "job"
+        } record to the database`}
+      />
+      <Separator className="my-6 mt-2" />
+      <JobDetailsForm initialData={{ status: jobStatus }} onSubmit={addJob} />
     </>
   );
 }

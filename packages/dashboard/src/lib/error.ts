@@ -1,66 +1,67 @@
-import { AppError, AppErrorType } from "../types/app-error";
+import AppError from "../types/app-error";
+import ClientError from "../types/client-error";
+import ServerError from "../types/server-error";
 import axios from "axios";
 import { ErrorResponse } from "@jimmodel/shared";
-import staffService from "../services/auth";
 import { store } from "../redux/store";
 import { unauthenticate } from "../redux/auth-reducer";
 
-export function getAppError(err: unknown): AppError {
-  let error: AppError;
-  if (axios.isAxiosError<ErrorResponse>(err) && err.response) {
-    error = {
-      details: err.response.data.details,
-      message: err.response.data.message,
-      statusCode: err.response.status,
-      type:
-        err.response.status === 401
-          ? AppErrorType.AUTH_ERROR
-          : AppErrorType.SERVER_ERROR,
-    };
+export function standardiseError(err: unknown): AppError {
+  // Handle axios error
+  if (axios.isAxiosError<ErrorResponse>(err)) {
+    // The request was made and the server response with a status code
+    if (err.response) {
+      const error = new ServerError(
+        err.response.data.message,
+        err.response.status,
+        err.response.data.details
+      );
+      error.cause = err;
+      return error;
+    }
 
-   
-  } else if (axios.isAxiosError<ErrorResponse>(err) && err.request) {
-    error = {
-      details: err.message,
-      message: "Something went wrong. Please try again later",
-      type: AppErrorType.CLIENT_ERROR,
-    };
-  } else {
-    error = {
-      details: (err as Error).message,
-      message: "Something went wrong. Please try again later",
-      type: AppErrorType.CLIENT_ERROR,
-    };
+    // The request was made but no response was received
+    if (err.request) {
+      const error = new ClientError(
+        "Something went wrong. Please try again later.",
+        "No response was received"
+      );
+      error.cause = error;
+      return error;
+    }
   }
 
-  
+  // Some other error
+  if (err instanceof Error) {
+    const error = new AppError(err.message);
+    error.cause = err;
+    return error;
+  }
+
+  const error = new AppError("An unknown error occurred");
+  error.cause = err;
   return error;
 }
 
-export function errorInterceptor(err: unknown, cb: (error: AppError) => void) {
-  const error = getAppError(err);
-  if (error.statusCode === 401) {
-    staffService.clearAccessToken();
-    staffService.clearRefreshToken();
-    store.dispatch(unauthenticate());
-    return 
+function handleError(error: AppError): AppError {
+
+  if (error instanceof ServerError && error.statusCode === 401) {
+    store.dispatch(unauthenticate())
   }
-  cb(error)
+
+ return error;
 }
 
-
-export function errorInterceptorV2<T, K>(fn: (arg: T) => Promise<K>, arg: T) {
-  try {
-    return fn(arg);
-  } catch (err) {
-    const error = getAppError(err);
-    if (error.statusCode === 401) {
-      staffService.clearAccessToken();
-      staffService.clearRefreshToken();
-      store.dispatch(unauthenticate());
-      throw error;
+export function errWrapper<T>(fn: () => Promise<T>): () => Promise<T>;
+export function errWrapper<T, A>(fn: (arg: A) => Promise<T>): (arg: A) => Promise<T>;
+export function errWrapper<T, A>(fn: ((arg?: A) => Promise<T>) | (() => Promise<T>)): ((arg?: A) => Promise<T>) | (() => Promise<T>) {
+  return async (arg?: A) => {
+    try {
+      return await fn(arg);
+    } catch (err) {
+      const appError =  standardiseError(err);
+      throw handleError(appError);
+      
     }
-
-    throw error;
-  }
+  };
 }

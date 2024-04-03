@@ -10,7 +10,7 @@ export function FormTextareaField<T extends FieldValues>({
 }: Omit<FormGenericFieldProps<T>, "render"> & {textareaProps?:  ComponentProps<typeof Textarea>}) {
     return <FormGenericField {...props} render={({field}) => (
         <FormControl>
-            <Textarea  {...props.textareaProps} {...field}/>
+            <Textarea  {...props.textareaProps} {...field} value={field.value ?? ""}/>
         </FormControl>
     )}/>
 }

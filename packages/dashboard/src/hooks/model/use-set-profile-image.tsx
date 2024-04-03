@@ -1,15 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import modelService from "../../services/model";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation";
 
 export default function useSetProfileImage() {
-  const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: async ({ imageId }: { imageId: string; modelId: string }) =>
-      modelService.setProfileImage({ imageId }),
-    onSuccess: (_, { modelId }) => {
-      queryClient.invalidateQueries({ queryKey: ["models", modelId] });
-    },
-  });
+  const {mutate, status} = useAppMutation({
+    mutationFn: modelService.setProfileImage,
+    notifySuccess: { notify: true, message: "Model updated successfully" },
+    invalidateQueryKeys: [["models"]],
+  })
 
-  return { setProfile: mutate, isPending };
+  return { setProfile: mutate, status };
 }

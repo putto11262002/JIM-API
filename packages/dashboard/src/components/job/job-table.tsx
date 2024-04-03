@@ -1,11 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "../shared/data-table";
 import { Job } from "@jimmodel/shared";
-import { AppError } from "../../types/app-error";
 import _ from "lodash";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { JobDropdownMenu } from "./job-dropdown-menu";
+import DataTable from "./data-table";
 const columns: ColumnDef<Job>[] = [
   { accessorKey: "title", header: "Title" },
   { accessorKey: "client", header: "Client" },
@@ -47,25 +46,13 @@ const columns: ColumnDef<Job>[] = [
 ];
 function JobTable({
   data,
-  isLoading,
-  pagination,
-  onPageChange,
-  error,
 }: {
-  data?: Job[];
-  isLoading: boolean;
-  pagination: { page: number; pageSize: number; totalPage: number };
-  onPageChange: (page: number) => void;
-  error: AppError | null;
+  data: Job[];
 }) {
   return (
     <DataTable
       columns={columns}
       data={data || []}
-      isLoading={isLoading}
-      pagination={pagination}
-      onPageChange={onPageChange}
-      error={error}
     />
   );
 }

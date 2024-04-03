@@ -5,11 +5,11 @@ import {
   StaffLoginInput,
   StaffLoginResult,
   StaffUpdateInput,
+  StaffUpdatePasswordInput,
   StaffWithoutSecrets,
 } from "@jimmodel/shared";
 
 import axiosClient, { axiosClientWithToken } from "../lib/axios";
-import { GenericAbortSignal } from "axios";
 
 async function create(payload: StaffCreateInput) {
   const response = await axiosClient.post("/staffs", payload);
@@ -26,6 +26,12 @@ async function login(payload: StaffLoginInput) {
   return loginResult;
 }
 
+/**
+ * Use the refresh stored in the local storage to refresh teh access token.
+ * If no refresh token exist in the local storage a ClientError is thrown
+ * If the token is successfully refreshed the local storage is updated.
+ * @returns 
+ */
 async function refreshToken() {
   const token = localStorage.getItem("refreshToken");
 
@@ -48,7 +54,7 @@ async function logout() {
   
 }
 
-async function getAll(query: StaffGetQuery, signal: GenericAbortSignal){
+async function getAll({query, signal}: {query: StaffGetQuery, signal?: AbortSignal}){
   const res = await axiosClient.get("/staffs", {
     params: {...query, roles: query.roles?.join(",")},
     signal
@@ -57,7 +63,7 @@ async function getAll(query: StaffGetQuery, signal: GenericAbortSignal){
 }
 
 
-async function updateById(id: string, payload: StaffUpdateInput) {
+async function updateById({id, payload}: {id: string, payload: StaffUpdateInput}) {
   await axiosClient.put(`/staffs/${id}`, payload);
 }
 
@@ -85,6 +91,18 @@ function clearRefreshToken(){
   localStorage.removeItem("refreshToken")
 }
 
+async function getById({id, signal}: {id: string, signal?: AbortSignal}){
+  const res = await axiosClient.get(`/staffs/${id}`, {signal});
+  return res.data as StaffWithoutSecrets;
+}
+
+
+ async  function updateStaffPasswordById(
+  {id, payload}: {id: string,
+  payload: StaffUpdatePasswordInput}
+): Promise<void> {
+  await axiosClient.put(`/staffs/${id}/password`, payload);
+}
 
 const staffService = {
   login,
@@ -96,7 +114,9 @@ const staffService = {
   updateById,
   clearAccessToken,
   clearRefreshToken,
-  getAll
+  getAll,
+  getById,
+  updateStaffPasswordById
 };
 
 

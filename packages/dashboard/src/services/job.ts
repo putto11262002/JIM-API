@@ -2,11 +2,12 @@ import {
   BookingCreateInput,
   Job,
   JobCreateInput,
+  JobFields,
   JobGetQuery,
   JobStatus,
   JobUpdateInput,
   PaginatedData,
-  paginatedDataQuery,
+  PaginatedDataQuery,
 } from "@jimmodel/shared";
 import { GenericAbortSignal } from "axios";
 import axiosClient from "../lib/axios";
@@ -21,7 +22,7 @@ async function getAll({
   signal,
 }: {
   query: JobGetQuery;
-  signal?: GenericAbortSignal;
+  signal?: AbortSignal;
 }) {
   const res = await axiosClient.get("/jobs", { params: query, signal });
   return res.data as PaginatedData<Job>;
@@ -32,7 +33,7 @@ async function getById({
   signal,
 }: {
   id: string;
-  signal?: GenericAbortSignal;
+  signal?: AbortSignal;
 }) {
   const res = await axiosClient.get(`/jobs/${id}`, { signal });
   return res.data as Job;
@@ -45,7 +46,7 @@ async function updateById({
 }: {
   id: string;
   input: JobUpdateInput;
-  signal?: GenericAbortSignal;
+  signal?: AbortSignal;
 }) {
   await axiosClient.put(`/jobs/${id}`, input, { signal });
 }
@@ -128,7 +129,7 @@ async function getModelJobs({
   modelId, 
   query, 
   signal,
-} : {modelId: string, query: paginatedDataQuery, signal?: GenericAbortSignal}){
+} : {modelId: string, query: PaginatedDataQuery<JobFields>, signal?: AbortSignal}){
   const res = await axiosClient.get(`/models/${modelId}/jobs`, {params: query, signal})
   return res.data as PaginatedData<Job>
 }

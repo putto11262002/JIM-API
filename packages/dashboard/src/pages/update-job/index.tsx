@@ -1,203 +1,66 @@
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useState } from "react";
 import { SideBar } from "../../components/shared/form-side-menu";
 import PageTitle from "../../components/shared/page-title";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
-import { errorInterceptorV2 } from "../../lib/error";
-import jobService from "../../services/job";
-
-import { AppError } from "../../types/app-error";
-import { JobCreateInput, Job, JobUpdateInput, Model, BookingCreateInput, JobStatus } from "@jimmodel/shared";
-import JobDetailsForm from "../../components/job/job-details-form";
+import { JobStatus } from "@jimmodel/shared";
 import LoaderBlock from "../../components/shared/loader-block";
-import ErrorBlock from "../../components/shared/error-block";
-import JobModelForm from "../../components/job/job-model-form";
-import modelService from "../../services/model";
-import JobBookingForm from "../../components/job/job-booking-form";
-import useNotification from "../../hooks/use-notification";
-import JobActionForm from "../../components/job/job-action-form";
+import JobActionForm from "./job-action-form";
+import { Separator } from "../../components/ui/separator";
+import JobDetailsUpdateForm from "./job-details-update-form";
+import JobModelUpdateForm from "./job-model-update-form";
+import JobBookingUpdateForm from "./job-booking-update-form";
+import useGetJob from "../../hooks/job/use-get-job";
+import WithSuspense from "../../components/shared/with-suspense";
 
 const menuItems: {
   label: string;
   value: string;
-  form?: ({
-    handleUpdateJob,
-  }: {
-    handleUpdateJob: (input: JobCreateInput) => void;
-    handleAddModel: (model: Model) => void;
-    handleRemoveModel: (modelId: string) => void;
-    handleSearchModel: (term: string) => void;
-    handleAddBooking: (bookingInput: BookingCreateInput) => void;
-    handleRemoveBooking: (bookingId: string) => void;
-    searchedModels?: Model[];
-    initialData: Job;
-    handleConfirm: (jobId: string) => void,
-    handleArchive: (jobId: string) => void
-  }) => ReactNode;
+  form?: ({ jobId }: { jobId: string }) => ReactNode;
 }[] = [
   {
     label: "Details",
     value: "job-details",
-    form: ({ handleUpdateJob, initialData }) => (
-      <JobDetailsForm initialData={initialData} onSubmit={handleUpdateJob} />
-    ),
+    form: ({ jobId }) => <JobDetailsUpdateForm jobId={jobId} />,
   },
   {
     label: "Models",
     value: "model",
-    form: ({ handleSearchModel, searchedModels, handleAddModel, initialData, handleRemoveModel }) => (
-      <JobModelForm
-      onRemoveModel={handleRemoveModel}
-        onAddModel={handleAddModel}
-        searchedModels={searchedModels}
-        onSeachTermChange={handleSearchModel}
-        models={initialData.models}
-      />
-    ),
+    form: ({ jobId }) => <JobModelUpdateForm jobId={jobId} />,
   },
   {
     label: "Booking",
     value: "booking",
-    form: ({handleAddBooking, initialData ,handleRemoveBooking}) => <JobBookingForm onRemoveBooking={handleRemoveBooking} bookings={initialData.bookings} onAddBooking={handleAddBooking} />
+    form: ({ jobId }) => <JobBookingUpdateForm jobId={jobId} />,
   },
   {
     label: "Actions",
     value: "actions",
-    form: ({handleConfirm, handleArchive, initialData}) => <JobActionForm onConfirm={handleConfirm} onArchive={handleArchive} data={initialData}/> 
-  }
+    form: ({ jobId }) => <JobActionForm jobId={jobId} />,
+  },
 ];
 
 function UpdateJobPage() {
   const { id } = useParams<{ id: string }>();
-  const [searchParam, setSearchParam] = useSearchParams()
-  const initialFormIndex = menuItems.findIndex(({value}) => value === searchParam.get("form") )
-  const [formIndex, setFormIndex] = useState(initialFormIndex === -1 ? 0 : initialFormIndex);
-  const [modelSearchTerm, setModelSeachTerm] = useState("");
-  const queryClient = useQueryClient();
-  const {success} = useNotification()
-
-  // Get job
-  const {
-    data: job,
-    isPending: isLoadingJob,
-    error: getJobError,
-  } = useQuery<unknown, AppError, Job>({
-    queryKey: ["jobs", id],
-    queryFn: id
-      ? ({ signal }) => errorInterceptorV2(jobService.getById, { id, signal })
-      : undefined,
-  });
+  const [searchParam, setSearchParam] = useSearchParams();
+  const initialFormIndex = menuItems.findIndex(
+    ({ value }) => value === searchParam.get("form")
+  );
+  const [formIndex, setFormIndex] = useState(
+    initialFormIndex === -1 ? 0 : initialFormIndex
+  );
 
 
 
-  // Update job details
-  const {
-    mutate: updateJob,
-    // isPending: isUpdatingJob,
-    // error: updateJobError,
-  } = useMutation({
-    mutationFn: id
-      ? (input: JobUpdateInput) =>
-          errorInterceptorV2(jobService.updateById, { id, input })
-      : undefined,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-    },
-    onError: (err) => {
-      console.log(err);
-    },
-  });
-
-  // Search models
-  const { data: searchedModels } = useQuery({
-    queryKey: ["models", { q: modelSearchTerm }],
-    queryFn: () =>
-      errorInterceptorV2(modelService.getAll, { q: modelSearchTerm }),
-    enabled: modelSearchTerm !== "",
-  });
-
-  // Add model
-  const { mutate: addModel } = useMutation({
-    mutationFn: id
-      ? (modelId: string) =>
-          errorInterceptorV2(jobService.addModel, { id, modelId })
-      : undefined,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-      success("Model added to job")
-    },
-  });
-
-  const {mutate: removeModel} = useMutation({
-    mutationFn: id ? (modelId: string) => jobService.removeModel({ id, modelId }) : undefined,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-      success("Model removed from job")
-    }
-  })
-
-
-  const {mutate: addBooking} = useMutation({
-    mutationFn: id ? (bookingInput: BookingCreateInput) => jobService.addBooking({id, bookingInput}) : undefined,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-     success("Booking added to job")
-    }
-  })
-
-  const {mutate: removeBooking} = useMutation({
-    mutationFn: id ? (bookingId: string) => jobService.removeBooking({bookingId}) : undefined,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs", id] });
-     success("Booking removed from job")
-    }
-  })
-
-  const { mutate: archive } = useMutation({
-    mutationFn: (jobId: string) => jobService.archive({ id: jobId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-      success("Job archived");
-    },
-    onError: (err) => console.error(err)
-  });
-
-  const {mutate: confirm} = useMutation({
-    mutationFn: (jobId: string) => jobService.confirm({id: jobId}),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jobs"] });
-      success("Job confirmed")
-    }
-  })
-  const unaddedModels = useMemo(() => {
-    if (searchedModels?.data && job?.models) {
-      return searchedModels.data.filter(
-        (model) => !job.models.find((m) => m.id === model.id)
-      );
-    }
-    return [];
-  }, [searchedModels, job?.models]);
+  const { job } = useGetJob({ jobId: id! });
 
   const currentForm = menuItems[formIndex].form;
 
   function renderForm() {
-    if (isLoadingJob || currentForm === undefined) {
+    if (currentForm === undefined || !id) {
       return <LoaderBlock message="Loading job data..." />;
-    } else if (getJobError) {
-      return <ErrorBlock error={getJobError} />;
     } else {
       return currentForm({
-        handleUpdateJob: updateJob,
-        handleAddModel: (model) => addModel(model.id),
-        handleRemoveModel: removeModel,
-        initialData: job,
-        handleSearchModel: (term) => setModelSeachTerm(term),
-        searchedModels: unaddedModels,
-        handleAddBooking: addBooking,
-        handleRemoveBooking: removeBooking,
-        handleArchive: archive,
-        handleConfirm: confirm,
-        
+        jobId: id,
       });
     }
   }
@@ -206,8 +69,11 @@ function UpdateJobPage() {
     <>
       <PageTitle
         title={`Edit ${job?.status === JobStatus.PENDING ? "Option" : "Job"}`}
-        subtitle={`Edit ${job?.status === JobStatus.PENDING ? "Option": "Job"} recrod in the database`}
+        subtitle={`Edit ${
+          job?.status === JobStatus.PENDING ? "Option" : "Job"
+        } recrod in the database`}
       />
+      <Separator className="my-6 mt-2" />
       <div className="flex gap-8">
         <div className="">
           <SideBar
@@ -215,7 +81,10 @@ function UpdateJobPage() {
             selected={menuItems[formIndex].value}
             onChange={({ index }) => {
               setFormIndex(index);
-              setSearchParam(prev => ({...prev, form: menuItems[index].value,}), {replace: true})
+              setSearchParam(
+                (prev) => ({ ...prev, form: menuItems[index].value }),
+                { replace: true }
+              );
             }}
           />
         </div>
@@ -225,4 +94,4 @@ function UpdateJobPage() {
   );
 }
 
-export default UpdateJobPage;
+export default WithSuspense(UpdateJobPage);

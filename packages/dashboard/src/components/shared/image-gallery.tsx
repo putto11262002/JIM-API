@@ -25,17 +25,17 @@ function ImageGallery<T extends { url: string }>({
   }, [images]);
 
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-3 gap-3 h-auto">
       {grid.map((col, i) => (
-        <div key={i} className="flex flex-col gap-3">
+        <div key={i} className="flex flex-col gap-3 h-auto">
           {col.map((image, j) => (
-            <div key={j} className="group relative">
+            <div key={j} className="group relative  h-auto">
               {overlayContent && (
                 <div className="absolute  bg-slate-700 bg-opacity-50 w-full h-full flex justify-center items-center opacity-0 group-hover:opacity-100 transition duration-300">
                   {overlayContent(image)}
                 </div>
               )}
-              <img className="w-full h-auto" src={image.url} />
+              <img className="w-full h-full" src={image.url} />
             </div>
           ))}
         </div>

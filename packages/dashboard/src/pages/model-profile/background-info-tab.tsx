@@ -1,17 +1,13 @@
 import { InfoBlock } from "./info-block";
 import ExperienceTable from "../../components/model/experience-table";
-import LoaderBlock from "@/components/shared/loader-block";
-import useGetModel from "../../hooks/model/use-get-model";
+import { useGetModel } from "@/hooks/model/use-get-model";
 
-export default function ModelBackgroundInfoTab({
+function ModelBackgroundInfoTab({
   modelId,
 }: {
   modelId: string;
 }) {
-  const { model, isPending } = useGetModel({ id: modelId });
-  if (isPending || !model) {
-    return <LoaderBlock message="Loading model data" />;
-  }
+  const {model} = useGetModel({ modelId })
   return (
     <div className="space-y-4">
       <InfoBlock label="Occupation" value={model.occupation} />
@@ -29,4 +25,6 @@ export default function ModelBackgroundInfoTab({
     </div>
   );
 }
+
+export default ModelBackgroundInfoTab
 

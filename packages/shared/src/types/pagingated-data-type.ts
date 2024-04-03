@@ -8,7 +8,17 @@ export type PaginatedData<T> = {
     hasPreviousPage: boolean;
 };
 
-export type paginatedDataQuery = {
+export const OrderDir = {
+    ASC: "asc",
+    DESC: "desc"
+} as const;
+
+export type OrderDir = typeof OrderDir[keyof typeof OrderDir];
+
+
+export type PaginatedDataQuery<T> = {
     page?: number;
     pageSize?: number;
+    orderBy?: T
+    orderDir?: OrderDir;
 }

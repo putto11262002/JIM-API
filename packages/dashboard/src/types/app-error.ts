@@ -1,11 +1,8 @@
-export enum AppErrorType {
-  CLIENT_ERROR = "CLIENT_ERROR",
-  AUTH_ERROR = "AUTH_ERROR",
-  SERVER_ERROR = "SERVER_ERROR",
-}
-export type AppError = {
-  statusCode?: number;
-  message: string;
+export default class AppError extends Error {
   details?: string;
-  type: AppErrorType;
-};
+
+  constructor(message: string, details?: string) {
+    super(message);
+    this.details = details;
+  }
+}

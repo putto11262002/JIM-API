@@ -13,6 +13,7 @@ import ModelJobsInfoTab from "./jobs-info-tab";
 import ModelMediaTab from "./media-tab";
 import ModelProfileOverview from "./overview";
 import { Separator } from "../../components/ui/separator";
+import WithSuspense from "../../components/shared/with-suspense";
 
 const menuItems: {
   label: string;
@@ -85,23 +86,18 @@ function ModelProfilePage() {
     setTabInex(index);
   }
 
-  function renderCurrentTab() {
-    const currentTab = menuItems[tabIndex]?.tab;
-    if (!id || currentTab === undefined) {
-      return <LoaderBlock message="Loading model data" />;
-    } else {
-      return currentTab({
-        modelId: id,
-      });
-    }
+  const currentTab = menuItems[tabIndex]?.tab;
+
+  if (!id) {
+    return <LoaderBlock message="Loading model data" />;
   }
 
   return (
     <>
       <PageTitle title="Model Profile" />
       <Separator className="my-6 mt-2" />
-      <ModelProfileOverview modelId={id}/>
-      <Separator className="my-6"/>
+      <ModelProfileOverview modelId={id} />
+      <Separator className="my-6" />
       <div className="flex">
         <div className="">
           <SideBar
@@ -110,11 +106,11 @@ function ModelProfilePage() {
             menuItems={menuItems}
           />
         </div>
-   
-        <div className="grow px-8 ">{renderCurrentTab()}</div>
+
+        <div className="grow px-8 ">{currentTab({ modelId: id })}</div>
       </div>
     </>
   );
 }
 
-export default ModelProfilePage;
+export default WithSuspense(ModelProfilePage);

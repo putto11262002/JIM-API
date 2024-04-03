@@ -10,7 +10,7 @@ export function FormInputField<T extends FieldValues>({
      return (
        <FormGenericField {...props} render={({field}) => (
          <FormControl>
-           <Input {...props.inputProps} {...field}  />
+           <Input {...props.inputProps} {...field} value={field.value || ""}  />
          </FormControl>
        )}/>
      );

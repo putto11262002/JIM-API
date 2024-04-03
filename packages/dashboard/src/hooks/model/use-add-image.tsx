@@ -1,25 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import modelService from "../../services/model";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation";
 
 export default function useAddImage() {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: ({
-      imageCreateInput,
-      id,
-    }: {
-      imageCreateInput: { image: File; type: string };
-      id: string;
-    }) => {
-      if (!id) {
-        throw new Error("Model ID is required");
-      }
-      return modelService.addImage(id, imageCreateInput);
-    },
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ["models", id] });
-    },
-  });
+  const {mutate, status} = useAppMutation({
+    mutationFn: modelService.addImage,
+    invalidateQueryKeys: [["models"]],
+    notifySuccess: { notify: true, message: "Image added successfully" },
+  })
 
-  return { addImage: mutate };
+  return {                                                                                                           addImage: mutate, status };
 }
