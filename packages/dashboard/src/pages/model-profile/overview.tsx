@@ -1,16 +1,13 @@
-import LoaderBlock from "../../components/shared/loader-block";
-import useGetModel from "../../hooks/model/use-get-model";
+import { useGetModel } from "@/hooks/model/use-get-model";
 
-export default function ModelProfileOverview({
+
+
+function ModelProfileOverview({
   modelId,
 }: {
-  modelId?: string;
+  modelId: string;
 }) {
-  const { model, isPending } = useGetModel({ id: modelId });
-
-  if (!model || isPending) {
-    return <LoaderBlock />;
-  }
+ const {data: model} = useGetModel({modelId})
   return (
     <div className="flex">
       <div className="h-[6em] w-[6em] rounded-full overflow-hidden">
@@ -35,3 +32,5 @@ export default function ModelProfileOverview({
     </div>
   );
 }
+
+export default ModelProfileOverview

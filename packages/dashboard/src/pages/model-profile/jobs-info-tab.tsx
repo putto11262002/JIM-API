@@ -5,9 +5,10 @@ import { JobDropdownMenu } from "../../components/job/job-dropdown-menu";
 import { Button } from "../../components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import _ from "lodash";
-import useGetModelJobs from "../../hooks/model/use-get-model-jobs";
-import LoaderBlock from "@/components/shared/loader-block";
 import Pagination from "../../components/shared/pagination";
+import { useGetModelJob } from "@/hooks/model/use-get-model-jobs";
+
+
 const columns: ColumnDef<Job>[] = [
   {
     accessorKey: "title",
@@ -44,12 +45,8 @@ const columns: ColumnDef<Job>[] = [
 function ModelJobDataTable({ data }: { data: Job[] }) {
   return <DataTable data={data} columns={columns} />;
 }
-export default function ModelJobsInfoTab({ modelId }: { modelId: string }) {
-  const { jobs, isLoading, nextPage, prevPage, totalPage, page } =
-    useGetModelJobs({ id: modelId });
-  if (isLoading) {
-    return <LoaderBlock message="Loading model jobs" />;
-  }
+function ModelJobsInfoTab({ modelId }: { modelId: string }) {
+  const {data: jobs, totalPage, page, nextPage, prevPage } = useGetModelJob({modelId})
   return (
     <div>
       <div>
@@ -66,3 +63,4 @@ export default function ModelJobsInfoTab({ modelId }: { modelId: string }) {
     </div>
   );
 }
+export default ModelJobsInfoTab

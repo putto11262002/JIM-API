@@ -29,10 +29,8 @@ import {
   SelectValue,
   SelectContent,
 } from "../../components/ui/select";
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import modelApplicationService from "../../services/applications";
+import { useCreateApplication } from "../../hooks/application/use-create-application";
 
 function FormSection({
   title,
@@ -143,7 +141,6 @@ const Ethnicity = {
 };
 
 export default function ApplicationSubmissionPage() {
-  const [submitted, setSubmitted] = useState(false);
   const form = useForm<z.infer<typeof CreateModelApplicationFormSchema>>({
     resolver: zodResolver(CreateModelApplicationFormSchema),
   });
@@ -151,28 +148,13 @@ export default function ApplicationSubmissionPage() {
   const talents = form.watch("talents") || [];
   const experiences = form.watch("experiences") || [];
 
-  const {
-    mutate: handleSubmitApplication,
-    isPending,
-    isError,
-  } = useMutation({
-    mutationFn: async (
-      data: z.infer<typeof CreateModelApplicationFormSchema>
-    ) => {
-      const application = await modelApplicationService.create(data);
+ const {create, status} = useCreateApplication()
 
-      await modelApplicationService.addImages(application.id, [
-        data.midlengthImage,
-        data.closeUpImage,
-        data.fullLengthImage,
-      ]);
-    },
-    onSuccess: () => {
-      setSubmitted(true);
-    },
-  });
+ function handleSubmit(data: z.infer<typeof CreateModelApplicationFormSchema>){
+  create({modelApplicationInput: data, images: [data.midlengthImage, data.closeUpImage, data.fullLengthImage]})
+ }
 
-  if (isError) {
+  if (status === "error") {
     return (
       <div className="flex flex-col items-center space-y-3 mt-20">
         <XCircle className="text-danger" />
@@ -186,7 +168,7 @@ export default function ApplicationSubmissionPage() {
     );
   }
 
-  if (isPending) {
+  if (status === "pending") {
     return (
       <div className="flex flex-col items-center space-y-3 mt-20">
         <Loader2 className="animate-spin" />
@@ -195,7 +177,7 @@ export default function ApplicationSubmissionPage() {
     );
   }
 
-  if (submitted) {
+  if (status === "success") {
     return (
       <div className="flex flex-col items-center mt-20 space-y-3">
         <CheckCircle className="text-success " />
@@ -222,7 +204,7 @@ export default function ApplicationSubmissionPage() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) =>
-              handleSubmitApplication(data)
+              handleSubmit(data)
             )}
             className="pt-6 pb-3 space-y-2"
           >

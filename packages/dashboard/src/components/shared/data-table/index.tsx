@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import { Button } from "../../ui/button";
-import { AppError } from "../../../types/app-error";
+import AppError  from "../../../types/app-error";
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];

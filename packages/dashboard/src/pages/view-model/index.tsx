@@ -1,8 +1,4 @@
-import { EncodedModelGetQuery, Model, PaginatedData } from "@jimmodel/shared";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import modelService from "../../services/model";
-import { getAppError } from "../../lib/error";
 import placeholderImage from "@/assets/placeholder.jpeg";
 import { Button } from "@components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -18,53 +14,8 @@ import { Link } from "react-router-dom";
 import LoaderBlock from "../../components/shared/loader-block";
 import ErrorBlock from "../../components/shared/error-block";
 import Pagination from "../../components/shared/pagination";
-
-function useGetModel() {
-  const [query, setQuery] = useState<
-    EncodedModelGetQuery & { page: number; pageSize: number }
-  >({
-    page: 1,
-    pageSize: 9,
-    order: "createdAt:desc",
-  });
-
-  function _setQuery(
-    newQuery: Omit<EncodedModelGetQuery, "page" | "pageSize">
-  ) {
-    setQuery({ ...query, ...newQuery, page: 1 });
-  }
-
-  function nextPage() {
-    if (query.page >= (data?.totalPage ?? 0)) return;
-    setQuery({ ...query, page: query.page + 1 });
-  }
-
-  function prevPage() {
-    if (query.page <= 1) return;
-    setQuery({ ...query, page: query.page - 1 });
-  }
-  const {
-    isLoading,
-    error: _error,
-    data,
-    isPending,
-    isFetching,
-  } = useQuery<PaginatedData<Model>>({
-    queryKey: ["model", query],
-    queryFn: ({ signal }) => modelService.getAll({ ...query }, signal),
-  });
-  return {
-    setQuery: _setQuery,
-    isLoading,
-    error: _error ? getAppError(_error) : _error,
-    data,
-    isFetching,
-    isPending,
-    nextPage,
-    prevPage,
-    query,
-  };
-}
+import { Model, ModelFields, ModelGetQuery, OrderDir } from "@jimmodel/shared";
+import  {useAppPaginatedQuery} from "../../lib/react-query-wrapper/use-app-paginated-query";
 
 function ModelCard({ model }: { model: Model }) {
   return (
@@ -113,30 +64,64 @@ function ModelGrid({ models }: { models: Model[] }) {
 }
 
 function ModelPage() {
-  const { setQuery, data, isLoading, error, prevPage, nextPage, query } =
-    useGetModel();
+  const initialQuery = {
+    query: {
+      q: "",
+      orderBy: "createdAt",
+      orderDir: "desc",
+      page: 1,
+      pageSize: 10,
+    },
+  };
+  const { data, status, totalPage, nextPage, prevPage, updateQuery, error, page } =
+    useAppPaginatedQuery<
+      Model,
+      { signal?: AbortSignal; query?: ModelGetQuery },
+      ModelGetQuery
+    >({
+      queryFn: modelService.getAll,
+      key: ["models"],
+      initialQuery: {
+        orderBy: "createdAt",
+        orderDir: "desc",
+      },
+      arg: {},
+    });
 
   return (
     <>
       <div className="flex justify-between items-center py-2 gap-3">
         <div className="flex gap-2 grow justify-start">
           <Input
-            onChange={(e) => setQuery({ ...query, q: e.target.value })}
+            onChange={(e) =>
+              updateQuery((prevQuery) => ({ ...prevQuery, q: e.target.value }))
+            }
             className="w-56"
             placeholder="Search by name, email..."
           />
 
           <Select
-            onValueChange={(val) => setQuery({ ...query, order: val })}
-            defaultValue={query.order}
+            onValueChange={(val) => {
+              const [orderBy, orderDir] = val.split(":");
+              updateQuery((prevQuery) => ({
+                ...prevQuery, orderBy: orderBy as ModelFields, orderDir: orderDir as OrderDir
+              }));
+            }}
+            defaultValue={`${initialQuery.query.orderBy}:${initialQuery.query.orderDir}`}
           >
             <SelectTrigger className="w-48">
               <SelectValue className="" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="createdAt:asc">Lastest to oldest</SelectItem>
-              <SelectItem value="createdAt:desc">Oldest to lastest</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value={`${ModelFields.createdAt}:${OrderDir.ASC}`}>
+                Lastest to oldest
+              </SelectItem>
+              <SelectItem value={`${ModelFields.createdAt}:${OrderDir.DESC}`}>
+                Oldest to lastest
+              </SelectItem>
+              <SelectItem value={`${ModelFields.name}:${OrderDir.ASC}`}>
+                Name
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -149,18 +134,18 @@ function ModelPage() {
         </div>
       </div>
       <div className="py-4">
-        {isLoading ? (
+        {status === "pending" ? (
           <LoaderBlock />
-        ) : error ? (
-          <ErrorBlock error={error} />
-        ) : data && data.totalPage > 0 ? (
+        ) : status === "error" ? (
+          <ErrorBlock error={error?.message} />
+        ) : data && totalPage > 0 ? (
           <>
-            <ModelGrid models={data?.data || []} />
-            {data.totalPage > 1 && (
+            <ModelGrid models={data || []} />
+            {totalPage > 1 && (
               <div className="mt-6 flex justify-end">
                 <Pagination
-                  page={data.page}
-                  totalPage={data.totalPage}
+                  page={page}
+                  totalPage={totalPage}
                   nextPage={nextPage}
                   prevPage={prevPage}
                 />

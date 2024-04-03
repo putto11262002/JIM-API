@@ -1,9 +1,9 @@
 import { Loader2 } from "lucide-react";
 
 function LoaderBlock({message}: {message?: string}){
-    return <div className="flex justify-center flex-col items-center space-y-2">
+    return <div className="flex justify-center flex-col items-center s">
     <Loader2 className="animate-spin" />
-    <p>{message ? message : "Loading..."}</p>
+ {message &&   <p className="font-medium mt-2">{message}</p>}
     </div>
 }
 

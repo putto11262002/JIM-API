@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { useRefreshToken } from "../../hooks/staff/useRefreshToken";
+import { useRefreshToken } from "../../hooks/staff/use-refresh-token";
 
 export default function InitApp({ children }: { children?: React.ReactNode }) {
   const { refreshToken } = useRefreshToken();
 
   useEffect(() => {
-    refreshToken();
+    refreshToken({});
   }, [refreshToken]);
+
   return (
     <>
       <div className="hidden md:block">{children ?? <Outlet />}</div>

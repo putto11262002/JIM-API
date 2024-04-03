@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import jobService from "../../services/job";
-export default function useGetJob({jobId}: {jobId?: string}){
-    const {data, status, error} = useQuery({
-        queryKey: ["jobs", jobId],
-        queryFn: jobId ? ({signal}) => jobService.getById({id: jobId, signal}) : undefined,
-        enabled: !!jobId,
-        staleTime: 1000 * 60 * 5
-    })
+import { useAppSuspenseQuery } from "../../lib/react-query-wrapper/use-app-query";
+export default function useGetJob({ jobId }: { jobId: string }) {
+  const { data, status, error } = useAppSuspenseQuery({
+    queryFn: jobService.getById,
+    key: ["jobs", jobId],
+    arg: { id: jobId },
+    staleTime: 1000 * 60 * 2
+  });
 
-    return {job: data, status, error}
+  return { job: data, status, error };
 }

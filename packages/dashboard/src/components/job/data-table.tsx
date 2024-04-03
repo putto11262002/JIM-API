@@ -16,14 +16,14 @@ interface DataTableProps<TData, TValue> {
       getCoreRowModel: getCoreRowModel(),
     });
     return (
-      <div className="rounded-md border">
+      <div className="border rounded-sm">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead className="px-2" key={header.id}>
+                    <TableHead className="" key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(

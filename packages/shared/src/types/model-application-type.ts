@@ -1,5 +1,5 @@
 import * as db from "@prisma/client"
-import { paginatedDataQuery } from "./pagingated-data-type.js"
+import { PaginatedDataQuery } from "./pagingated-data-type.js"
 export type ModelApplication = db.ModelApplication & {
     experiences: db.ModelApplicationExperience[]
     images: db.ModelApplicationImage[]
@@ -15,11 +15,16 @@ export type ModelApplicationCreateInput = Omit<db.Prisma.ModelApplicationCreateI
     experiences?: ModelApplicationExperienceCreateInput[]
 }
 
+
+export const ModelApplicationFields = db.Prisma.ModelApplicationScalarFieldEnum
+
+export type ModelApplicationFields = keyof typeof ModelApplicationFields
+
 export type ModelApplicationGetQuery = {
     q?: string,
     from?: Date,
     to?: Date,
     status?: ModelApplicationStatus,
 
-} & paginatedDataQuery
+} & PaginatedDataQuery<ModelApplicationFields>
 

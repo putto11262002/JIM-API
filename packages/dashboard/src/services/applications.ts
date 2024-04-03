@@ -1,34 +1,32 @@
 import { ModelApplication, ModelApplicationCreateInput, ModelApplicationGetQuery, PaginatedData } from "@jimmodel/shared";
 import axiosClient from "../lib/axios";
-import { GenericAbortSignal } from "axios";
 
-async function getAll(query: ModelApplicationGetQuery, signal?: GenericAbortSignal) {
+async function getAll({query, signal}: {query: ModelApplicationGetQuery, signal?: AbortSignal}) {
     const res = await axiosClient.get("/model-applications", { params: query, signal });
     return res.data as PaginatedData<ModelApplication>;
 }
 
-async function getById(id: string, signal?: GenericAbortSignal) {
+async function getById({id, signal}: {id: string, signal?: AbortSignal}) {
     const res = await axiosClient.get(`/model-applications/${id}`, { signal });
     return res.data as ModelApplication;
 }
 
-async function accept(id: string){
+async function accept({id}:{id: string}){
     const res = await axiosClient.post(`/model-applications/${id}/accept`);
     return res.data as ModelApplication;
 }
 
-async function archive(id: string){
+async function archive({id}: {id: string}){
     const res = await axiosClient.post(`/model-applications/${id}/archive`);
     return res.data as ModelApplication;
 }
 
-async function create(modelApplication: ModelApplicationCreateInput){
-    const res = await axiosClient.post(`/model-applications`, modelApplication);
+async function create({input}: {input: ModelApplicationCreateInput}){
+    const res = await axiosClient.post(`/model-applications`, input);
     return res.data as ModelApplication;
-
 }
 
-async function addImages(id: string, images: File[]){
+async function addImages({id, images}: {id: string, images: File[]}){
     const formData = new FormData();
     images.forEach((image) => {
         formData.append("images", image);

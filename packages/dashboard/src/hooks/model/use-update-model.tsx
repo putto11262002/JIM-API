@@ -1,20 +1,12 @@
-import { ModelUpdateInput } from "@jimmodel/shared";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import modelService from "../../services/model";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation";
 
 export default function useUpdateModel(){
-    const queryClient = useQueryClient();
-    const { mutate, isPending } = useMutation({
-        mutationFn: async ({id, input}: {id: string, input: ModelUpdateInput}) => {
-          if (!id) {
-            throw new Error("Model ID is required");
-          }
-          return modelService.updateById(id, input);
-        },
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["models"] });
-        },
-      });
+   const {mutate, status} = useAppMutation({
+    mutationFn: modelService.updateById,
+    notifySuccess: {notify: true, message: 'Model updated successfully'},
+    invalidateQueryKeys: [['models']]
+   })
 
-      return {update: mutate, isPending}
+      return {update: mutate, status}
 }

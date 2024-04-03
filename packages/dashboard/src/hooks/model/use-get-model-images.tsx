@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import modelService from "../../services/model";
-export default function useGetModelImages({ id }: { id?: string }) {
-  const { data, isPending, error } = useQuery({
-    queryKey: ["models", id, "images"],
-    queryFn: id
-      ? ({ signal }) => modelService.getImages({ signal, id })
-      : undefined,
-    enabled: !!id,
-    staleTime: 1000 * 60 * 5,
+import { ModelImage } from "@jimmodel/shared";
+import { useAppSuspenseQuery } from "../../lib/react-query-wrapper/use-app-query";
+
+export function useGetModelImage({ modelId }: { modelId: string; }) {
+  const returned =  useAppSuspenseQuery<ModelImage[], { signal?: AbortSignal; id: string; }>({
+    queryFn: modelService.getImages,
+    key: ["models", modelId, "images"],
+    arg: { id: modelId },
   });
-  return { images: data, isPending, error };
+
+  return {...returned, images: returned.data};
 }

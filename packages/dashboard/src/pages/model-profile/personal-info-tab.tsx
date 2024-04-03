@@ -1,13 +1,11 @@
 import dayjs from "dayjs";
 import { InfoBlock } from "./info-block";
-import useGetModel from "../../hooks/model/use-get-model";
-import LoaderBlock from "@/components/shared/loader-block";
+import { useGetModel } from "@/hooks/model/use-get-model";
 
-export default function ModelPersonalInfoTab({ modelId }: { modelId: string }) {
-  const { model, isPending } = useGetModel({ id: modelId });
-  if (isPending || !model) {
-    return <LoaderBlock message="Loading model data" />;
-  }
+
+
+ function ModelPersonalInfoTab({ modelId }: { modelId: string }) {
+ const {data: model} = useGetModel({modelId})
   return (
     <div className="space-y-4">
       <InfoBlock label="Name" value={model.name} />
@@ -33,3 +31,5 @@ export default function ModelPersonalInfoTab({ modelId }: { modelId: string }) {
     </div>
   );
 }
+
+export default ModelPersonalInfoTab

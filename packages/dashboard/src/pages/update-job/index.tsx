@@ -10,6 +10,7 @@ import JobDetailsUpdateForm from "./job-details-update-form";
 import JobModelUpdateForm from "./job-model-update-form";
 import JobBookingUpdateForm from "./job-booking-update-form";
 import useGetJob from "../../hooks/job/use-get-job";
+import WithSuspense from "../../components/shared/with-suspense";
 
 const menuItems: {
   label: string;
@@ -48,7 +49,9 @@ function UpdateJobPage() {
     initialFormIndex === -1 ? 0 : initialFormIndex
   );
 
-  const { job } = useGetJob({ jobId: id });
+
+
+  const { job } = useGetJob({ jobId: id! });
 
   const currentForm = menuItems[formIndex].form;
 
@@ -91,4 +94,4 @@ function UpdateJobPage() {
   );
 }
 
-export default UpdateJobPage;
+export default WithSuspense(UpdateJobPage);

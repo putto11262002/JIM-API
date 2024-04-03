@@ -12,6 +12,7 @@ export default function useNotification(){
                 <p className="font-medium">{message}</p>
               </div>
             ),
+            
           });
     }
 

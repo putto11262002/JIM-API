@@ -1,14 +1,14 @@
-import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import { Navigate, createBrowserRouter } from "react-router-dom";
+import LoginPage from "./pages/login";
+import NotFoundPage from "./pages/not-found";
 import ProtectedRoute from "./components/globals/ProtectedRoute";
 import CalendarPage from "./pages/calendar";
 import PrimaryLayout from "./components/layouts/PrimaryLayout";
-import InitApp from "./components/globals/InitApp";
-import StaffPage from "./pages/StaffPage";
+import InitAppAsync from "./components/globals/InitApp";
+import ViewStaffPage from "./pages/view-staff";
 import ApplicationSubmissionPage from "./pages/model-application-submission";
 import AppilcationPage from "./pages/AppilcationPage";
-import ApplicationDetailsPage from "./pages/ApplicationDetailsPage";
+import ApplicationDetailsPage from "./pages/application-details";
 import ModelPage from "./pages/view-model";
 import AddModelPage from "./pages/add-model";
 import UpdateModelPage from "./pages/update-model";
@@ -21,7 +21,7 @@ import ModelProfilePage from "./pages/model-profile";
 
 const router = createBrowserRouter([
   {
-    element: <InitApp/>,
+    element: <InitAppAsync/>,
     children: [
       {
         path: "/login",
@@ -37,9 +37,15 @@ const router = createBrowserRouter([
                 path: "/calendar",
                 element: <CalendarContextProvider>
                   <CalendarPage/>
-                </CalendarContextProvider>
+                </CalendarContextProvider>,
+
               }
             ]
+          },
+          {
+            path: "/",
+           element: <Navigate to={"/calendar"}/>
+            
           },
 
           {
@@ -51,7 +57,7 @@ const router = createBrowserRouter([
               // },
               {
                 path: "/staffs",
-                element: <StaffPage/>
+                element: <ViewStaffPage/>
               },
               {
                 path: "/model-applications",

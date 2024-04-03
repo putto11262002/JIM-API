@@ -2,9 +2,9 @@ import { ModelApplication } from "@jimmodel/shared";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
-import { AppError } from "../../types/app-error";
-import { DataTable } from "../shared/data-table";
 import { Link } from "react-router-dom";
+import DataTable from "../job/data-table";
+import React from "react";
 
 const columns: ColumnDef<ModelApplication>[] = [
     {
@@ -39,27 +39,18 @@ const columns: ColumnDef<ModelApplication>[] = [
 
 type ApplicationTableProps = {
     data: ModelApplication[],
-    pagination: {page: number, pageSize: number, totalPage: number},
-    onPageChange: (page: number) => void,
-    isLoading?: boolean,
-    error: null | AppError
 }
 
 export default function ApplicationTable({
     data,
-    pagination,
-    onPageChange,
-    isLoading = false,
-    error
-}: ApplicationTableProps) {
+    ...rest
+}: ApplicationTableProps & React.HTMLAttributes<HTMLDivElement>) {
     return (
-        <DataTable
-            error={error}
-            isLoading={isLoading}
+     <div {...rest}>
+           <DataTable
             columns={columns}
             data={data}
-            pagination={pagination}
-            onPageChange={onPageChange}
         />
+     </div>
     )
 }

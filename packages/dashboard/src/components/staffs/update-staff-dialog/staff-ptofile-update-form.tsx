@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StaffRole,  StaffWithoutSecrets, StaffUpdateInput } from "@jimmodel/shared";
+import { StaffRole } from "@jimmodel/shared";
 import {
   Select,
   SelectTrigger,
@@ -20,14 +20,12 @@ import {
   Form,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { useToast } from "../../ui/use-toast";
-import { useUpdateStaff } from "../../../hooks/staff/useUpdateStaff";
-
 import { Alert, AlertDescription } from "../../ui/alert";
+import { useGetStaff } from "../../../hooks/staff/use-get-staff";
+import { useUpdateStaff } from "../../../hooks/staff/use-update-staff";
 
 type UpdateStaffProfileFormProps = {
-  staff: StaffWithoutSecrets;
-  updateFn: (payload: StaffUpdateInput) => Promise<void>
+ staffId: string
 };
 
 const UpdateStaffProfileFormSchema = z.object({
@@ -38,30 +36,23 @@ const UpdateStaffProfileFormSchema = z.object({
 });
 
 export default function UpdateStaffProfileForm({
-  staff,
-  updateFn
+  staffId,
+
 }: UpdateStaffProfileFormProps) {
+  const { staff } = useGetStaff({ staffId });
+ 
   const form = useForm<z.infer<typeof UpdateStaffProfileFormSchema>>({
     resolver: zodResolver(UpdateStaffProfileFormSchema),
     defaultValues: staff,
   });
 
-  const {toast} = useToast()
-
-  const { update, isPending, error } = useUpdateStaff({
-    updateFn,
-    onSuccess: () => {
-        toast({title: "Successfully updated staff profile"})
-       
-    },
-  });
-
+  const {update, error, status} = useUpdateStaff()
   
   return (
     <Form {...form}>
       <form
         className="grid grid-cols-2 gap-2"
-        onSubmit={form.handleSubmit((data) => update(data))}
+        onSubmit={form.handleSubmit((data) => update({payload: data, id: staffId}))}
       >
         <div className="col-span-2">
         {error && (
@@ -137,7 +128,7 @@ export default function UpdateStaffProfileForm({
           )}
         />
         <div className="py-2 col-span-2">
-          <Button disabled={isPending} type="submit">Update Profile</Button>
+          <Button disabled={status === "pending"} type="submit">Update Profile</Button>
         </div>
       </form>
     </Form>

@@ -1,6 +1,6 @@
 import * as db from "@prisma/client"
 import { Model } from "./model-type.js"
-import {  paginatedDataQuery } from "./pagingated-data-type.js"
+import {  PaginatedDataQuery } from "./pagingated-data-type.js"
 import { Staff } from "./staff-type.js"
 import _ from "lodash"
 
@@ -17,10 +17,14 @@ export type Job = db.Job  & {
 export type JobStatus = db.JobStatus
 export const JobStatus = db.JobStatus
 
+export const JobFields = db.Prisma.JobScalarFieldEnum;
+
+export type JobFields = keyof typeof JobFields
+
 export type JobGetQuery = {
     status?: string
     q?: string
-} & paginatedDataQuery
+} & PaginatedDataQuery<JobFields>
 
 
 export type JobAddModelInput = {

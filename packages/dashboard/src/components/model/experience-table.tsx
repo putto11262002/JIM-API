@@ -18,7 +18,7 @@ function ExperienceTable({
         </TableHeader>
        <TableBody>
           {experiences?.map((experience) => (
-            <TableRow>
+            <TableRow key={experience.id}>
               <TableCell>{experience.year}</TableCell>
               <TableCell>{experience.product}</TableCell>
               <TableCell>{experience.media}</TableCell>

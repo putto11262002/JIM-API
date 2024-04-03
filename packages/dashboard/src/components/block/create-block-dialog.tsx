@@ -8,27 +8,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { BlockCreateInput } from "@jimmodel/shared";
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormLabel } from "../ui/form";
 import { FormDatePickerField } from "../shared/form/FormDatePickerField";
 import { FormInputField } from "../shared/form/FormInputField";
-import { AddModelDialog } from "../job/job-model-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { errorInterceptorV2 } from "../../lib/error";
-import modelService from "../../services/model";
+import { useState } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import placeholderImage from "@assets/placeholder.jpeg";
 import dayjs from "dayjs";
 import { FromSelectField } from "../shared/form/FormSelectField";
-import blockService from "../../services/block";
-import { useToast } from "../ui/use-toast";
-import { AppError } from "../../types/app-error";
-import { Alert, AlertDescription } from "../ui/alert";
 import { timeOptions } from "../../lib/constants";
+import { AddModelDialog } from "../job/add-model-dialog";
+import { useSearchModelWithfilter } from "../../hooks/model/use-search-model-with-filter";
+import { useAddBlock } from "../../hooks/block/use-add-block";
 
 const BlockCreateFormSchema = z
   .object({
@@ -51,11 +45,12 @@ const BlockCreateFormSchema = z
     dates: z.any(),
   })
   .superRefine((data, ctx) => {
-
-    const start = dayjs(data.startDate).startOf("day")
+    const start = dayjs(data.startDate)
+      .startOf("day")
       .set("hour", parseInt(data.startTime.split(":")[0]))
       .set("minute", parseInt(data.startTime.split(":")[1]));
-    const end = dayjs(data.endDate).startOf("day")
+    const end = dayjs(data.endDate)
+      .startOf("day")
       .set("hour", parseInt(data.endTime.split(":")[0]))
       .set("minute", parseInt(data.endTime.split(":")[1]));
     if (end.isBefore(start)) {
@@ -88,36 +83,37 @@ const FormBlockToBlockCreateInput = z
   })
   .transform((data) => {
     return {
-      start: dayjs(data.startDate).startOf("day")
+      start: dayjs(data.startDate)
+        .startOf("day")
         .add(parseInt(data.startTime.split(":")[0]), "hours")
-        .add( parseInt(data.startTime.split(":")[1]), "minutes")
+        .add(parseInt(data.startTime.split(":")[1]), "minutes")
         .toDate()
         .toISOString(),
-      end: dayjs(data.endDate).startOf("day")
+      end: dayjs(data.endDate)
+        .startOf("day")
         .add(parseInt(data.endTime.split(":")[0]), "hours")
         .add(parseInt(data.endTime.split(":")[1]), "minutes")
         .toDate()
         .toISOString(),
       reason: data.reason,
       modelIds: data.models.map((model) => model.id),
-      type: data.type
+      type: data.type,
     };
   });
 
-const typeOptions: { label: string, value: string }[] = [
+const typeOptions: { label: string; value: string }[] = [
   {
     label: "Extend Visa",
-    value: "extend-visa"
+    value: "extend-visa",
   },
   {
     label: "Unavailable",
-    value: "unavailable"
-  }
-]
-export default function CreateBlockDialog() {
-  const [modelSearchTerm, setModelSearchTerm] = useState("");
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+    value: "unavailable",
+  },
+];
+
+
+export default function CreateBlockDialog() { 
   const [displayDialog, setDisplayDialog] = useState(false);
   const form = useForm<z.infer<typeof BlockCreateFormSchema>>({
     resolver: zodResolver(BlockCreateFormSchema),
@@ -129,38 +125,16 @@ export default function CreateBlockDialog() {
     keyName: "_id",
   });
 
-  const { data: searchedModels } = useQuery({
-    queryKey: ["models", { q: modelSearchTerm }],
-    queryFn: () =>
-      errorInterceptorV2(modelService.getAll, { q: modelSearchTerm }),
-    enabled: modelSearchTerm !== "",
+  const {addBlock, status} = useAddBlock({onSuccess: () => {
+    form.reset({})
+              modelField.replace([])
+              setDisplayDialog(false)
+  }})
+
+  const { models, updateSearchTerm } = useSearchModelWithfilter({
+    filter: modelField.fields || [],
   });
 
-  const {
-    mutate: addBlock,
-    isPending: isPendingAddBlock,
-    error,
-  } = useMutation<unknown, AppError, BlockCreateInput>({
-    mutationFn: (input: BlockCreateInput) =>
-      errorInterceptorV2(blockService.create, input),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blocks", "calendar"] });
-      form.reset({ models: [] });
-      setDisplayDialog(false);
-      toast({
-        description: "Block created successfully",
-      });
-    },
-  });
-
-  const unaddedModels = useMemo(() => {
-    if (searchedModels?.data && modelField.fields) {
-      return searchedModels.data.filter(
-        (model) => !modelField.fields.find((m) => m.id === model.id)
-      );
-    }
-    return [];
-  }, [searchedModels, modelField.fields]);
 
   return (
     <Dialog open={displayDialog} onOpenChange={setDisplayDialog}>
@@ -178,18 +152,13 @@ export default function CreateBlockDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        {error && (
-          <Alert variant="destructive" className="my-3">
-            <AlertDescription>{error.message}</AlertDescription>
-          </Alert>
-        )}
-
         <Form {...form}>
           <form
             className="space-y-3"
-            onSubmit={form.handleSubmit((data) =>
+            onSubmit={form.handleSubmit((data) => {
               addBlock(FormBlockToBlockCreateInput.parse(data))
-            )}
+              
+            })}
           >
             {form.formState?.errors?.dates && (
               <p className="text-danger text-sm font-medium">
@@ -225,7 +194,7 @@ export default function CreateBlockDialog() {
                     key={field.id}
                   >
                     <Avatar>
-                      <AvatarImage src={field.imageUrl || placeholderImage} />
+                      <AvatarImage className="object-cover" src={field.imageUrl || placeholderImage} />
                     </Avatar>
                     <div className="ml-4">
                       <p className="text-sm font-medium">{field.name}</p>
@@ -246,8 +215,6 @@ export default function CreateBlockDialog() {
               </div>
               <div>
                 <AddModelDialog
-                  onSeachTermChange={(term) => setModelSearchTerm(term)}
-                  searchedModels={unaddedModels}
                   onAddModel={(model) =>
                     modelField.append({
                       id: model.id,
@@ -256,7 +223,13 @@ export default function CreateBlockDialog() {
                       email: model.email,
                     })
                   }
-                />
+                  searchedModels={models}
+                  onSearchModel={(term) => updateSearchTerm(term)}
+                >
+                  <Button variant={"outline"}>
+                    <Plus className="w-4 h-4 mr-2" /> Model
+                  </Button>
+                </AddModelDialog>
               </div>
               {form.formState.errors["models"] && (
                 <p className="text-xs font-medium text-danger">
@@ -266,7 +239,7 @@ export default function CreateBlockDialog() {
             </div>
             <div>
               <Button
-                disabled={isPendingAddBlock}
+                disabled={status === "pending"}
                 className="mt-2"
                 type="submit"
               >

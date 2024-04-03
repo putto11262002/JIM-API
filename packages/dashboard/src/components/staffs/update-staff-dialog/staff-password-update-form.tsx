@@ -9,12 +9,10 @@ import {
 } from "../../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StaffUpdatePasswordInput } from "@jimmodel/shared";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { useToast } from "../../ui/use-toast";
-import { useUpdateStaffPassword } from "../../../hooks/staff/useUpdateStaffPassword";
 import { Alert, AlertDescription } from "../../ui/alert";
+import { useUpdateStaffPassword } from "../../../hooks/staff/use-update-staff-password";
 
 const UpdateStaffPasswordFormSchema = z
   .object({
@@ -27,52 +25,45 @@ const UpdateStaffPasswordFormSchema = z
   });
 
 type UpdateStaffPasswordFormProps = {
-  updateFn: (payload: StaffUpdatePasswordInput) => Promise<void>;
+  staffId: string
 };
 
 export default function UpdateStaffPasswordForm({
-  updateFn,
+staffId
 }: UpdateStaffPasswordFormProps) {
   const form = useForm<z.infer<typeof UpdateStaffPasswordFormSchema>>({
     resolver: zodResolver(UpdateStaffPasswordFormSchema),
   });
-  
-  const {toast} = useToast()
 
-  const {update, isPending, error} = useUpdateStaffPassword({
-    updateFn: updateFn,
-    onSuccess: () => {
-      toast({title: "Successfully updated staff password"})
-      form.reset({password: "", confirmPassword: ""})
-    },
-  });
+const {update, error, status} = useUpdateStaffPassword()
 
   return (
     <Form {...form}>
       <form
         className="space-y-2"
-        onSubmit={form.handleSubmit((data) => update({newPassword: data.password}))}
-      >
-          <div className="col-span-2">
-        {error && (
-          <Alert variant="destructive" className="my-3">
-            <AlertDescription>{error.message}</AlertDescription>
-          </Alert>
+        onSubmit={form.handleSubmit((data) =>
+          update({ payload: {newPassword: data.password}, id:  staffId})
         )}
+      >
+        <div className="col-span-2">
+          {status === "error" && (
+            <Alert variant="destructive" className="my-3">
+              <AlertDescription>{error?.message}</AlertDescription>
+            </Alert>
+          )}
         </div>
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-          
-             <FormItem>
+            <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
-  )}
+          )}
         />
 
         <FormField
@@ -89,7 +80,7 @@ export default function UpdateStaffPasswordForm({
           )}
         />
         <div className="py-2">
-            <Button disabled={isPending}>Update Password</Button>
+          <Button disabled={status === "pending"}>Update Password</Button>
         </div>
       </form>
     </Form>
