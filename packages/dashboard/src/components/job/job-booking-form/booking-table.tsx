@@ -3,6 +3,7 @@ import { Booking } from "@jimmodel/shared";
 import dayjs from "dayjs";
 import { Button } from "../../ui/button";
 import DataTable from "../data-table";
+import { ArrowRight } from "lucide-react";
 const getColumns = ({
   onRemove,
 }: {
@@ -14,14 +15,14 @@ const getColumns = ({
       header: "Date",
       cell: ({ row }) => {
         return (
-          <p>
+          <p className="flex items-center">
             <span className="font-medium">
               {" "}
-              {dayjs(row.original.start).format("DD/MM/YYYY HH:mm")}
+              {dayjs(row.original.start).format("D MMM YYYY HH:mm A")}
             </span>{" "}
-            to{" "}
+            <ArrowRight className="w-4 h-4 mx-2 text-muted-foreground"/>
             <span className="font-medium">
-              {dayjs(row.original.start).format("DD/MM/YYYY HH:mm")}
+              {dayjs(row.original.start).format("D MMM YYYY HH:mm A")}
             </span>
           </p>
         );

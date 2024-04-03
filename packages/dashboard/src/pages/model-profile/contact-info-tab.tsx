@@ -1,12 +1,9 @@
+import { useGetModel } from "@/hooks/model/use-get-model";
 import { InfoBlock } from "./info-block";
-import LoaderBlock from "@/components/shared/loader-block";
-import useGetModel from "../../hooks/model/use-get-model";
 
-export default function ModelContactInfoTab({ modelId }: { modelId: string }) {
-  const { model, isPending } = useGetModel({ id: modelId });
-  if (isPending || !model) {
-    return <LoaderBlock message="Loading model data" />;
-  }
+
+function ModelContactInfoTab({ modelId }: { modelId: string }) {
+  const {model} = useGetModel({modelId});
   return (
     <div className="space-y-4">
       <InfoBlock label="Email" value={model.email} />
@@ -19,4 +16,7 @@ export default function ModelContactInfoTab({ modelId }: { modelId: string }) {
     </div>
   );
 }
+
+
+export default ModelContactInfoTab;
 

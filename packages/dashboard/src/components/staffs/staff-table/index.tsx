@@ -1,10 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { StaffWithoutSecrets } from "@jimmodel/shared";
-import { DataTable } from "../../shared/data-table";
+import DataTable from "../../job/data-table";
 import { Button } from "../../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import UpdateStaffDialog from "../update-staff-dialog";
-import { AppError } from "../../../types/app-error";
 
 const columns: ColumnDef<StaffWithoutSecrets>[] = [
   {
@@ -26,10 +25,8 @@ const columns: ColumnDef<StaffWithoutSecrets>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      // const staff = row.original
-      // console.log(staff)
       return (
-       <UpdateStaffDialog staff={row.original}>
+       <UpdateStaffDialog staffId={row.original.id}>
          <Button variant="ghost">
           <MoreHorizontal className="h-4 w-4" />
         </Button>
@@ -41,27 +38,15 @@ const columns: ColumnDef<StaffWithoutSecrets>[] = [
 
 type StaffTableProps = {
   data: StaffWithoutSecrets[];
-  pagination: { page: number; pageSize: number; totalPage: number };
-  onPageChange: (page: number) => void;
-  isLoading?: boolean
-  error: AppError | null
 };
 
 export default function StaffTable({
   data,
-  pagination,
-  onPageChange,
-  isLoading = false,
-  error
 }: StaffTableProps) {
   return (
     <DataTable
-    error={error}
-    isLoading={isLoading}
-      pagination={pagination}
       columns={columns}
       data={data}
-      onPageChange={onPageChange}
     />
   );
 }

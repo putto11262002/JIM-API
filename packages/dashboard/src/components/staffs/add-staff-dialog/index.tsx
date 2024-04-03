@@ -29,14 +29,13 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { z } from "zod";
-import { useToast } from "../../ui/use-toast";
-import { Alert, AlertDescription } from "../../ui/alert";
+
 import { CreateStaffFormSchema } from "../../../schemas/staff";
-import { useCreateStaff } from "../../../hooks/staff/useCreateStaff";
+import { useAddStaff } from "../../../hooks/staff/use-add-staff";
 
 export default function AddStaffDialog() {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const { toast } = useToast();
+
 
   const form = useForm<z.infer<typeof CreateStaffFormSchema>>({
     resolver: zodResolver(CreateStaffFormSchema),
@@ -50,13 +49,10 @@ export default function AddStaffDialog() {
     },
   });
 
-  const { create, error } = useCreateStaff({
-    onSuccess: () => {
-      form.reset();
-      setOpenDialog(false);
-      toast({ title: "Successfully created staff" });
-    },
-  });
+  const {addStaff} = useAddStaff({onSuccess: () => {
+    form.reset({})
+    setOpenDialog(false)
+  }})
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -72,16 +68,16 @@ export default function AddStaffDialog() {
             Add a new staff to the application
           </DialogDescription>
         </DialogHeader>
-        {error && (
+        {/* {error && (
           <Alert variant="destructive" className="my-3">
             <AlertDescription>{error.message}</AlertDescription>
           </Alert>
-        )}
+        )} */}
         <div className="">
           <Form {...form}>
             <form
               className="grid grid-cols-2 gap-2"
-              onSubmit={form.handleSubmit((data) => create(data))}
+              onSubmit={form.handleSubmit((data) => addStaff(data))}
             >
               <FormField
                 control={form.control}

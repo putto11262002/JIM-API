@@ -1,4 +1,4 @@
-import { StaffUpdateInput, StaffUpdatePasswordInput } from "@jimmodel/shared";
+import { StaffUpdateInput, StaffUpdatePasswordInput, StaffWithoutSecrets } from "@jimmodel/shared";
 import axiosClient from "../lib/axios";
 
 export class StaffService {
@@ -14,5 +14,10 @@ export class StaffService {
     payload: StaffUpdatePasswordInput
   ): Promise<void> {
     await axiosClient.put(`/staffs/${id}/password`, payload);
+  }
+
+  public static async getById({id}: {id: string}){
+    const res = await axiosClient.get(`/staffs/${id}`);
+    return res.data as StaffWithoutSecrets;
   }
 }

@@ -7,12 +7,8 @@ import {
 import { Link } from "react-router-dom";
 import { ReactNode } from "react";
 import { Job, JobStatus } from "@jimmodel/shared";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import jobService from "../../services/job";
-import useNotification from "../../hooks/use-notification";
-import { lowerCase } from "lodash";
-import { errorInterceptorV2 } from "../../lib/error";
-import { AppError } from "../../types/app-error";
+import { useUpdateJobStatus } from "../../hooks/job/use-update-job-status";
+
 export function JobDropdownMenu({
   children,
   job,
@@ -20,22 +16,9 @@ export function JobDropdownMenu({
   children: ReactNode;
   job: Job;
 }) {
-  const { success } = useNotification();
+  const {updateStatus} = useUpdateJobStatus()
 
-  const queryClient = useQueryClient()
 
-  const { mutate } = useMutation<void, AppError, { status: JobStatus }>({
-    mutationFn: ({ status }: { status: JobStatus }) =>
-      errorInterceptorV2(jobService.updateById, {
-        id: job.id,
-        input: { status },
-      }),
-    onSuccess: (_, { status }) => {
-      queryClient.invalidateQueries({queryKey: ['jobs']})
-      queryClient.invalidateQueries({queryKey: ["calendar"]})
-      success(`Job has been ${lowerCase(status)}`);
-    },
-  });
 
   return (
     <DropdownMenu>
@@ -44,9 +27,8 @@ export function JobDropdownMenu({
         <Link to={`/jobs/${job.id}/update`}>
           <DropdownMenuItem>Update</DropdownMenuItem>
         </Link>
-       {job.status !== JobStatus.CONFIRMED &&  <DropdownMenuItem onClick={() => mutate({status: JobStatus.CONFIRMED})} >Confirm</DropdownMenuItem>}
-        {job.status !== JobStatus.ARCHIVED && <DropdownMenuItem onClick={() => mutate({status: JobStatus.ARCHIVED})}>Archive</DropdownMenuItem>}
-       {/* { <DropdownMenuItem>Cancel</DropdownMenuItem>} */}
+       {job.status !== JobStatus.CONFIRMED &&  <DropdownMenuItem onClick={() => updateStatus({id: job.id, status: JobStatus.CONFIRMED})} >Confirm</DropdownMenuItem>}
+        {job.status !== JobStatus.ARCHIVED && <DropdownMenuItem onClick={() => updateStatus({id: job.id, status: JobStatus.ARCHIVED})}>Archive</DropdownMenuItem>}
       </DropdownMenuContent>
     </DropdownMenu>
   );

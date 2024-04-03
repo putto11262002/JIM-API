@@ -1,34 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
-import staffService from "../../services/auth";
-import { useAppDispatch } from "../../redux/hooks";
-import { unauthenticate } from "../../redux/auth-reducer";
-import { AppError } from "../../types/app-error";
-import { useState } from "react";
-import { errorInterceptor } from "../../lib/error";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation"
+import { unauthenticate } from "../../redux/auth-reducer"
+import { useAppDispatch } from "../../redux/hooks"
+import staffService from "../../services/auth"
 
-export function useLogout({
-  onError,
-  onSuccess,
-}: { onError?: (err: AppError) => void; onSuccess?: () => void } = {}) {
-  const dispatch = useAppDispatch();
-  const [error, setError] = useState<AppError | null>(null);
-  const { mutate, isPending } = useMutation({
+export function useLogout(){
+  const dispatch= useAppDispatch()
+  const returned = useAppMutation({
     mutationFn: staffService.logout,
+    notifySuccess: {notify: true, message: "Goodbye"},
     onSuccess: () => {
-      setError(null);
-      dispatch(unauthenticate());
-      if (onSuccess) {
-        onSuccess();
-      }
+      dispatch(unauthenticate())
     },
-    onError: (err) => errorInterceptor(err, (err) => {
-      setError(err);
-      if (onError) {
-        onError(err);
-      }
-    
-    })
-  });
+  })
 
-  return { logout: mutate, isPending, error };
+  return {...returned, logout: returned.mutate}
 }

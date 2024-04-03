@@ -1,13 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {JobUpdateInput} from "@jimmodel/shared"
 import jobService from "../../services/job";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation";
 export default function useUpdateJob() {
-    const queryClient = useQueryClient()
-    const {mutate, status} = useMutation({
-        mutationFn: ({jobId, input}: {jobId: string, input: JobUpdateInput}) => jobService.updateById({id: jobId, input}),
-        onSuccess: (_, {jobId}) => {
-            queryClient.invalidateQueries({queryKey: ["jobs", jobId]})
-        },
+    const {mutate, status} = useAppMutation({
+        mutationFn: jobService.updateById,
+        invalidateQueryKeys: [["jobs"], ["calendar"]],
+        notifySuccess: {notify: true, message: "Job updated successfully"},
     })
 
     return {update: mutate, status}

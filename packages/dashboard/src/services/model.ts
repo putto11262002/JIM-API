@@ -1,8 +1,9 @@
 import {
-  EncodedModelGetQuery,
+
   Model,
   ModelCreateInput,
   ModelExperienceCreateInput,
+  ModelGetQuery,
   ModelImage,
   ModelUpdateInput,
   PaginatedData,
@@ -11,8 +12,8 @@ import { GenericAbortSignal } from "axios";
 import axiosClient from "../lib/axios";
 
 async function getAll(
-  query?: EncodedModelGetQuery,
-  signal?: GenericAbortSignal
+ {query, signal}: { query?: ModelGetQuery,
+  signal?: AbortSignal}
 ) {
   const res = await axiosClient.get("/models", { params: query, signal });
   return res.data as PaginatedData<Model>;
@@ -22,7 +23,7 @@ async function getById({
   signal,
 }: {
   id: string;
-  signal?: GenericAbortSignal;
+  signal?: AbortSignal;
 }) {
   const res = await axiosClient.get(`/models/${id}`, { signal });
   return res.data as Model;
@@ -33,13 +34,13 @@ async function create(model: ModelCreateInput, signal?: GenericAbortSignal) {
   return res.data as Model;
 }
 
-async function updateById(modelId: string, payload: ModelUpdateInput) {
+async function updateById({modelId, payload}:{modelId: string, payload: ModelUpdateInput}) {
   await axiosClient.put(`/models/${modelId}`, payload);
 }
 
 async function addImage(
-  modelId: string,
-  modelImageCreateInput: { image: File; type: string }
+ {modelId, modelImageCreateInput}: { modelId: string,
+  modelImageCreateInput: { image: File; type: string }}
 ) {
   const formData = new FormData();
   formData.append("image", modelImageCreateInput.image);
@@ -50,13 +51,13 @@ async function addImage(
 }
 
 
-async function removeImage({imageId, signal}: {imageId: string, signal?: GenericAbortSignal}) {
+async function removeImage({imageId, signal}: {imageId: string, signal?: GenericAbortSignal, modelId: string}) {
   await axiosClient.delete(`/models/images/${imageId}`, { signal });
 }
 
 async function addExperience(
-  modelId: string,
-  experience: ModelExperienceCreateInput | ModelExperienceCreateInput[]
+  {modelId, experience}: {modelId: string,
+  experience: ModelExperienceCreateInput | ModelExperienceCreateInput[]}
 ) {
   await axiosClient.post(`/models/${modelId}/experiences`, experience);
 }

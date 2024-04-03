@@ -1,27 +1,12 @@
-import { ModelExperienceCreateInput } from "@jimmodel/shared";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import modelService from "../../services/model";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation";
 
 export default function useAddExperience() {
-  const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      modelId,
-      experience,
-    }: {
-      modelId: string;
-      experience: ModelExperienceCreateInput;
-    }) => {
-      if (!modelId) {
-        throw new Error("Model ID is required");
-      }
+ const {mutate, status} = useAppMutation({
+  mutationFn: modelService.addExperience,
+  notifySuccess: { notify: true, message: "Experience added successfully" },
+  invalidateQueryKeys: [["models"]],
+ })
 
-      return modelService.addExperience(modelId, experience);
-    },
-    onSuccess: (_, { modelId }) => {
-      queryClient.invalidateQueries({ queryKey: ["models", modelId] });
-    },
-  });
-
-  return { addExperience: mutate, isPending };
+  return { addExperience: mutate, status };
 }

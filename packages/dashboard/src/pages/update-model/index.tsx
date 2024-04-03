@@ -12,6 +12,7 @@ import ExperienceUpdateForm from "./experiences-update-form";
 import ModelMeasurementInfoUpdateForm from "./meaaurement-info-update-form";
 import ModelBackgroundInfoUpdateForm from "./background-info-update-form";
 import ModelMediaUpdateForm from "./model-media-update-form";
+import WithSuspense from "../../components/shared/with-suspense";
 
 const menuItems: {
   label: string;
@@ -143,4 +144,4 @@ function UpdateModelPage() {
   );
 }
 
-export default UpdateModelPage;
+export default WithSuspense(UpdateModelPage);

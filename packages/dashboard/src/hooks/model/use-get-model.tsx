@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import modelService from "../../services/model";
-export default function useGetModel({ id }: { id?: string }) {
-  const { data, isPending, error } = useQuery({
-    queryKey: ["models", id],
-    queryFn: id
-      ? ({ signal }) => modelService.getById({ signal, id })
-      : undefined,
-    enabled: !!id,
-    staleTime: 1000 * 60 * 5,
+import { useAppSuspenseQuery } from "../../lib/react-query-wrapper/use-app-query";
+
+export function useGetModel({ modelId }: { modelId: string; }) {
+  const returned = useAppSuspenseQuery({
+    queryFn: modelService.getById,
+    key: ["models", modelId],
+    arg: { id: modelId },
+    staleTime: 1000 * 60 * 2,
   });
-  return { model: data, isPending, error };
+
+  return { ...returned, model: returned.data };
 }

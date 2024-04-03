@@ -1,24 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import modelService from "../../services/model";
+import useAppMutation from "../../lib/react-query-wrapper/use-app-mutation";
 
 export default function useRemoveImage() {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: ({
-      imageId,
-    }: {
-      imageId: string
-      modelId: string
-    }) => {
-      if (!imageId) {
-        throw new Error("Model ID is required");
-      }
-      return modelService.removeImage({imageId});
-    },
-    onSuccess: (_, {modelId}) => {
-      queryClient.invalidateQueries({ queryKey: ["models", modelId] });
-    },
-  });
 
-  return { removeImage: mutate };
+  const {mutate, status} = useAppMutation({
+    mutationFn: modelService.removeImage,
+    invalidateQueryKeys: [["models"]],
+    notifySuccess: {notify: true, message: "Image removed successfully"},
+  })
+
+  return {removeImage: mutate, status}
 }

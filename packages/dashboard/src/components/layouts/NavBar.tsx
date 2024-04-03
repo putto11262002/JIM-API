@@ -5,6 +5,7 @@ import { useAppSelector } from "../../redux/hooks";
 import { useLogout } from "../../hooks/staff/useLogout";
 
 
+
 const menuItems = [
     {
       title: "Calendar",
@@ -47,6 +48,9 @@ export default function NavBar() {
       });
     }
 
+ 
+
+
    
 
   return (
@@ -64,7 +68,7 @@ export default function NavBar() {
                     <DropdownMenuItem>
                         <p>Settings</p>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => logout()}>
+                    <DropdownMenuItem onClick={() => logout({})}>
                         <p>Logout</p>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

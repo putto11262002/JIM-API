@@ -1,21 +1,19 @@
 import ImageGallery from "../../components/shared/image-gallery";
-import useGetModel from "../../hooks/model/use-get-model";
-import LoaderBlock from "@/components/shared/loader-block";
+import { useGetModelImage } from "@/hooks/model/use-get-model-images";
 
-export default function ModelMediaTab({ modelId, type }: { modelId: string, type: string }) {
-  const { model, isPending } = useGetModel({ id: modelId });
- 
-  if (isPending || !model) {
-    return <LoaderBlock message="Loading model data" />;
-  }
+
+function ModelMediaTab({ modelId, type }: { modelId: string, type: string }) {
+  const {data} = useGetModelImage({modelId})
   return (
     <>
       <div>
       <ImageGallery
-            images={model?.images?.filter((image) => image.type == type) || []}
+            images={data.filter((image) => image.type == type) || []}
           />
       </div>
     </>
   );
 }
+
+export default ModelMediaTab
 

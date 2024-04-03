@@ -216,7 +216,7 @@ async function getModels(
             take: 1
           },
         },
-        orderBy: query.order,
+        orderBy: {[query.orderBy ?? "createdAt"]: query.orderDir ?? "desc"},
       }),
       prisma.model.count({ where }),
     ]);

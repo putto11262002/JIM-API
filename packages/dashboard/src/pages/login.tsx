@@ -16,14 +16,15 @@ import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { useAppSelector } from "../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { AuthStatus } from "../redux/auth-reducer";
-import {  z } from "zod";
+import { z } from "zod";
 import { StaffLoginFormSchema } from "../schemas/staff";
 import { useLogin } from "../hooks/staff/useLogin";
+
 export default function LoginPage() {
 
   const navigate = useNavigate();
 
-  const {login, error} = useLogin()
+  const { login, error } = useLogin()
 
   const { status } = useAppSelector((state) => state.auth);
 

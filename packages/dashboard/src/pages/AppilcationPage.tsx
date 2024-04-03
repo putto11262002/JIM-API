@@ -1,10 +1,8 @@
 import { Plus } from "lucide-react";
 import { Button } from "../components/ui/button";
 import ApplicationTable from "../components/applications/ApplicationTable";
-import { useGetApplications } from "../hooks/application/useGetApplications";
-import { useState } from "react";
+import { useGetApplications } from "../hooks/application/use-get-applications";
 import {
-  ModelApplicationGetQuery,
   ModelApplicationStatus,
 } from "@jimmodel/shared";
 import {
@@ -16,31 +14,22 @@ import {
 import { SelectValue } from "@radix-ui/react-select";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-const pageSize = 10;
-function AppilcationPage() {
-  const [query, setQuery] = useState<ModelApplicationGetQuery>({
-    status: ModelApplicationStatus.PENDING,
-  });
-  const [page, setPage] = useState<number>(1);
-  const { data, isPending, error } = useGetApplications({
-    query: { ...query, page, pageSize },
-  });
+import LoaderBlock from "../components/shared/loader-block";
+import ErrorBlock from "../components/shared/error-block";
+import Pagination from "../components/shared/pagination";
 
-  function handlePageChange(page: number) {
-    if (page < 1 || page > (data?.totalPage ?? 0)) return;
-    setPage(page);
-  }
+function AppilcationPage() {
+  const {data, updateQuery, query, status, page, totalPage, prevPage, nextPage} = useGetApplications();
   return (
     <>
       <div className="flex justify-between py-3">
         <div className="w-1/5">
           <Select
             onValueChange={(value) => {
-              setQuery((prevQuery) => ({
+              updateQuery((prevQuery) => ({
                 ...prevQuery,
                 status: value as ModelApplicationStatus,
               }));
-              setPage(1);
             }}
             value={query.status}
           >
@@ -66,15 +55,18 @@ function AppilcationPage() {
         </Link>
       </div>
 
-      <div className="py-3">
-        <ApplicationTable
-          error={error}
-          onPageChange={handlePageChange}
-          data={data?.data ?? []}
-          isLoading={isPending}
-          pagination={{ page, pageSize, totalPage: data?.totalPage ?? 0 }}
-        />
-      </div>
+      {
+        status === "pending" ? (
+          <LoaderBlock/>
+        ) : status === "error" ? (
+         <ErrorBlock/>
+        ) : (
+          <>
+          <ApplicationTable className="mt-3" data={data} />
+        {totalPage > 1 &&  <Pagination className="mt-3 flex justify-end" page={page} totalPage={totalPage} prevPage={prevPage} nextPage={nextPage} />}
+          </>
+        )
+      }
     </>
   );
 }

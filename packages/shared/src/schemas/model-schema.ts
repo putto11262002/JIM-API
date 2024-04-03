@@ -5,6 +5,7 @@ import {
   EncodedModelGetQuery,
   ModelCreateInput,
   ModelExperienceCreateInput,
+  ModelFields,
   ModelGetQuery,
   ModelUpdateInput,
 } from "../types/index.js";
@@ -170,33 +171,9 @@ export const DecodeGetModelQuerySchema = schemaForType<ModelGetQuery>()(
     page: PaginatedQuerySchema.shape.page,
     pageSize: PaginatedQuerySchema.shape.pageSize,
     q: z.string().optional(),
-    order: z
-      .string()
-      .transform((val, ctx) => {
-        if (val === undefined) {
-          return undefined;
-        }
-
-        const parts = val.split(":");
-        const orderByfield = parts.shift();
-        let orderDir = parts.shift();
-        if (orderByfield === undefined) {
-          return undefined;
-        }
-
-        if (orderDir !== "asc" && orderDir !== "desc") {
-          orderDir = undefined;
-        }
-
-        const order: { [key: string]: "asc" | "desc" | undefined } = {
-          [orderByfield]: orderDir,
-        };
-
-        return order;
-      })
-      .optional(),
-  })
-);
+    orderBy: z.nativeEnum(ModelFields).optional(),
+    orderDir: z.enum(["asc", "desc"]).optional(),
+  }))
 
 
 export const ModelSetProfileImageSchema = z.object({

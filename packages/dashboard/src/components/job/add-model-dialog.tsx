@@ -1,33 +1,25 @@
 import { Plus } from "lucide-react";
-import { Button } from "../../ui/button";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
-import { Input } from "../../ui/input";
+} from "../ui/dialog";
+import { Input } from "../ui/input";
 import { Model } from "@jimmodel/shared";
-import { Avatar, AvatarImage } from "../../ui/avatar";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import React from "react";
 import placeholderImage from "@assets/placeholder.jpeg";
-import ModelTable from "./model-table";
 
-export function AddModelDialog({
-  searchedModels,
-  onSeachTermChange,
-  onAddModel,
-}: {
-  searchedModels?: Model[];
-  onSeachTermChange: (term: string) => void;
-  onAddModel: (model: Model) => void;
-}) {
+export function AddModelDialog({ onAddModel, children, onSearchModel, searchedModels }: { onAddModel: (model: Model) => void, children: React.ReactNode, onSearchModel: (term: string) => void, searchedModels: Model[]}) {
+
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
-          <Plus className="w-4 h-4 mr-2" /> Model
-        </Button>
+       {children}
       </DialogTrigger>
 
       <DialogContent className="">
@@ -37,7 +29,9 @@ export function AddModelDialog({
 
         <div className="space-y-3">
           <Input
-            onChange={(e) => onSeachTermChange(e.target.value)}
+            onChange={(e) => {
+              onSearchModel(e.target.value);
+            }}
             placeholder="Search for model..."
           />
           <div className="">
@@ -48,7 +42,7 @@ export function AddModelDialog({
               >
                 <Avatar>
                   <AvatarImage
-                  className="object-cover"
+                    className="object-cover"
                     src={model.images?.[0]?.url || placeholderImage}
                   />
                 </Avatar>
@@ -73,33 +67,3 @@ export function AddModelDialog({
     </Dialog>
   );
 }
-function JobModelForm({
-  onSeachTermChange,
-  searchedModels,
-  onAddModel,
-  models,
-  onRemoveModel
-}: {
-  onSeachTermChange: (term: string) => void;
-  searchedModels?: Model[];
-  onAddModel: (model: Model) => void;
-  models?: Model[];
-  onRemoveModel: (modelId: string) => void;
-}) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <AddModelDialog
-          searchedModels={searchedModels}
-          onSeachTermChange={onSeachTermChange}
-          onAddModel={onAddModel}
-        />
-      </div >
-     <div>
-     <ModelTable onRemoveModel={onRemoveModel} models={models || []} />
-     </div>
-    </div>
-  );
-}
-
-export default JobModelForm;
