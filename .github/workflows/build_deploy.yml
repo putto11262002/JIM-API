@@ -3,6 +3,8 @@ name: Build and Deploy
 on:
   push:
   pull_request:
+    types: 
+      - closed
 
 jobs:
 
@@ -36,7 +38,7 @@ jobs:
 
   # Only deploy the database when the main branch is pushed
   deploy_db: 
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
     needs: build
     runs-on: ubuntu-latest
     environment: Production
@@ -65,7 +67,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   invoke_deployment:
-    if : github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
     needs: [build, deploy_db]
     environment: Production
@@ -75,3 +77,4 @@ jobs:
         uses: distributhor/workflow-webhook@v3
         with:
             webhook_url: ${{ secrets.WEBHOOK_URL }}
+
