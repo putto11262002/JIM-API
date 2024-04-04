@@ -15,26 +15,38 @@ import _ from "lodash";
 dayjs.extend(utc);
 
 const dayjsutc = dayjs.utc;
+
+/**
+ * Get the date range for the given date and mode
+ */
 function getDateRange(date: Dayjs, mode: CalendarMode) {
   switch (mode) {
-    case CalendarMode.Day:
-      return {
-        startDate: date.startOf("day"),
-        endDate: date.endOf("day"),
-      };
+    // case CalendarMode.Day:
+    //   return {
+    //     startDate: date.startOf("day"),
+    //     endDate: date.endOf("day"),
+    //   };
     case CalendarMode.Week:
       return {
         startDate: date.startOf("week"),
         endDate: date.endOf("week"),
       };
     case CalendarMode.Month:
+      const startOfMonth = date.startOf("month");
+      const endOfMonth = date.endOf("month");
       return {
-        startDate: date.startOf("month"),
-        endDate: date.endOf("month"),
+        startDate: startOfMonth.startOf("week"),
+        endDate: endOfMonth.endOf("week"),
       };
   }
 }
 
+/**
+ * Get all booking events that are active between the given date range
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 async function getBookingEvents(startDate: Dayjs, endDate: Dayjs) {
   const bookings = await prisma.booking.findMany({
     where: {
@@ -77,6 +89,12 @@ async function getBookingEvents(startDate: Dayjs, endDate: Dayjs) {
   return calendarEvent;
 }
 
+/**
+ * Get all block events that are active between the given date range
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 async function getBlockEvents(startDate: Dayjs, endDate: Dayjs) {
   const blocks = await prisma.block.findMany({
     where: {
@@ -111,6 +129,12 @@ async function getBlockEvents(startDate: Dayjs, endDate: Dayjs) {
   return calendarEvent;
 }
 
+/**
+ * Get all calendar events (booking and block) that are active between the given date range
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 async function getCalendarEvents(startDate: Dayjs, endDate: Dayjs) {
   const calendarEvents = await Promise.all([
     getBookingEvents(startDate, endDate),
@@ -120,6 +144,11 @@ async function getCalendarEvents(startDate: Dayjs, endDate: Dayjs) {
   return calendarEvents.flat();
 }
 
+/**
+ * Get the date keys for the given event. Date keys are the dates that the event spans. 
+ * @param event 
+ * @returns 
+ */
 function getDateKeyMap(event: CalendarEvent) {
   switch (event.type) {
     case EventType.Booking:
@@ -147,6 +176,11 @@ function getDateKeyMap(event: CalendarEvent) {
   }
 }
 
+/**
+ * Get a map of event ids to the date keys that the event spans
+ * @param events 
+ * @returns 
+ */
 function getEventDateKeysMap(events: CalendarEvent[]) {
   const eventToDateKeys: Map<string, string[]> = new Map();
 
@@ -158,6 +192,12 @@ function getEventDateKeysMap(events: CalendarEvent[]) {
   return eventToDateKeys;
 }
 
+/**
+ * Sort events in the order they should be displayed
+ * @param a 
+ * @param b 
+ * @returns 
+ */
 function eventSortFn(a: CalendarEvent, b: CalendarEvent) {
   if (a.type === EventType.Block && b.type === EventType.Booking) {
     return -1;
@@ -213,6 +253,7 @@ function sortModel(dates: Calendar['dates']){
     });
   });
 }
+
 
 async function getCalendar(
   req: express.Request,

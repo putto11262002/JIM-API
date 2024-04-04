@@ -3,7 +3,7 @@ import { EventType } from "@jimmodel/shared";
 import dayjs, { Dayjs } from "dayjs";
 import { ReactNode, createContext, useContext, useState } from "react";
 import { upperFirst } from "lodash";
-import { getEventColor } from "@/pages/calendar/utils";
+import { getEventColor } from "@/components/calendar/utils";
 import { JobDropdownMenu } from "../job/job-dropdown-menu";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";

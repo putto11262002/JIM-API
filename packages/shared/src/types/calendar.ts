@@ -2,7 +2,7 @@ import { Block } from "./block.js";
 import { BookingWithJob } from "./job.js";
 
 export enum CalendarMode {
-  Day = "day",
+  // Day = "day",
   Week = "week",
   Month = "month",
 }

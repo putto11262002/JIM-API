@@ -78,7 +78,3 @@ jobs:
         with:
             webhook_url: ${{ secrets.WEBHOOK_URL }}
 
-
-      
-      
-  

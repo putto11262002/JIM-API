@@ -16,13 +16,11 @@ import utc from "dayjs/plugin/utc";
 import CalendarComp from "../../components/calendar";
 import { useCalendar } from "../../components/calendar/context";
 
-
-
 dayjs.extend(utc);
 
 
 function CalendarPage() {
-  const {next, previous, mode, now, today} = useCalendar()
+  const {next, previous, mode, now, today, setMode} = useCalendar()
 
   function getCurrent() {
     if (mode === CalendarMode.Month) {
@@ -32,9 +30,6 @@ function CalendarPage() {
       return `${now.startOf("week").format("D MMM")} - ${now
         .endOf("week")
         .format("D MMM")}`;
-    }
-    if (mode === CalendarMode.Day) {
-      return now.format("D MMMM YYYY");
     }
   }
 
@@ -46,13 +41,13 @@ function CalendarPage() {
 
           <Button
             className=""
-            onClick={() => next()}
+            onClick={() => previous()}
             variant={"outline"}
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <Button
-            onClick={() => previous()}
+            onClick={() => next()}
             variant={"outline"}
           >
             <ArrowRight className="h-4 w-4" />
@@ -64,7 +59,7 @@ function CalendarPage() {
         </div>
 
         <div className="">
-          <Select defaultValue={mode}>
+          <Select onValueChange={value => setMode(value as CalendarMode)} defaultValue={mode}>
             <SelectTrigger className="w-40">
               <SelectValue className="" />
             </SelectTrigger>
