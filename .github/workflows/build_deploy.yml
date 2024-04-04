@@ -75,13 +75,3 @@ jobs:
         uses: distributhor/workflow-webhook@v3
         with:
             webhook_url: ${{ secrets.WEBHOOK_URL }}
-
-    
-
-      
-    
-  
-
-      
-      
-  
