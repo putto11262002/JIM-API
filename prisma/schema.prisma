@@ -26,7 +26,7 @@ model Staff {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   color     String
-  jobs       Job[]
+  jobs      Job[]
 }
 
 enum StaffRole {
@@ -57,8 +57,8 @@ model ModelApplicationImage {
   type          String
   caption       String?
   url           String
-  // height        Int
-  // width         Int
+  height        Int
+  width         Int
   application   ModelApplication @relation(fields: [applicationId], references: [id])
   applicationId String
   createdAt     DateTime         @default(now())
@@ -107,10 +107,12 @@ model ModelApplication {
 model ModelImage {
   id        String   @id @default(uuid())
   caption   String?
-  profile Boolean  @default(false)
+  profile   Boolean  @default(false)
   type      String
   url       String
   fileId    String
+  width    Int
+  height    Int 
   model     Model    @relation(fields: [modelId], references: [id])
   modelId   String
   createdAt DateTime @default(now())
@@ -200,6 +202,8 @@ model Model {
   Job                          Job[]
   Booking                      Booking[]
   Block                        Block[]
+  public                       Boolean @default(false)
+  tags                         String[]
 }
 
 model Option {

@@ -18,15 +18,15 @@ export const headerNavItems: NavMenuItem[] = [
       children: [
         {
           label: "In Town",
-          href: "/models/women/in-town",
+          href: "/model/women/in-town",
         },
         {
           label: "Direct Booking",
-          href: "/models/women/direct-booking",
+          href: "/model/women/direct-booking",
         },
         {
           label: "Local",
-          href: "/models/women/local",
+          href: "/model/women/local",
         },
       ],
     },
@@ -35,15 +35,15 @@ export const headerNavItems: NavMenuItem[] = [
       children: [
         {
           label: "In Town",
-          href: "/models/men/in-town",
+          href: "/model/men/in-town",
         },
         {
           label: "Direct Booking",
-          href: "/models/men/direct-booking",
+          href: "/model/men/direct-booking",
         },
         {
           label: "Local",
-          href: "/models/men/local",
+          href: "/model/men/local",
         },
       ],
     },
@@ -73,7 +73,7 @@ export const footerNavItems: Extract<NavMenuItem, {href: string}>[] = [
   },
   {
     label: "Models",
-    href: "/models",
+    href: "/model",
   },
   {
     label: "Contact",

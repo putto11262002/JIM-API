@@ -4,8 +4,8 @@ import { PaginatedDataQuery } from "./pagingated-data-type.js";
 export type ModelImage = db.ModelImage;
 
 export type Model = db.Model & {
-  images?: ModelImage[];
-  experiences?: db.ModelExperience[];
+  images: ModelImage[];
+  experiences: db.ModelExperience[];
 };
 
 export type ModelCreateInput = Omit<
@@ -21,6 +21,7 @@ export type ModelUpdateInput = Omit<
   "experiences" | "images"
 > & {
   talents?: string[];
+  tags?: string[];
 };
 
 export type ModelImageCreateInput = db.Prisma.ModelImageCreateWithoutModelInput;
@@ -30,6 +31,7 @@ export type ModelExperienceCreateInput =
 
 export type EncodedModelGetQuery = {
   q?: string;
+  public?: boolean
   order?: string;
   page?: number;
   pageSize?: number;
@@ -37,6 +39,7 @@ export type EncodedModelGetQuery = {
 
 export type ModelGetQuery = {
   q?: string;
+  public?: boolean
   orderBy?: string;
   orderDir?: "asc" | "desc";
 } & PaginatedDataQuery<ModelFields>;

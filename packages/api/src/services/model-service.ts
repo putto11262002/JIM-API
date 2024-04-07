@@ -5,23 +5,26 @@ import {
   FileMetaData,
   ModelExperienceCreateInput,
   ModelUpdateInput,
+  ModelGetQuery,
+  PaginatedData,
 } from "@jimmodel/shared";
 import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
-import localFileService from "./local-file-service";
+import localFileService, { ImageMetaData } from "./local-file-service";
 export interface IModelService {
   getById(id: string): Promise<Model>;
   create(modelInput: ModelCreateInput): Promise<Model>;
   updateById(modelId: string, modelInput: ModelUpdateInput): Promise<Model>;
   addImage(
     modelId: string,
-    image: { image: Express.Multer.File | FileMetaData; type: string }
+    image: { image: Express.Multer.File | ImageMetaData; type: string }
   ): Promise<void>;
   removeModelImage(imageId: string): Promise<void>;
   addExperience(
     modelId: string,
     experience: ModelExperienceCreateInput | ModelExperienceCreateInput[]
   ): Promise<void>;
+  getModels(query: ModelGetQuery): Promise<PaginatedData<Model>>
 }
 
 async function getById(id: string): Promise<Model> {
@@ -50,7 +53,7 @@ async function create(modelInput: ModelCreateInput): Promise<Model> {
 
 async function addImage(
   modelId: string,
-  image: { image: Express.Multer.File | FileMetaData; type: string }
+  image: { image: Express.Multer.File | ImageMetaData; type: string }
 ): Promise<void> {
   const model = await prisma.model.findUnique({
     where: {
@@ -60,10 +63,10 @@ async function addImage(
   if (model === null) {
     throw new NotFoundError("Model not found");
   }
-  let savedImage: FileMetaData;
+  let savedImage: ImageMetaData;
 
   if ("originalname" in image.image) {
-    savedImage = await localFileService.saveFile(image.image);
+    savedImage = await localFileService.saveImage(image.image);
   } else {
     savedImage = image.image;
   }
@@ -73,6 +76,8 @@ async function addImage(
       url: savedImage.url,
       fileId: savedImage.id,
       type: image.type,
+      width: savedImage.width,
+      height: savedImage.height,
       model: {
         connect: {
           id: modelId,
@@ -155,6 +160,68 @@ async function addExperience(
   });
 }
 
+async function getModels(
+  query: ModelGetQuery
+){
+  const where: pgk.Prisma.ModelWhereInput = {};
+
+  if (query !== undefined) {
+    if (query.q !== undefined) {
+      where.OR = [
+        {
+          firstName: {
+            contains: query.q,
+          },
+        },
+        {
+          lastName: {
+            contains: query.q,
+          },
+        },
+      ];
+    }
+
+    if (query.public !== undefined){
+      where.public = query.public
+    }
+  }
+
+
+  const page = query.page ?? 1;
+  const pageSize = query.pageSize ?? 10;
+
+  const [models, total] = await Promise.all([
+    prisma.model.findMany({
+      where,
+      take: pageSize,
+      skip: (page - 1) * pageSize,
+      include: {
+        experiences: true,
+        images: {
+          orderBy: {
+            profile: "desc",
+          },
+          take: 1
+        },
+      },
+      orderBy: {[query.orderBy ?? "createdAt"]: query.orderDir ?? "desc"},
+    }),
+    prisma.model.count({ where }),
+  ]);
+
+  const paginatedModel: PaginatedData<Model> = {
+    data: models,
+    total,
+    page,
+    pageSize,
+    totalPage: Math.ceil(total / pageSize),
+    hasNextPage: total > page * pageSize,
+    hasPreviousPage: page > 1,
+  };
+
+  return paginatedModel
+}
+
 const modelService: IModelService = {
   getById,
   create,
@@ -162,6 +229,7 @@ const modelService: IModelService = {
   removeModelImage,
   addExperience,
   updateById,
+  getModels
 };
 
 export default modelService;

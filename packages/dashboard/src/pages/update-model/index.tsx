@@ -13,6 +13,7 @@ import ModelMeasurementInfoUpdateForm from "./meaaurement-info-update-form";
 import ModelBackgroundInfoUpdateForm from "./background-info-update-form";
 import ModelMediaUpdateForm from "./model-media-update-form";
 import WithSuspense from "../../components/shared/with-suspense";
+import ActionForm from "./action-form";
 
 const menuItems: {
   label: string;
@@ -88,6 +89,11 @@ const menuItems: {
     form: ({ modelId }) => (
       <ModelMediaUpdateForm modelId={modelId} type="composite"/>
     ),
+  },
+  {
+    label: "Actions",
+    value: "action",
+    form: ({modelId}) => <ActionForm modelId={modelId}/>
   }
 ];
 

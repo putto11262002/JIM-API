@@ -7,7 +7,12 @@ const modelRouter = express.Router();
 
 modelRouter.get("/", staffAuthMiddleware(), modelController.getModels);
 
-modelRouter.get("/:id", modelController.getModel);
+
+modelRouter.get("/public", modelController.getPublicModels)
+
+modelRouter.get("/public/:id", modelController.getPublicModelById)
+
+modelRouter.get("/:id", staffAuthMiddleware(), modelController.getModel);
 
 modelRouter.post("/", staffAuthMiddleware(),modelController.createModel);
 

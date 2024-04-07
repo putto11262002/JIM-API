@@ -5,12 +5,12 @@ import { ArrowUpRight } from "lucide-react";
 
 function AboutUs() {
   return (
-    <section className="py-20 pb-10">
+    <section className="py-10">
       <div className="container">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold">About Us</h2>
-            <p className="text-muted-foreground">Our mission</p>
+            <h2 className="text-2xl font-bold">Our Mission</h2>
+            {/* <p className="text-muted-foreground">Our mission</p> */}
           </div>
           <Link
             className="hidden underline items-center md:flex text-sm "

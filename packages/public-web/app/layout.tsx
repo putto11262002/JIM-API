@@ -28,7 +28,8 @@ export default function RootLayout({
         className={cn("font-sans antialiased bg-background", roboto.variable)}
       >
         <Header />
-        <main className="mt-14">{children}</main>
+        <div className="h-14"></div>
+        <main className=" min-h-screen">{children}</main>
         <Footer />
       </body>
     </html>

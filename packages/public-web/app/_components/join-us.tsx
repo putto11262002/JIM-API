@@ -19,7 +19,7 @@ function JoinUs() {
   );
   const buttonOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
   return (
-    <section ref={sectionRef} className="h-[300vh] relative">
+    <section ref={sectionRef} className="h-[300vh] relative overflow-clip">
       <motion.div className="sticky top-14 h-screen w-screen bg-red z-10 overflow-hidden">
         <div className="relative h-full w-full">
           <motion.div
@@ -40,7 +40,7 @@ function JoinUs() {
             style={{ opacity: buttonOpacity }}
             className="absolute h-full w-full flex flex-col justify-center items-center bg-red"
           >
-            <h2 className="text-bold text-xl">Unlease your true potential</h2>
+            <h2 className="text-bold text-xl">Unleash your true potential</h2>
             <button className="mt-3 py-3 px-8 bg-primary rounded-3xl text-white font-medium hover:bg-white hover:text-primary hover:scale-105 transition-transform duration-75 delay-75">
               Join Us
             </button>

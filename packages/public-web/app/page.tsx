@@ -9,9 +9,10 @@ export default function Home() {
   return (
     <main>
       <ImageSlider/>
-      <AboutUs/>
       <Portfolio/>
+      <AboutUs/>
      <JoinUs/>
+
     </main>
   );
 }

@@ -272,6 +272,9 @@ importers:
 
   packages/public-web:
     dependencies:
+      '@jimmodel/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@radix-ui/react-collapsible':
         specifier: ^1.0.3
         version: 1.0.3(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0)
@@ -284,9 +287,15 @@ importers:
       '@radix-ui/react-navigation-menu':
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0)
+      '@radix-ui/react-separator':
+        specifier: ^1.0.3
+        version: 1.0.3(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: 1.0.2(@types/react@18.2.67)(react@18.2.0)
+      '@radix-ui/react-switch':
+        specifier: ^1.0.3
+        version: 1.0.3(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -296,6 +305,9 @@ importers:
       framer-motion:
         specifier: ^11.0.24
         version: 11.0.24(react-dom@18.2.0)(react@18.2.0)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       next:
         specifier: 14.1.4
         version: 14.1.4(react-dom@18.2.0)(react@18.2.0)
@@ -312,6 +324,9 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.1)
     devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.0
+        version: 4.17.0
       '@types/node':
         specifier: ^20
         version: 20.11.29
@@ -336,6 +351,9 @@ importers:
       postcss:
         specifier: ^8
         version: 8.4.36
+      react-grid-gallery:
+        specifier: 1.0.1-alpha.0
+        version: 1.0.1-alpha.0(react@18.2.0)
       tailwindcss:
         specifier: ^3.3.0
         version: 3.4.1
@@ -7650,6 +7668,14 @@ packages:
   /react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
     dev: false
+
+  /react-grid-gallery@1.0.1-alpha.0(react@18.2.0):
+    resolution: {integrity: sha512-7Qf4ZRQD/f5h2c0v0ocfMViUijUyQmWnkcL4HDHBtJWaCM+8RZjUGYE+H9kxT1/ui9Zsyc9NmyA6SSCxNu3KiQ==}
+    peerDependencies:
+      react: '>=16.14.0'
+    dependencies:
+      react: 18.2.0
+    dev: true
 
   /react-helmet@6.1.0(react@18.2.0):
     resolution: {integrity: sha512-4uMzEY9nlDlgxr61NL3XbKRy1hEkXmKNXhjbAIOVw5vcFrsdYbH2FEwcNyWvWinl103nXgzYNlns9ca+8kFiWw==}

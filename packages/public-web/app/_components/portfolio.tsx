@@ -166,7 +166,7 @@ function PortfolioItem(item: PortfolioItem) {
 
 function Portfolio() {
   return (
-    <section className="py-10">
+    <section className="py-10 pt-20">
     <div className="container">
     <h2 className="text-2xl font-bold">Portfolio</h2>
       <h3 className="text-muted-foreground">Explore Our Diverse Collection of Work</h3>

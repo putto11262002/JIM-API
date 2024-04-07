@@ -73,6 +73,8 @@ export const ModelCreateSchema = schemaForType<ModelCreateInput>()(
     shoeSize: z.string().optional(),
     hairColor: z.string().optional(),
     eyeColor: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    public: z.boolean().optional()
   })
 );
 
@@ -139,6 +141,8 @@ export const ModelUpdateSchema = schemaForType<ModelUpdateInput>()(
     shoeSize: z.string().optional().nullable(),
     hairColor: z.string().optional().nullable(),
     eyeColor: z.string().optional().nullable(),
+    public: z.boolean().optional(),
+    tags: z.array(z.string()).optional()
   })
 );
 
@@ -170,6 +174,7 @@ export const DecodeGetModelQuerySchema = schemaForType<ModelGetQuery>()(
   z.object({
     page: PaginatedQuerySchema.shape.page,
     pageSize: PaginatedQuerySchema.shape.pageSize,
+    public: z.string().transform(val => val === "true" ? true : val === "false" ? false : undefined).optional(),
     q: z.string().optional(),
     orderBy: z.nativeEnum(ModelFields).optional(),
     orderDir: z.enum(["asc", "desc"]).optional(),

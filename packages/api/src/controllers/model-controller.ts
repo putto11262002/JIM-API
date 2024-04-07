@@ -13,10 +13,11 @@ import {
   CreateModelImageSchema,
   ModelCreateSchema,
   Model,
-  ModelSetProfileImageSchema,
+
 } from "@jimmodel/shared";
 import modelService from "../services/model-service";
 import { validate } from "../lib/validation";
+import { ACCEPTED_IMAGE_MIMETYPE } from "../lib/file-processors/image";
 
 interface IModelController {
   createModel: express.Handler;
@@ -29,6 +30,8 @@ interface IModelController {
   getModel: express.Handler;
   setModelProfileImage: express.Handler;
   getModelImages: express.Handler;
+  getPublicModels: express.Handler
+  getPublicModelById: express.Handler
 }
 
 async function createModel(
@@ -120,12 +123,15 @@ async function addModelImage(
   next: express.NextFunction
 ) {
   try {
-    console.log("addModelImage");
     const modelId = req.params.id;
 
     const modelImage = extractSingleFilesFromRequest(req, "image");
     if (modelImage === null) {
       throw new Error("Image found in the request");
+    }
+
+    if (!ACCEPTED_IMAGE_MIMETYPE.includes(modelImage.mimetype)){
+      throw new Error("Invalid image format")
     }
 
     const { type } = validate(req.body, CreateModelImageSchema);
@@ -180,58 +186,53 @@ async function getModels(
   try {
     const query = validate(req.query, DecodeGetModelQuerySchema);
 
-    const where: pgk.Prisma.ModelWhereInput = {};
+    const result = await modelService.getModels(query)
 
-    if (query !== undefined) {
-      if (query.q !== undefined) {
-        where.OR = [
-          {
-            firstName: {
-              contains: query.q,
-            },
-          },
-          {
-            lastName: {
-              contains: query.q,
-            },
-          },
-        ];
-      }
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+async function getPublicModels(
+  req: express.Request, 
+  res: express.Response,
+  next: express.NextFunction
+){
+  try{
+    const query = validate(req.query, DecodeGetModelQuerySchema)
+    const result = await modelService.getModels({...query, public: true})
+    res.json(result)
+  }catch(err){
+    next(err)
+  }
+}
+
+async function getPublicModelById(
+  req: express.Request, 
+  res: express.Response,
+  next: express.NextFunction
+){
+  try {
+    const modelId = req.params.id;
+
+    const model = await prisma.model.findUnique({
+      where: {
+        id: modelId,
+        public: true
+      },
+      include: {
+        experiences: true,
+        images: true
+      },
+    });
+
+    if (model === null) {
+      throw new NotFoundError("Model not found");
     }
 
-    const page = query.page ?? 1;
-    const pageSize = query.pageSize ?? 10;
-
-    const [models, total] = await Promise.all([
-      prisma.model.findMany({
-        where,
-        take: pageSize,
-        skip: (page - 1) * pageSize,
-        include: {
-          experiences: true,
-          images: {
-            orderBy: {
-              profile: "desc",
-            },
-            take: 1
-          },
-        },
-        orderBy: {[query.orderBy ?? "createdAt"]: query.orderDir ?? "desc"},
-      }),
-      prisma.model.count({ where }),
-    ]);
-
-    const paginatedModel: PaginatedData<Model> = {
-      data: models,
-      total,
-      page,
-      pageSize,
-      totalPage: Math.ceil(total / pageSize),
-      hasNextPage: total > page * pageSize,
-      hasPreviousPage: page > 1,
-    };
-
-    return res.json(paginatedModel);
+    return res.json(model);
   } catch (err) {
     next(err);
   }
@@ -313,13 +314,11 @@ async function getModelImages(
 ){
   try{
     const modelId = req.params.id;
-
     const images = await prisma.modelImage.findMany({
       where: {
         modelId
       }
     })
-
     return res.json(images)
   }catch(err){
     next(err)
@@ -337,7 +336,9 @@ const modelController: IModelController = {
   removeModelImage,
   getModel,
   setModelProfileImage,
-  getModelImages
+  getModelImages,
+  getPublicModels,
+  getPublicModelById
 };
 
 export default modelController;

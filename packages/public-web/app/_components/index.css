@@ -33,9 +33,9 @@
   animation: slide 30s infinite linear;
 }
 
-.slide-animation-container:hover  .slide-animation {
+/* .slide-animation-container:hover  .slide-animation {
   animation-play-state: paused;
-}
+} */
 
 .about-us-card {
   background-image:url("http://localhost:3000/model1.jpeg");

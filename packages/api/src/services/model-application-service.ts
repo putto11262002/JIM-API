@@ -66,18 +66,20 @@ async function addImages(modelApplicationId: string, images: ModelApplicationAdd
         throw new ConstraintViolationError("Images already added to the model application")
     }
 
-    for (let i =0; i <  images.length; i++){
-      await sharp(images[i].image.path).resize(600, 600).toFormat("jpeg").toFile(images[i].image.destination + "/resized-" + images[i].image.filename)
-      images[i].image.path = images[i].image.destination + "/resized-" + images[i].image.filename
-    }
+    // for (let i =0; i <  images.length; i++){
+    //   await sharp(images[i].image.path).resize(600, 600).toFormat("jpeg").toFile(images[i].image.destination + "/resized-" + images[i].image.filename)
+    //   images[i].image.path = images[i].image.destination + "/resized-" + images[i].image.filename
+    // }
 
 
     const savedIamges = await Promise.all(images.map(async(image) => {
-        const savedImage = await localFileService.saveFile(image.image)
+        const savedImage = await localFileService.saveImage(image.image)
         return {
             url: savedImage.url,
             type: image.type,
-            fileId: savedImage.id
+            fileId: savedImage.id,
+            width: savedImage.width,
+            height: savedImage.height
         }
     }))
 
@@ -161,7 +163,7 @@ async function accept(modelApplicationId: string): Promise<Model>{
 
     for (const image of modelApplication.images){
       const fileMetaData = await localFileService.getFileMetaData(image.fileId)
-        await modelService.addImage(model.id, {image: fileMetaData, type: image.type})
+        await modelService.addImage(model.id, {image: {...fileMetaData, width: image.width, height: image.height}, type: image.type})
     }
 
     for(const experience of modelApplication.experiences){
