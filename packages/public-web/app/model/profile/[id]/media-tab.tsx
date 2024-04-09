@@ -22,7 +22,7 @@ function MediaTab({images}: {images: ModelImage[]}) {
     <div>
    
       <div className="">
-        <div className=" py-1 px-2 flex justify-around gap-2 rounded-3xl bg-muted text-sm max-w-[400px] mx-auto">
+        <div className=" py-1 px-2 flex justify-around gap-2 rounded-3xl bg-muted text-sm mx-auto max-w-[300px]">
           <MediaTabListItem label="Book" onSelect={() => setActiveTab(Tab.BOOK)} selected={activeTab === Tab.BOOK}/>
           <MediaTabListItem label="Composite" onSelect={() => setActiveTab(Tab.COMPOSITE)} selected={activeTab === Tab.COMPOSITE}/>
           <MediaTabListItem label="Polaroid" onSelect={() => setActiveTab(Tab.POLAROID)} selected={activeTab === Tab.POLAROID}/>
@@ -35,7 +35,8 @@ function MediaTab({images}: {images: ModelImage[]}) {
            
             filteredImage
           }
-          maxRows={1}
+          rowHeight={250}
+          
         />}
       </div>
     </div>

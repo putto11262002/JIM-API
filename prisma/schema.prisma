@@ -104,11 +104,17 @@ model ModelApplication {
   updatedAt     DateTime                     @updatedAt
 }
 
+enum ModelImageType {
+  POLAROID
+  BOOK
+  COMPOSITE
+}
+
 model ModelImage {
   id        String   @id @default(uuid())
   caption   String?
   profile   Boolean  @default(false)
-  type      String
+  type      ModelImageType
   url       String
   fileId    String
   width    Int
@@ -130,21 +136,27 @@ model ModelExperience {
   details String?
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+}
+
 model Model {
   id                           String            @id @default(uuid())
-  firstName                    String
-  lastName                     String
+  // firstName                    String
+  // lastName                     String
   name                         String
   nickname                     String?
-  phoneNumber                  String
-  email                        String
+  phoneNumber                  String?
+  email                        String?
   lineId                       String?
   whatsapp                     String?
   wechat                       String?
   instagram                    String?
   facebook                     String?
-  dateOfBirth                  DateTime
-  gender                       String
+  dateOfBirth                  DateTime?
+  gender                       Gender
   nationality                  String?
   ethnicity                    String?
   countryOfResidence           String?
@@ -168,8 +180,8 @@ model Model {
   emergencyContactName         String?
   emergencyContactPhoneNumber  String?
   emergencyContactRelationship String?
-  height                       String
-  weight                       String
+  height                       String?
+  weight                       String?
   bust                         String?
   collar                       String?
   aroundArmpit                 String?
@@ -210,12 +222,13 @@ model Option {
   id String @id @default(uuid())
 }
 
-model FileMetaData {
+model ApplicationFile {
   id        String   @id @default(uuid())
   path      String
   url       String
-  mimeType  String
+  mimetype  String
   size      Int
+  location  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

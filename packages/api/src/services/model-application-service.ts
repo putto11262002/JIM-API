@@ -1,13 +1,15 @@
-import { ModelApplication, ModelApplicationCreateInput, PaginatedData, ModelApplicationStatus, ModelCreateInput, Model, ModelApplicationGetQuery } from "@jimmodel/shared";
+import { ModelApplication, ModelApplicationCreateInput, PaginatedData, ModelApplicationStatus, ModelCreateInput, Model, ModelApplicationGetQuery, ModelGender } from "@jimmodel/shared";
 import * as pkg from "@prisma/client";
 import { prisma } from "../prisma";
 import NotFoundError from "../lib/errors/not-found-error";
 import ConstraintViolationError from "../lib/errors/constraint-violation-error";
-import localFileService from "./local-file-service";
+import localFileService from "./file-service/local-file-service";
 import modelService from "./model-service";
 import { buildPaginatedData } from "../lib/paginated-data";
 
 import sharp from "sharp";
+import { ApplicationImage } from "./image";
+import { File } from "../types/file";
 
 export type ModelApplicationAddImagesInput = {type: string, image: Express.Multer.File}[]
 
@@ -66,20 +68,18 @@ async function addImages(modelApplicationId: string, images: ModelApplicationAdd
         throw new ConstraintViolationError("Images already added to the model application")
     }
 
-    // for (let i =0; i <  images.length; i++){
-    //   await sharp(images[i].image.path).resize(600, 600).toFormat("jpeg").toFile(images[i].image.destination + "/resized-" + images[i].image.filename)
-    //   images[i].image.path = images[i].image.destination + "/resized-" + images[i].image.filename
-    // }
-
 
     const savedIamges = await Promise.all(images.map(async(image) => {
-        const savedImage = await localFileService.saveImage(image.image)
+      const applicationImage = new ApplicationImage(image.image)
+      const {width, height} = await applicationImage.autoResize()
+      const format = applicationImage.formatTo()
+      const applicationFile = await localFileService.saveFileFromReadableStream(await applicationImage.getReadableStream(), `image/${format}`)
         return {
-            url: savedImage.url,
+            url: applicationFile.url,
             type: image.type,
-            fileId: savedImage.id,
-            width: savedImage.width,
-            height: savedImage.height
+            fileId: applicationFile.id,
+            width: width!,
+            height: height!
         }
     }))
 
@@ -123,8 +123,7 @@ async function accept(modelApplicationId: string): Promise<Model>{
 
 
     const creatModelInput: ModelCreateInput = {
-      firstName: modelApplication.firstName,
-      lastName: modelApplication.lastName,
+     name: `${modelApplication.firstName} ${modelApplication.lastName}`,
       email: modelApplication.email,
       phoneNumber: modelApplication.phoneNumber,
       nickname: `${modelApplication.firstName} ${modelApplication.lastName
@@ -136,7 +135,7 @@ async function accept(modelApplicationId: string): Promise<Model>{
       instagram: modelApplication.instagram,
       facebook: modelApplication.facebook,
       dateOfBirth: modelApplication.dateOfBirth,
-      gender: modelApplication.gender,
+      gender: modelApplication.gender as ModelGender,
       nationality: modelApplication.nationality,
       ethnicity: modelApplication.ethnicity,
       address: modelApplication.address,
@@ -162,8 +161,8 @@ async function accept(modelApplicationId: string): Promise<Model>{
     )
 
     for (const image of modelApplication.images){
-      const fileMetaData = await localFileService.getFileMetaData(image.fileId)
-        await modelService.addImage(model.id, {image: {...fileMetaData, width: image.width, height: image.height}, type: image.type})
+      const applicationFile = await localFileService.getFileMetaData(image.fileId)
+        await modelService.addImage(model.id, {image: new ApplicationImage(applicationFile), type: "book"})
     }
 
     for(const experience of modelApplication.experiences){

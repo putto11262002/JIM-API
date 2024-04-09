@@ -10,10 +10,9 @@ export type Model = db.Model & {
 
 export type ModelCreateInput = Omit<
   db.Prisma.ModelCreateInput,
-  "experiences" | "images" | "talents" | "name"
+  "experiences" | "images" | "talents" 
 > & {
   talents?: string[];
-  name?: string;
 };
 
 export type ModelUpdateInput = Omit<
@@ -47,3 +46,19 @@ export type ModelGetQuery = {
 export const ModelFields = db.Prisma.ModelScalarFieldEnum;
 
 export type ModelFields = keyof typeof ModelFields;
+
+export const ModelImageType = db.ModelImageType;
+
+
+export type ModelImageType = db.ModelImageType
+
+export const ModelGender =  db.Gender
+
+export type ModelGender = db.Gender
+
+export type ModelImageUpdateTypeInput = {
+  type: ModelImageType
+}
+
+
+

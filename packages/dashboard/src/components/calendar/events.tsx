@@ -34,7 +34,7 @@ function BlockEvent({
   event: Extract<CalendarEvent, { type: EventType.Block }>;
 }) {
   const text = event.details.models
-    .map((model) => `${model.firstName} ${model.lastName}`)
+    .map((model) => `${model.name}`)
     .join(", ");
   return <Event bg="bg-danger" text={text} />;
 }
@@ -47,7 +47,7 @@ function BookingEvent({
   const text =
     event.details?.job?.models && event.details.job?.models.length > 0
       ? event.details?.job?.models
-        .map((model) => `${model.firstName} ${model.lastName}`)
+        .map((model) => `${model.name}`)
         .join(", ")
       : event.details?.job?.title;
 

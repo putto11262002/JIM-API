@@ -6,10 +6,9 @@ import useSetProfileImage from "../../hooks/model/use-set-profile-image";
 
 function ModelMediaUpdateForm({
   modelId,
-  type,
 }: {
   modelId: string;
-  type: string;
+
 }) {
   const { images } = useGetModelImage({ modelId: modelId });
   const { addImage } = useAddImage();
@@ -24,7 +23,6 @@ function ModelMediaUpdateForm({
       onRemoveImage={({ imageId, modelId }) =>
         removeImage({ imageId, modelId })
       }
-      type={type}
       onAddImage={({ image, type }) => {
         addImage({ modelId, modelImageCreateInput: { image, type } });
       }}

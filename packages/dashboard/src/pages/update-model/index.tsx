@@ -70,26 +70,13 @@ const menuItems: {
     ),
   },
   {
-    label: "Books",
-    value: "book",
+    label: "Media",
+    value: "media",
     form: ({ modelId }) => (
-      <ModelMediaUpdateForm modelId={modelId} type="book"/>
+      <ModelMediaUpdateForm modelId={modelId} />
     ),
   },
-  {
-    label: "Polaroids",
-    value: "polaroid",
-    form: ({ modelId }) => (
-      <ModelMediaUpdateForm modelId={modelId} type="polaroid"/>
-    ),
-  },
-  {
-    label: "Composites",
-    value: "composite",
-    form: ({ modelId }) => (
-      <ModelMediaUpdateForm modelId={modelId} type="composite"/>
-    ),
-  },
+
   {
     label: "Actions",
     value: "action",

@@ -3,7 +3,6 @@ import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
 import NotFoundError from "../lib/errors/not-found-error";
 import { extractSingleFilesFromRequest } from "../lib/request";
-import localFileService from "../services/local-file-service";
 
 import {
   DecodeGetModelQuerySchema,
@@ -13,11 +12,13 @@ import {
   CreateModelImageSchema,
   ModelCreateSchema,
   Model,
-
+  ModelImageUpdateTypeSchema,
 } from "@jimmodel/shared";
 import modelService from "../services/model-service";
 import { validate } from "../lib/validation";
 import { ACCEPTED_IMAGE_MIMETYPE } from "../lib/file-processors/image";
+import { ApplicationImage } from "../services/image";
+import { File } from "../types/file";
 
 interface IModelController {
   createModel: express.Handler;
@@ -30,8 +31,9 @@ interface IModelController {
   getModel: express.Handler;
   setModelProfileImage: express.Handler;
   getModelImages: express.Handler;
-  getPublicModels: express.Handler
-  getPublicModelById: express.Handler
+  getPublicModels: express.Handler;
+  getPublicModelById: express.Handler;
+  updateModelImageType: express.Handler;
 }
 
 async function createModel(
@@ -125,18 +127,16 @@ async function addModelImage(
   try {
     const modelId = req.params.id;
 
-    const modelImage = extractSingleFilesFromRequest(req, "image");
-    if (modelImage === null) {
+    const file = extractSingleFilesFromRequest(req, "image");
+    if (file === null) {
       throw new Error("Image found in the request");
     }
 
-    if (!ACCEPTED_IMAGE_MIMETYPE.includes(modelImage.mimetype)){
-      throw new Error("Invalid image format")
-    }
+    const image = new ApplicationImage(file);
 
     const { type } = validate(req.body, CreateModelImageSchema);
 
-    await modelService.addImage(modelId, { image: modelImage, type });
+    await modelService.addImage(modelId, { image, type });
 
     return res.sendStatus(204);
   } catch (err) {
@@ -153,24 +153,7 @@ async function removeModelImage(
     // const modelId = req.params.id;
     const imageId = req.params.imageId;
 
-    const image = await prisma.modelImage.findUnique({
-      where: {
-        id: imageId,
-        // modelId
-      },
-    });
-
-    if (image === null) {
-      throw new NotFoundError("Image not found");
-    }
-
-    await prisma.modelImage.delete({
-      where: {
-        id: imageId,
-      },
-    });
-
-    localFileService.deleteFile(image.fileId);
+    await modelService.removeModelImage(imageId);
 
     return res.sendStatus(204);
   } catch (err) {
@@ -186,7 +169,7 @@ async function getModels(
   try {
     const query = validate(req.query, DecodeGetModelQuerySchema);
 
-    const result = await modelService.getModels(query)
+    const result = await modelService.getModels(query);
 
     return res.json(result);
   } catch (err) {
@@ -194,37 +177,36 @@ async function getModels(
   }
 }
 
-
 async function getPublicModels(
-  req: express.Request, 
+  req: express.Request,
   res: express.Response,
   next: express.NextFunction
-){
-  try{
-    const query = validate(req.query, DecodeGetModelQuerySchema)
-    const result = await modelService.getModels({...query, public: true})
-    res.json(result)
-  }catch(err){
-    next(err)
+) {
+  try {
+    const query = validate(req.query, DecodeGetModelQuerySchema);
+    const result = await modelService.getModels({ ...query, public: true });
+    res.json(result);
+  } catch (err) {
+    next(err);
   }
 }
 
 async function getPublicModelById(
-  req: express.Request, 
+  req: express.Request,
   res: express.Response,
   next: express.NextFunction
-){
+) {
   try {
     const modelId = req.params.id;
 
     const model = await prisma.model.findUnique({
       where: {
         id: modelId,
-        public: true
+        public: true,
       },
       include: {
         experiences: true,
-        images: true
+        images: true,
       },
     });
 
@@ -256,7 +238,7 @@ async function getModel(
           orderBy: {
             profile: "desc",
           },
-          take: 1
+          take: 1,
         },
       },
     });
@@ -281,24 +263,24 @@ async function setModelProfileImage(
 
     const updatedImage = await prisma.modelImage.update({
       where: {
-        id: imageId
+        id: imageId,
       },
       data: {
-        profile: true
-      }
-    })
+        profile: true,
+      },
+    });
 
     await prisma.modelImage.updateMany({
       where: {
         modelId: updatedImage.modelId,
         id: {
-          not: imageId
-        }
+          not: imageId,
+        },
       },
       data: {
-        profile: false
-      }
-    })
+        profile: false,
+      },
+    });
 
     return res.sendStatus(204);
   } catch (err) {
@@ -306,25 +288,41 @@ async function setModelProfileImage(
   }
 }
 
-
 async function getModelImages(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
-){
-  try{
+) {
+  try {
     const modelId = req.params.id;
     const images = await prisma.modelImage.findMany({
       where: {
-        modelId
+        modelId,
+      },
+      orderBy: {
+        profile: "desc"
       }
-    })
-    return res.json(images)
-  }catch(err){
-    next(err)
+    });
+    return res.json(images);
+  } catch (err) {
+    next(err);
   }
 }
 
+async function updateModelImageType(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
+  try {
+    const imageId = req.params.imageId;
+    const input = validate(req.body, ModelImageUpdateTypeSchema);
+    await modelService.updateModelImageType(imageId, input);
+    res.sendStatus(204)
+  } catch (err) {
+    next(err);
+  }
+}
 
 const modelController: IModelController = {
   getModels,
@@ -338,7 +336,8 @@ const modelController: IModelController = {
   setModelProfileImage,
   getModelImages,
   getPublicModels,
-  getPublicModelById
+  getPublicModelById,
+  updateModelImageType
 };
 
 export default modelController;

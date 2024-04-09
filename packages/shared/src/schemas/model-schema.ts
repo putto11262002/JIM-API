@@ -6,24 +6,26 @@ import {
   ModelCreateInput,
   ModelExperienceCreateInput,
   ModelFields,
+  ModelGender,
   ModelGetQuery,
+  ModelImageType,
   ModelUpdateInput,
 } from "../types/index.js";
 
+
 export const ModelCreateSchema = schemaForType<ModelCreateInput>()(
   z.object({
-    firstName: z.string(),
-    lastName: z.string(),
+    name: z.string(),
     nickname: z.string().optional(),
-    phoneNumber: z.string(),
-    email: z.string().email(),
+    phoneNumber: z.string().optional(),
+    email: z.string().email().optional(),
     lineId: z.string().optional(),
     whatsapp: z.string().optional(),
     wechat: z.string().optional(),
     instagram: z.string().optional(),
     facebook: z.string().optional(),
-    dateOfBirth: z.date().or(z.string().datetime({ offset: false })),
-    gender: z.string(),
+    dateOfBirth: z.date().or(z.string().datetime({ offset: false })).optional(),
+    gender: z.nativeEnum(ModelGender),
     nationality: z.string().optional(),
     ethnicity: z.string().optional(),
     countryOfResidence: z.string().optional(),
@@ -48,8 +50,8 @@ export const ModelCreateSchema = schemaForType<ModelCreateInput>()(
     emergencyContactName: z.string().optional(),
     emergencyContactPhoneNumber: z.string().optional(),
     emergencyContactRelationship: z.string().optional(),
-    height: z.string(),
-    weight: z.string(),
+    height: z.string().optional(),
+    weight: z.string().optional(),
     bust: z.string().optional(),
     collar: z.string().optional(),
     aroundArmpit: z.string().optional(),
@@ -80,8 +82,7 @@ export const ModelCreateSchema = schemaForType<ModelCreateInput>()(
 
 export const ModelUpdateSchema = schemaForType<ModelUpdateInput>()(
   z.object({
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
+  name: z.string().optional(),
     nickname: z.string().optional().nullable(),
     phoneNumber: z.string().optional(),
     email: z.string().email().optional(),
@@ -91,7 +92,7 @@ export const ModelUpdateSchema = schemaForType<ModelUpdateInput>()(
     instagram: z.string().optional().nullable(),
     facebook: z.string().optional().nullable(),
     dateOfBirth: z.string().datetime({ offset: false }).optional(),
-    gender: z.string().optional(),
+    gender: z.nativeEnum(ModelGender).optional(),
     nationality: z.string().optional().nullable(),
     ethnicity: z.string().optional().nullable(),
     countryOfResidence: z.string().optional().nullable(),
@@ -158,7 +159,7 @@ export const ModelExperienceCreateSchema =
   );
 
 export const CreateModelImageSchema = z.object({
-  type: z.string(),
+  type: z.nativeEnum(ModelImageType),
 });
 
 // export const EncodeGetModelQuerySchema = schemaForType<EncodedModelGetQuery>()(
@@ -184,3 +185,8 @@ export const DecodeGetModelQuerySchema = schemaForType<ModelGetQuery>()(
 export const ModelSetProfileImageSchema = z.object({
   imageId: z.string(),
 });
+
+
+export const ModelImageUpdateTypeSchema = z.object({
+  type: z.nativeEnum(ModelImageType)
+})

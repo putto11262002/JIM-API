@@ -24,13 +24,13 @@ async function ModelPage({ params: { id } }: { params: { id: string } }) {
   const model = await getModel(id);
 
   return (
-    <div className="max-w-xl mx-auto container ">
+    <div className="max-w-[700px] mx-auto container ">
     <div className="pt-3">
     <BreadCrumb path={[{label: "Models", href: "/model"}, {label: ModelGenderLabel[model.gender], href: `/model/${ModelGenderLabel[model.gender]}`}, {label: model.name, href: `/model/${model.id}`}]}/>
     </div>
-      <div className="flex pt-8 max-w-[600px] f-full ">
+      <div className="flex pt-8 w-full  ">
         <div>
-          <div className="relative h-[8em] w-[8em] md:h-[10em] md:w-[10em] overflow-hidden rounded-full">
+          <div className="relative h-[12em] w-[8em] md:h-[15em] md:w-[10em] overflow-hidden">
             <ModelProfileImage model={model} />
           </div>
         </div>
@@ -38,7 +38,7 @@ async function ModelPage({ params: { id } }: { params: { id: string } }) {
         <div className="grow pl-5 md:pl-10">
           <h1 className=" font-bold mb-3">{model.name}</h1>
 
-          <div className="flex items-center gap-x-4 gap-y-2 flex-wrap text-sm">
+          <div className="flex flex-col gap-x-4 gap-y-2 flex-wrap text-sm">
             <p>
               Height <span className="text-muted-foreground">187CM</span>
             </p>

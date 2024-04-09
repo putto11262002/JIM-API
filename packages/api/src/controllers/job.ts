@@ -60,7 +60,7 @@ async function getAll(
       where.OR.push({ client: { contains: query.q, mode: "insensitive" } });
       where.OR.push({
         models: {
-          some: { firstName: { contains: query.q, mode: "insensitive" } },
+          some: { name: { contains: query.q, mode: "insensitive" } },
         },
       });
     }

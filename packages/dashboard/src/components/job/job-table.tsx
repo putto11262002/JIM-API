@@ -26,7 +26,7 @@ const columns: ColumnDef<Job>[] = [
     cell: ({ row }) => (
       <div className="max-w-[300px] truncate ... ">
         {row.original.models
-          .map((model) => `${model.firstName} ${model.lastName}`)
+          .map((model) => `${model.name}`)
           .join(", ")}
       </div>
     ),

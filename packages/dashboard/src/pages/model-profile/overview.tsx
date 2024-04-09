@@ -13,7 +13,7 @@ function ModelProfileOverview({ modelId }: { modelId: string }) {
           />
         ) : (
           <div className="bg-slate-300 absolute inset-0 z-10 text-white flex items-center justify-center text-5xl font-bold">
-            {model.firstName.charAt(0).toUpperCase()}
+            {model.name.charAt(0).toUpperCase()}
           </div>
         )}
       </div>

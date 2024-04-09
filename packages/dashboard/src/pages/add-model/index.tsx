@@ -1,6 +1,6 @@
 import { Model } from "@jimmodel/shared";
 import { z } from "zod";
-import { ModelCreateFormSchema } from "../../schemas/model";
+import { ModelCreateFormSchema } from "../../components/model/schema";
 import { ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
 import { PersonalForm } from "../../components/model/personal-form";

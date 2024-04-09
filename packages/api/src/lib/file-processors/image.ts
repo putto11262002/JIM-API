@@ -1,7 +1,7 @@
 import sharp from "sharp"
-import { Writer } from "../../services/local-file-service"
+import { Writer } from "../../services/file-service/local-file-service"
 
-export const ACCEPTED_IMAGE_MIMETYPE = ["image/jpeg", "image/png", "image/gif"]
+export const ACCEPTED_IMAGE_MIMETYPE = ["image/jpeg", "image/png", "image/gif", "image/jpg"]
 export const imageWriter: Writer<[], {width: number, height: number}> =  {
     write: async (orginal: string, processed: string, config: {format: sharp.AvailableFormatInfo} = {format: sharp.format.jpeg}) => {
       

@@ -2,12 +2,11 @@ import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import _ from "lodash";
+import { lowerCase, upperFirst } from "lodash";
 import {
   Form,
   FormControl,
@@ -19,10 +18,115 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
-import { Trash, Upload, User } from "lucide-react";
+import { MoreHorizontal, Upload } from "lucide-react";
 import { useState } from "react";
 import { ModelImage } from "@jimmodel/shared";
-import ImageGallery from "../shared/image-gallery";
+import { ModelImageType } from "../../types/model";
+import { ColumnDef } from "@tanstack/react-table";
+import DataTable from "../job/data-table";
+import dayjs from "dayjs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { FromSelectField } from "../shared/form/FormSelectField";
+import useRemoveImage from "../../hooks/model/use-remove-image";
+import useSetProfileImage from "../../hooks/model/use-set-profile-image";
+import { useUpdateModelImageType } from "../../hooks/model/use-update-model-image-type";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+
+const columns: ColumnDef<ModelImage>[] = [
+  {
+    id: "image",
+    cell: ({ row }) => {
+      return (
+        <img src={row.original.url} alt="" className="object-cover h-12 w-12" />
+      );
+    },
+  },
+  {
+    header: "Type",
+    cell: ({ row }) => upperFirst(lowerCase(row.original.type)),
+  },
+  {
+    header: "Created At",
+    cell: ({ row }) => dayjs(row.original.createdAt).format("DD/MM/YYYY"),
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <ModelImageDropdownMenu image={row.original}>
+          <Button variant="ghost">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </ModelImageDropdownMenu>
+      );
+    },
+  },
+];
+
+function ModelImageDropdownMenu({
+  children,
+  image,
+}: {
+  children: React.ReactNode;
+  image: ModelImage;
+}) {
+  const { removeImage } = useRemoveImage();
+  const { setProfile } = useSetProfileImage();
+  const { updateModelImageType } = useUpdateModelImageType();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
+      <DropdownMenuContent className="w-54">
+        <DropdownMenuItem
+          onClick={() =>
+            removeImage({ imageId: image.id, modelId: image.modelId })
+          }
+        >
+          Delete
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={image.profile}
+          onClick={() => setProfile({ imageId: image.id })}
+        >
+          Set as profile
+        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Change type</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              {Object.values(ModelImageType).map((type) => (
+                <DropdownMenuItem
+                  disabled={image.type === type}
+                  key={type}
+                  onClick={() =>
+                    updateModelImageType({ imageId: image.id, input: { type } })
+                  }
+                >
+                  {upperFirst(lowerCase(type))}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 const allowedMimetype = ["image/jpg", "image/png", "image/jpeg"];
 
@@ -41,13 +145,14 @@ const ModelImageUploadFormSchema = z.object({
       (file) => file?.size < 5 * 1000 * 1000,
       "File size cannot exceed 5MB"
     ),
+  type: z.nativeEnum(ModelImageType),
 });
 function ImageUploadDialog({
-  type,
   onSubmit,
+  children,
 }: {
-  type: string;
-  onSubmit: (image: File) => void;
+  onSubmit: ({ image, type }: { image: File; type: ModelImageType }) => void;
+  children: React.ReactNode;
 }) {
   const form = useForm<z.infer<typeof ModelImageUploadFormSchema>>({
     resolver: zodResolver(ModelImageUploadFormSchema),
@@ -57,22 +162,18 @@ function ImageUploadDialog({
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-      <DialogTrigger asChild>
-        <Button className="w-full" variant={"outline"}>
-          <Upload className="h-4 w-4 mr-2" /> Upload {_.upperFirst(type)} Image
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upload {_.upperFirst(type)}</DialogTitle>
-          <DialogDescription>Upload {type} for model</DialogDescription>
+          <DialogTitle>Upload </DialogTitle>
+          {/* <DialogDescription>Upload {type} for model</DialogDescription> */}
         </DialogHeader>
         <Form {...form}>
           <form
             className="space-y-3"
             onSubmit={form.handleSubmit((data) => {
               setOpenDialog(false);
-              onSubmit(data.image);
+              onSubmit({ image: data.image, type: data.type });
             })}
           >
             <FormField
@@ -90,6 +191,14 @@ function ImageUploadDialog({
                 </FormItem>
               )}
             />
+            <FromSelectField
+              name="type"
+              form={form}
+              options={Object.values(ModelImageType).map((type) => ({
+                label: upperFirst(lowerCase(type)),
+                value: type,
+              }))}
+            />
 
             <div>
               <Button type="submit">Upload</Button>
@@ -104,50 +213,52 @@ function ImageUploadDialog({
 function MediaForm({
   onAddImage,
   images,
-  type,
-  onRemoveImage,
-  onSetProfileImage
 }: {
   onAddImage: ({ image, type }: { image: File; type: string }) => void;
   images: ModelImage[];
-  type: string;
   onRemoveImage: (args: { imageId: string; modelId: string }) => void;
   onSetProfileImage: (args: { imageId: string; modelId: string }) => void;
 }) {
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+
   return (
     <div>
-      <div className="mt-6">
+      <div className="mt-6 flex justify-between">
+        <div className="w-32">
+          <Select
+            value={selectedType || ""}
+            defaultValue={selectedType || ""}
+            onValueChange={(value) => setSelectedType(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(ModelImageType).map((type) => (
+                <SelectItem value={type} key={type}>
+                  {upperFirst(lowerCase(type))}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <ImageUploadDialog
-          type={type}
-          onSubmit={(image) => onAddImage({ image, type })}
-        />
+          onSubmit={({ image, type }) => onAddImage({ image, type })}
+        >
+          <Button className="" variant={"outline"}>
+            <Upload className="h-4 w-4 mr-2" /> Upload Image
+          </Button>
+        </ImageUploadDialog>
       </div>
       <div className="mt-4">
-        <ImageGallery
-          overlayContent={(image) => {
-            return (
-              <div className="flex space-x-2">
-                <div
-                  onClick={() =>
-                    onRemoveImage({ imageId: image.id, modelId: image.modelId })
-                  }
-                  className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full"
-                >
-                  <Trash className="w-4 h-4 text-black" />
-                </div>
-
-                <div
-                  onClick={() =>
-                    onSetProfileImage({ imageId: image.id, modelId: image.modelId })
-                  }
-                  className="cursor-pointer w-8 h-8 flex items-center justify-center bg-white rounded-full"
-                >
-                  <User className="w-4 h-4 text-black" />
-                </div>
-              </div>
-            );
-          }}
-          images={images.filter((image) => image.type == type)}
+        <DataTable
+          data={
+            selectedType === null
+              ? images
+              : images.filter((image) => image.type === selectedType)
+          }
+          columns={columns}
         />
       </div>
     </div>

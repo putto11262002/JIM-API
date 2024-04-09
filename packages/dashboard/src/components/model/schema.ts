@@ -1,21 +1,22 @@
 import { schemaForType, ModelExperienceCreateInput, ModelCreateInput } from "@jimmodel/shared";
 import z from "zod"
+import { ModelGender } from "../../types/model";
+
 export const ModelCreateFormSchema = schemaForType<
   ModelCreateInput & { experiences?: ModelExperienceCreateInput[] }
 >()(
   z.object({
-    firstName: z.string().min(1, "Required"),
-    lastName: z.string().min(1, "Required"),
+   name: z.string().min(1, "Required"),
     nickname: z.string().optional().nullable(),
-    phoneNumber: z.string().min(1, "Required").regex(/\+?\d{2,4}\s?\d{3,4}\s?\d{3,4}/, "Invalid phone number"),
-    email: z.string().email(),
+    phoneNumber: z.string().regex(/\+?\d{2,4}\s?\d{3,4}\s?\d{3,4}/, "Invalid phone number").optional().nullable(),
+    email: z.string().email().optional().nullable(),
     lineId: z.string().optional().nullable(),
     whatsapp: z.string().optional().nullable(),
     wechat: z.string().optional().nullable(),
     instagram: z.string().optional().nullable(),
     facebook: z.string().optional().nullable(),
-    dateOfBirth: z.date().or(z.string().datetime({ offset: false })),
-    gender: z.string().min(1, "Required"),
+    dateOfBirth: z.date().or(z.string().datetime({ offset: false })).optional().nullable(),
+    gender: z.nativeEnum(ModelGender),
     nationality: z.string().optional().nullable(),
     ethnicity: z.string().optional().nullable(),
     countryOfResidence: z.string().optional().nullable(),
@@ -40,8 +41,8 @@ export const ModelCreateFormSchema = schemaForType<
     emergencyContactName: z.string().optional().nullable(),
     emergencyContactPhoneNumber: z.string().optional().nullable(),
     emergencyContactRelationship: z.string().optional().nullable(),
-    height: z.string().min(1, "Required"),
-    weight: z.string().min(1, "Required"),
+    height: z.string().nullable().optional(),
+    weight: z.string().nullable().optional(),
     bust: z.string().optional().nullable(),
     collar: z.string().optional().nullable(),
     aroundArmpit: z.string().optional().nullable(),

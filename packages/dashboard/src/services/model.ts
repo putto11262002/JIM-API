@@ -73,6 +73,10 @@ async function getImages({id, signal}: {id: string, signal?: GenericAbortSignal}
   return res.data as ModelImage[];
 }
 
+async function updateModelImageType({imageId, input}: {imageId: string, input: { type: string }}){
+  await axiosClient.put(`/models/images/${imageId}/type`, input);
+}
+
 const modelService = {
   getAll,
   getById,
@@ -82,7 +86,8 @@ const modelService = {
   updateById,
   removeImage,
   setProfileImage,
-  getImages
+  getImages,
+  updateModelImageType
 };
 
 export default modelService;
