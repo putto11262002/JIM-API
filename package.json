@@ -6,7 +6,11 @@
   "workspaces": [
     "packages/*"
   ],
-  "scripts": {},
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "build:shared": "pnpm --filter @jimmodel/shared build"
+  },
   "author": "Put Suthisrisinlpa",
   "license": "MIT",
   "devDependencies": {

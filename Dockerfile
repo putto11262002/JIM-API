@@ -63,3 +63,36 @@ EXPOSE 8000
 
 CMD ["nginx", "-g", "daemon off;"]
 
+
+FROM base-build AS public-web-build
+RUN pnpm config set node-linker=hoisted
+RUN cp ./node_modules/.prisma/client/*.js ./node_modules/@prisma/client
+RUN pnpm --filter public-web build 
+
+FROM base AS public-web
+WORKDIR /usr/src/app
+
+ENV NODE_ENV production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=public-web-build --chown=nextjs:nodejs /usr/src/app/packages/public-web/.next/standalone ./
+COPY --from=public-web-build --chown=nextjs:nodejs /usr/src/app/packages/public-web/.next/static ./packages/public-web/.next/static
+COPY --from=public-web-build --chown=nextjs:nodejs /usr/src/app/packages/public-web/public ./packages/public-web/public
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+CMD  ["node", "./packages/public-web/server.js"]

@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../ui/form";
 import { FormInputField } from "../shared/form/FormInputField";
 import { Button } from "../ui/button";
+import { FromSelectField } from "../shared/form/FormSelectField";
+import { Country } from "@jimmodel/shared";
 
 export const ModelAddresSchema = ModelCreateFormSchema.pick({
   address: true,
@@ -40,7 +42,7 @@ export function ModelAddressForm({
         <FormInputField form={form} name="city" />
         <FormInputField form={form} name="region" />
         <FormInputField form={form} name="zipCode" />
-        <FormInputField form={form} name="country" />
+        <FromSelectField form={form} name="country" options={Country.map((c) => ({label: c, value: c}))}/>
         <Button className="mt-6" type="submit">
           Save
         </Button>

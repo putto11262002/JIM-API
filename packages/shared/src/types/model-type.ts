@@ -4,16 +4,15 @@ import { PaginatedDataQuery } from "./pagingated-data-type.js";
 export type ModelImage = db.ModelImage;
 
 export type Model = db.Model & {
-  images?: ModelImage[];
-  experiences?: db.ModelExperience[];
+  images: ModelImage[];
+  experiences: db.ModelExperience[];
 };
 
 export type ModelCreateInput = Omit<
   db.Prisma.ModelCreateInput,
-  "experiences" | "images" | "talents" | "name"
+  "experiences" | "images" | "talents" 
 > & {
   talents?: string[];
-  name?: string;
 };
 
 export type ModelUpdateInput = Omit<
@@ -21,6 +20,7 @@ export type ModelUpdateInput = Omit<
   "experiences" | "images"
 > & {
   talents?: string[];
+  tags?: string[];
 };
 
 export type ModelImageCreateInput = db.Prisma.ModelImageCreateWithoutModelInput;
@@ -30,6 +30,7 @@ export type ModelExperienceCreateInput =
 
 export type EncodedModelGetQuery = {
   q?: string;
+  public?: boolean
   order?: string;
   page?: number;
   pageSize?: number;
@@ -37,6 +38,7 @@ export type EncodedModelGetQuery = {
 
 export type ModelGetQuery = {
   q?: string;
+  public?: boolean
   orderBy?: string;
   orderDir?: "asc" | "desc";
 } & PaginatedDataQuery<ModelFields>;
@@ -44,3 +46,19 @@ export type ModelGetQuery = {
 export const ModelFields = db.Prisma.ModelScalarFieldEnum;
 
 export type ModelFields = keyof typeof ModelFields;
+
+export const ModelImageType = db.ModelImageType;
+
+
+export type ModelImageType = db.ModelImageType
+
+export const ModelGender =  db.Gender
+
+export type ModelGender = db.Gender
+
+export type ModelImageUpdateTypeInput = {
+  type: ModelImageType
+}
+
+
+

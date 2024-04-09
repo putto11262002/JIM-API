@@ -11,11 +11,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    environment: Production
+    environment: Build
 
     env: 
       API_IMAGE_NAME: putto2002/api
       DASHBOARD_IMAGE_NAME: putto2002/dashboard
+      PUBLIC_WEB_IMAGE_NAME: putto11262002/publicweb
 
     steps:
     - uses: actions/checkout@v3
@@ -24,4 +25,6 @@ jobs:
       run: docker build . --target api --tag ${{env.API_IMAGE_NAME}}:lastest --tag ${{env.API_IMAGE_NAME}}:${{github.sha}}
     - name: Build Dashboard Docker Image
       run: docker build . --build-arg API_BASE_URL=${{vars.API_BASE_URL}} --target dashboard --tag ${{env.DASHBOARD_IMAGE_NAME}}:lastest --tag ${{env.DASHBOARD_IMAGE_NAME}}:${{github.sha}}
+    - name: Build Public Web Docker Image
+      run: docker build . --target public-web --tag ${{env.PUBLIC_WEB_IMAGE_NAME}}:lastest --tag ${{env.PUBLIC_WEB_IMAGE_NAME}}
   

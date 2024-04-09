@@ -48,9 +48,9 @@ export function AddModelDialog({ onAddModel, children, onSearchModel, searchedMo
                 </Avatar>
                 <div className="ml-4">
                   <p className="text-sm font-medium">
-                    {model.firstName} {model.lastName}
+                    {model.name}
                   </p>
-                  <p className="text-xs text-muted-foreground">{model.email}</p>
+                  {/* <p className="text-xs text-muted-foreground">{model.email}</p> */}
                 </div>
                 <Button
                   onClick={() => onAddModel(model)}

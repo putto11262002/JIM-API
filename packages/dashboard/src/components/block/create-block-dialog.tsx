@@ -38,7 +38,6 @@ const BlockCreateFormSchema = z
           name: z.string(),
           id: z.string(),
           imageUrl: z.string().optional(),
-          email: z.string(),
         })
       )
       .min(1, "At least one model is required"),
@@ -76,7 +75,7 @@ const FormBlockToBlockCreateInput = z
           name: z.string(),
           id: z.string(),
           imageUrl: z.string().optional(),
-          email: z.string(),
+       
         })
       )
       .min(1, "At least one model is required"),
@@ -198,9 +197,9 @@ export default function CreateBlockDialog() {
                     </Avatar>
                     <div className="ml-4">
                       <p className="text-sm font-medium">{field.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      {/* <p className="text-xs text-muted-foreground">
                         {field.email}
-                      </p>
+                      </p> */}
                     </div>
                     <Button
                       onClick={() => modelField.remove(index)}
@@ -220,7 +219,6 @@ export default function CreateBlockDialog() {
                       id: model.id,
                       name: model.name,
                       imageUrl: model?.images?.[0]?.url,
-                      email: model.email,
                     })
                   }
                   searchedModels={models}

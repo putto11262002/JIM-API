@@ -1,15 +1,19 @@
 import express from "express";
 import modelController from "../controllers/model-controller";
-import {uploadMiddleware} from "../middlewares/upload";
+import { uploadMiddleware } from "../middlewares/upload";
 import { staffAuthMiddleware } from "../middlewares/staff-auth-middleware";
 
 const modelRouter = express.Router();
 
 modelRouter.get("/", staffAuthMiddleware(), modelController.getModels);
 
-modelRouter.get("/:id", modelController.getModel);
+modelRouter.get("/public", modelController.getPublicModels);
 
-modelRouter.post("/", staffAuthMiddleware(),modelController.createModel);
+modelRouter.get("/public/:id", modelController.getPublicModelById);
+
+modelRouter.get("/:id", staffAuthMiddleware(), modelController.getModel);
+
+modelRouter.post("/", staffAuthMiddleware(), modelController.createModel);
 
 modelRouter.put("/:id", modelController.updateModel);
 
@@ -24,13 +28,19 @@ modelRouter.get("/:id/images", modelController.getModelImages);
 
 modelRouter.delete("/images/:imageId", modelController.removeModelImage);
 
-
 modelRouter.post(
-	"/:id/images",
-	uploadMiddleware([{name: "image", maxCount: 1}], {allowedMimetype: ["image/png", "image/jpg", "image/jpeg"]}),
-	modelController.addModelImage
+  "/:id/images",
+  uploadMiddleware([{ name: "image", maxCount: 1 }], {
+    allowedMimetype: ["image/png", "image/jpg", "image/jpeg"],
+  }),
+  modelController.addModelImage
 );
 
-modelRouter.put("/images/:imageId/profile", modelController.setModelProfileImage)
+modelRouter.put(
+  "/images/:imageId/profile",
+  modelController.setModelProfileImage
+);
+
+modelRouter.put("/images/:imageId/type", modelController.updateModelImageType);
 
 export default modelRouter;

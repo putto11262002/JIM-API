@@ -22,7 +22,7 @@ export const getColumns = ({onRemoveModel}: {onRemoveModel: (model: Model) => vo
                 <Avatar>
                       <AvatarImage className="object-cover" src={row.original.images?.[0]?.url || placeholderImage}/>
                   </Avatar>
-                  <p className="ml-3">  {`${row.original.firstName} ${row.original.lastName}`}</p>
+                  <p className="ml-3">  {`${row.original.name}`}</p>
           </div>
         ,
           
