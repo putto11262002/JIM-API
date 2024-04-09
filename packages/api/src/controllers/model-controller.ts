@@ -1,5 +1,4 @@
 import express from "express";
-import * as pgk from "@prisma/client";
 import { prisma } from "../prisma";
 import NotFoundError from "../lib/errors/not-found-error";
 import { extractSingleFilesFromRequest } from "../lib/request";
@@ -16,9 +15,8 @@ import {
 } from "@jimmodel/shared";
 import modelService from "../services/model-service";
 import { validate } from "../lib/validation";
-import { ACCEPTED_IMAGE_MIMETYPE } from "../lib/file-processors/image";
 import { ApplicationImage } from "../services/image";
-import { File } from "../types/file";
+
 
 interface IModelController {
   createModel: express.Handler;
