@@ -4,7 +4,7 @@ const path = require("path");
 const isProd = process.env.NODE_ENV === "production";
 const nextConfig = {
   images: {
-    domains: ["localhost"]
+    domains: ["localhost", "api.jimmodel.com"]
   },
   output: "standalone",
   experimental: {
